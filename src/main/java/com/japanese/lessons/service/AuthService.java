@@ -26,11 +26,15 @@ public class AuthService {
     public AuthResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        UserDetails userDetails = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        String token = jwtService.getTokenService(userDetails);
-        return AuthResponse.builder().token(token).role(user.getRole()).build();
+
+        String token = jwtService.getTokenService(user);
+
+        return AuthResponse.builder()
+                .token(token)
+                .role(user.getRole())
+                .build();
     }
 
     public AuthResponse register(RegisterRequest registerRequest) {
