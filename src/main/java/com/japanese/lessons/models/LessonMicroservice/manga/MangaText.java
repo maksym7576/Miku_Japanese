@@ -17,7 +17,7 @@ public class MangaText {
     private int turn;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "manga_id", nullable = false)
+    @JoinColumn(name = "manga_id", nullable = true)
     @JsonIgnore
     private Manga manga;
 

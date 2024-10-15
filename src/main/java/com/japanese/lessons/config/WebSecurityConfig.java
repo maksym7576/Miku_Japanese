@@ -32,65 +32,24 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/api/wallet/user/{userId}",
-                                "/api/image/flight/{flightId}",
-                                "/api/wallet/create/{id}",
-                                "/api/flight/search",
-                                "/api/v1/routes/new/routes",
-                                "/api/test/all"
+                                "/api/manga/**"
+
                         ).permitAll()
 
                         .requestMatchers(
-                                "/api/user/delete",
-                                "/api/user/updateUsername",
-                                "/api/user/updatePassword",
-                                "/api/user/getByID/**"
+                                "/api/user/delete"
                         ).hasAnyAuthority("ROLE_USER")
 
                         .requestMatchers(
-                                "/api/wallet/user/addMoney/{userId}",
-                                "/api/user/updateRole/{id}",
-                                "/api/user",
-                                "/api/user/updateUsername/{id}",
-                                "/api/user/updatePassword/{id}",
-                                "/api/v1/new/reservation"
+                                "/api/wallet/user/addMoney/{userId}"
                         ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
                         .requestMatchers(
-                                "/api/flight/**",
-                                "/api/flight/all",
-                                "/api/user/get/{id}",
-                                "/api/flight/create",
-                                "/api/v1/update/passengers/**",
-                                "/api/flight/update/**",
-                                "/api/image/create/**",
-                                "/api/flight/delete/{id}",
-                                "/api/v1/new/routes",
-                                "/api/v1/update/routes/{id}",
-                                "/api/image/flight/delete/{id}",
-                                "/api/image/flight/update/{flightImageId}",
-                                "/api/v1/update/routes/{id}",
-                                "/api/v1/delete/routes/{id}",
-                                "/api/flight/get/{id}",
-                                "/api/v1/update/flight/{id}",
-                                "/api/v1/delete/flight/{id}",
-                                "/api/v1/new/passengers",
-                                "/api/v1/update/passengers/{id}",
-                                "/api/v1/delete/passengers/{id}",
-                                "/api/test/admin",
-                                "/api/v1/routes",
-                                "/api/v1/passengers"
+                                "/api/flight/**"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
-                                "/api/test/user",
-                                "/api/v1/reservation/user/**",
-                                "/api/v1/routes/**",
-                                "/api/v1/update/reservation/{id}",
-                                "/api/v1/delete/reservation/{id}",
-                                "/api/v1/reservation/**",
-                                "/api/wallet/user/addMoney/{userId}",
-                                "/api/v1/passengers/**"
+                                "/api/test/user"
                         ).hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                         .requestMatchers("/api/v1/passengers/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                         .anyRequest().authenticated()

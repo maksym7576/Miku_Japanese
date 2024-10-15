@@ -11,6 +11,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     private int turn;
@@ -22,9 +23,17 @@ public class Question {
     private Set<Answer> answers;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "manga_id", nullable = false)
+    @JoinColumn(name = "manga_id", nullable = true)
     @JsonIgnore
     private Manga manga;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getTurn() {
         return turn;
@@ -48,5 +57,13 @@ public class Question {
 
     public void setAnswers(Set<Answer> answers) {
         this.answers = answers;
+    }
+
+    public Manga getManga() {
+        return manga;
+    }
+
+    public void setManga(Manga manga) {
+        this.manga = manga;
     }
 }

@@ -17,7 +17,7 @@ public class Answer {
     private Boolean isCorrect;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "question_id", nullable = true)
     @JsonIgnore
     private Question question;
 

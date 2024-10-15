@@ -19,8 +19,8 @@ public class Images {
     @Column
     private int turn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manga_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "manga_id", nullable = true)
     @JsonIgnore
     private Manga manga;
 
@@ -32,7 +32,7 @@ public class Images {
         this.manga = manga;
         this.turn = turn;
     }
-
+    @JsonIgnore
     public boolean isImageEmpty() {
         return this.imageData == null || this.imageData.length == 0;
     }
