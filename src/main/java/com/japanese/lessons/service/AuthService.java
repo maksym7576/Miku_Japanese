@@ -3,14 +3,12 @@ package com.japanese.lessons.service;
 import com.japanese.lessons.dtos.request.LoginRequest;
 import com.japanese.lessons.dtos.request.RegisterRequest;
 import com.japanese.lessons.dtos.response.AuthResponse;
-import com.japanese.lessons.models.ERole;
-import com.japanese.lessons.models.User;
+import com.japanese.lessons.models.UserMicroservice.ERole;
+import com.japanese.lessons.models.UserMicroservice.User;
 import com.japanese.lessons.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.japanese.lessons.models;
+package com.japanese.lessons.models.UserMicroservice;
 
 public enum ERole {
     ADMIN,

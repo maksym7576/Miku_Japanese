@@ -1,4 +1,4 @@
-package com.japanese.lessons.models;
+package com.japanese.lessons.models.UserMicroservice;
 
 import jakarta.persistence.*;
 import lombok.*;

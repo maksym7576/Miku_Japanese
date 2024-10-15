@@ -1,6 +1,6 @@
 package com.japanese.lessons.repositories;
 
-import com.japanese.lessons.models.User;
+import com.japanese.lessons.models.UserMicroservice.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

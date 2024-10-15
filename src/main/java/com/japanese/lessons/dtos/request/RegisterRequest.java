@@ -1,7 +1,7 @@
 package com.japanese.lessons.dtos.request;
 
 
-import com.japanese.lessons.models.ERole;
+import com.japanese.lessons.models.UserMicroservice.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
