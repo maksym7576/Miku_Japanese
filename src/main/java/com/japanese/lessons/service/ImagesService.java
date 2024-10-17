@@ -42,6 +42,4 @@ public class ImagesService {
     public Images saveImage(Images images) {
         return iImagesRepository.save(images);
     }
-
-    public void uploadAllImages()
 }
