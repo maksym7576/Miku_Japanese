@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class QuestionService {
@@ -13,11 +15,13 @@ public class QuestionService {
     @Autowired
     IQuestionRepository iQuestionRepository;
 
-    public void saveAllQuestions(List<Question> questionList) {
+    public List<Question> saveAllQuestions(List<Question> questionList) {
         if(questionList != null && !questionList.isEmpty()) {
-            iQuestionRepository.saveAll(questionList);
+            Iterable<Question> savedQuestions = iQuestionRepository.saveAll(questionList);
+            return StreamSupport.stream(savedQuestions.spliterator(), false)
+                    .collect(Collectors.toList());
         } else {
-            throw new IllegalArgumentException("Has occurred an error with saving questionList");
+            throw new IllegalArgumentException("QuestionList cannot have null.");
         }
     }
 
@@ -25,7 +29,7 @@ public class QuestionService {
         if(question != null) {
             iQuestionRepository.save(question);
         } else {
-            throw new IllegalArgumentException("Has occurred an error with saving question");
+            throw new IllegalArgumentException("Question cannot have empty test.");
         }
     }
 }

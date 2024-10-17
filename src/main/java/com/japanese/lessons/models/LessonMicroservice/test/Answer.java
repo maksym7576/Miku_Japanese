@@ -11,13 +11,16 @@ public class Answer {
     private Long id;
 
     @Column
+    private int turn;
+
+    @Column
     private String answer;
 
     @Column
     private Boolean isCorrect;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "question_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "question_id")
     @JsonIgnore
     private Question question;
 
@@ -51,5 +54,12 @@ public class Answer {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
     }
 }

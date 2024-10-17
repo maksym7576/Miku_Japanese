@@ -32,8 +32,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/api/manga/**"
-
+                                "/api/manga/**",
+                                "api/manga/create",
+                                "/api/images/**"
                         ).permitAll()
 
                         .requestMatchers(

@@ -40,7 +40,7 @@ public class Manga {
     }
 
     public List<Images> getImages() {
-        return images != null ? images : new ArrayList<>();  // Повертаємо порожній список, якщо images == null
+        return images != null ? images : new ArrayList<>();
     }
 
     public void setImages(List<Images> images) {
@@ -48,7 +48,7 @@ public class Manga {
     }
 
     public Set<MangaText> getMangaTexts() {
-        return mangaTexts != null ? mangaTexts : Set.of();  // Повертаємо порожню множину, якщо mangaTexts == null
+        return mangaTexts != null ? mangaTexts : Set.of();
     }
 
     public void setMangaTexts(Set<MangaText> mangaTexts) {
@@ -64,7 +64,7 @@ public class Manga {
     }
 
     public Set<Question> getQuestions() {
-        return questions != null ? questions : Set.of();  // Повертаємо порожню множину, якщо questions == null
+        return questions != null ? questions : Set.of();
     }
 
     public void setQuestions(Set<Question> questions) {

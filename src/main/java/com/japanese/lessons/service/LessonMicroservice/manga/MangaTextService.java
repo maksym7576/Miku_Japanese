@@ -17,14 +17,14 @@ public class MangaTextService {
         if (mangaTextList != null && !mangaTextList.isEmpty()){
              iMangaTextRepository.saveAll(mangaTextList);
         } else {
-            throw new IllegalArgumentException("While saving mangaTextList occurred an error");
+            throw new IllegalArgumentException("MangaText cannot have null");
         }
     }
     public void saveMangaTest(MangaText mangaText) {
         if (mangaText != null ) {
             iMangaTextRepository.save(mangaText);
         } else {
-            throw new IllegalArgumentException("While saving mangaText occurred an error");
+            throw new IllegalArgumentException("MangaText cannot have empty test.");
         }
     }
 }

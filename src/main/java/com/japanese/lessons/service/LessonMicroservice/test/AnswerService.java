@@ -17,14 +17,14 @@ public class AnswerService {
         if(answerList != null && !answerList.isEmpty()) {
             iAnswerRepository.saveAll(answerList);
         } else {
-            throw new IllegalArgumentException("Has occurred an error with saving answerList");
+            throw new IllegalArgumentException("Answer cannot have null.");
         }
     }
     public void saveAnswer(Answer answer) {
         if (answer != null) {
             iAnswerRepository.save(answer);
         } else {
-            throw new IllegalArgumentException("Has occurred an error with saving answer");
+            throw new IllegalArgumentException("Answer cannot have empty test.");
         }
     }
 }
