@@ -1,8 +1,6 @@
 package com.japanese.lessons.models.LessonMicroservice.manga;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.japanese.lessons.models.LessonMicroservice.test.Question;
 import jakarta.persistence.*;
 
 @Entity
@@ -25,7 +23,7 @@ public class MangaText {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
+    private com.japanese.lessons.models.LessonMicroservice.test.question question;
 
     public Long getId() {
         return id;
