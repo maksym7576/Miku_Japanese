@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.LessonMicroservice.manga;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.japanese.lessons.models.Images;
 import com.japanese.lessons.models.LessonMicroservice.Lesson;
 import com.japanese.lessons.models.LessonMicroservice.test.Question;
@@ -29,6 +30,7 @@ public class Manga {
     private Lesson lesson;
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    @JsonManagedReference
     private Set<Question> questions;
 
     public Long getId() {

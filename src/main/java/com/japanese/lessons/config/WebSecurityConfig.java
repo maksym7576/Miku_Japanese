@@ -34,7 +34,9 @@ public class WebSecurityConfig {
                                 "/api/auth/**",
                                 "/api/manga/**",
                                 "api/manga/create",
-                                "/api/images/**"
+                                "/api/images/**",
+                                "/api/text/**",
+                                "/api/question/**"
                         ).permitAll()
 
                         .requestMatchers(

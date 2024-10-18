@@ -27,4 +27,20 @@ public class MangaTextService {
             throw new IllegalArgumentException("MangaText cannot have empty test.");
         }
     }
+    public void deleteMangaTest(Long id) {
+        if(iMangaTextRepository.existsById(id)) {
+            iMangaTextRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("This text of manga isn't exists");
+        }
+    }
+
+    public void updateMangaText(Long id, MangaText mangaText) {
+        if(iMangaTextRepository.existsById(id)) {
+            mangaText.setId(id);
+            iMangaTextRepository.save(mangaText);
+        } else {
+            throw new IllegalArgumentException("This text of manga isn't exists");
+        }
+    }
 }

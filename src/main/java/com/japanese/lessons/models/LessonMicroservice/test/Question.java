@@ -20,10 +20,13 @@ public class Question {
     @Column
     private String question;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @Column
+    private String correctAnswer;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "manga_id", nullable = true)
     @JsonIgnore
     private Manga manga;
@@ -66,5 +69,13 @@ public class Question {
 
     public void setManga(Manga manga) {
         this.manga = manga;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
     }
 }

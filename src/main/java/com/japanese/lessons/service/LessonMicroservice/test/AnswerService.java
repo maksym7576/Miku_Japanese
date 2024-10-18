@@ -27,4 +27,19 @@ public class AnswerService {
             throw new IllegalArgumentException("Answer cannot have empty test.");
         }
     }
+    public void deleteAnswer(Long id) {
+        if(iAnswerRepository.existsById(id)) {
+            iAnswerRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Answer isn't exists");
+        }
+    }
+    public void updateAnswer(Long id, Answer answer) {
+        if(iAnswerRepository.existsById(id)) {
+            answer.setId(id);
+            iAnswerRepository.save(answer);
+        } else {
+            throw new IllegalArgumentException("Answer isn't exists");
+        }
+    }
 }
