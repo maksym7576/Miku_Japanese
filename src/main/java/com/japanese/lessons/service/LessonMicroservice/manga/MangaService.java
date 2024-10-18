@@ -1,20 +1,17 @@
 package com.japanese.lessons.service.LessonMicroservice.manga;
 
 import com.japanese.lessons.dtos.request.MangaRequest;
-import com.japanese.lessons.models.Images;
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
-import com.japanese.lessons.models.LessonMicroservice.manga.MangaText;
-import com.japanese.lessons.models.LessonMicroservice.test.Answer;
+import com.japanese.lessons.models.LessonMicroservice.manga.Manga_dialogs;
+import com.japanese.lessons.models.LessonMicroservice.test.Quiz_answers;
 import com.japanese.lessons.models.LessonMicroservice.test.Question;
 import com.japanese.lessons.repositories.LessonMisroservice.IMangaRepository;
-import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.LessonMicroservice.test.AnswerService;
 import com.japanese.lessons.service.LessonMicroservice.test.QuestionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,17 +40,17 @@ public class MangaService {
     @Transactional
     public void createManga(MangaRequest mangaRequest) {
         Manga manga = mangaRequest.getManga();
-        List<MangaText> mangaTextList = mangaRequest.getMangaTextList();
+        List<Manga_dialogs> mangadialogsList = mangaRequest.getMangaTextList();
         List<Question> questionList = mangaRequest.getQuestionList();
-        List<Answer> answerList = mangaRequest.getAnswerList();
+        List<Quiz_answers> quizanswersList = mangaRequest.getAnswerList();
 
         Manga savedManga = saveManga(manga);
 
-        if (!mangaTextList.isEmpty()) {
-            mangaTextList.forEach(mangaText -> {
+        if (!mangadialogsList.isEmpty()) {
+            mangadialogsList.forEach(mangaText -> {
                 mangaText.setManga(savedManga);
             });
-            mangaTextService.saveAllMangaText(mangaTextList);
+            mangaTextService.saveAllMangaText(mangadialogsList);
         }
         if (!questionList.isEmpty()) {
             questionList.forEach(question -> {
@@ -61,10 +58,10 @@ public class MangaService {
             });
             List<Question> savedQuestions = questionService.saveAllQuestions(questionList);
 
-            if (!answerList.isEmpty()) {
-                answerList.forEach(answer -> {
+            if (!quizanswersList.isEmpty()) {
+                quizanswersList.forEach(answer -> {
                     Question matchingQuestion = savedQuestions.stream()
-                            .filter(q -> q.getTurn() == answer.getTurn())
+                            .filter(q -> q.getTurn() == answer.getSequence_order())
                             .findFirst()
                             .orElse(null);
 
@@ -72,7 +69,7 @@ public class MangaService {
                         answer.setQuestion(matchingQuestion);
                     }
                 });
-                answerService.saveAllAnswers(answerList);
+                answerService.saveAllAnswers(quizanswersList);
             }
         }
     }

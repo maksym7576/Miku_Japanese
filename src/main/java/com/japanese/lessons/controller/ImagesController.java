@@ -1,7 +1,6 @@
 package com.japanese.lessons.controller;
 
 import com.japanese.lessons.models.Images;
-import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
 import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.LessonMicroservice.manga.MangaService;
 import org.springframework.beans.factory.annotation.Autowired;

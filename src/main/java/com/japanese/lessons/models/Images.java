@@ -3,8 +3,12 @@ package com.japanese.lessons.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Images {
 
     @Id
@@ -19,8 +23,8 @@ public class Images {
     @Column
     private int turn;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "manga_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manga_id")
     @JsonIgnore
     private Manga manga;
 
@@ -35,37 +39,5 @@ public class Images {
     @JsonIgnore
     public boolean isImageEmpty() {
         return this.imageData == null || this.imageData.length == 0;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
-    public Manga getManga() {
-        return manga;
-    }
-
-    public void setManga(Manga manga) {
-        this.manga = manga;
     }
 }

@@ -1,59 +1,38 @@
 package com.japanese.lessons.models.LessonMicroservice.manga;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.japanese.lessons.models.LessonMicroservice.test.Question;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-public class MangaText {
+@Getter
+@Setter
+public class Manga_dialogs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String test;
+    private String character_name;
 
     @Column
-    private int turn;
+    private String content;
+
+    @Column
+    private String translation;
+
+    @Column
+    private int sequence_order;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "manga_id", nullable = true)
+    @JoinColumn(name = "manga_id")
     @JsonBackReference
     private Manga manga;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "question_id", nullable = false)
-    private com.japanese.lessons.models.LessonMicroservice.test.question question;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTest() {
-        return test;
-    }
-
-    public void setTest(String test) {
-        this.test = test;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
-    public Manga getManga() {
-        return manga;
-    }
-
-    public void setManga(Manga manga) {
-        this.manga = manga;
-    }
+    private Question question;
 }
