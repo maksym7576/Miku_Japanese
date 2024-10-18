@@ -40,9 +40,9 @@ public class MangaService {
     @Transactional
     public void createManga(MangaRequest mangaRequest) {
         Manga manga = mangaRequest.getManga();
-        List<Manga_dialogs> mangadialogsList = mangaRequest.getMangaTextList();
+        List<Manga_dialogs> mangadialogsList = mangaRequest.getMangadialogsList();
         List<Question> questionList = mangaRequest.getQuestionList();
-        List<Quiz_answers> quizanswersList = mangaRequest.getAnswerList();
+        List<Quiz_answers> quizanswersList = mangaRequest.getQuizanswersList();
 
         Manga savedManga = saveManga(manga);
 

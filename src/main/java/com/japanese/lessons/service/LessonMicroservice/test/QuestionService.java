@@ -29,7 +29,7 @@ public class QuestionService {
     }
 
     public void saveQuestion(Question question) {
-        if(question != null) {
+        if(question != null && !question.isAllFieldsFilled()) {
             iQuestionRepository.save(question);
         } else {
             throw new IllegalArgumentException("Question is empty.");

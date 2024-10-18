@@ -21,7 +21,7 @@ public class MangaTextService {
         }
     }
     public void saveMangaTest(Manga_dialogs mangadialogs) {
-        if (mangadialogs != null ) {
+        if (mangadialogs != null) {
             iMangaTextRepository.save(mangadialogs);
         } else {
             throw new IllegalArgumentException("MangaText cannot have empty test.");

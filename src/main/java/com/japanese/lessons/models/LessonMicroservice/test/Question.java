@@ -26,11 +26,28 @@ public class Question {
     @Column
     private String correctAnswer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Quiz_answers> quizAnswers;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "manga_id", nullable = true)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "manga_id")
     @JsonIgnore
     private Manga manga;
+
+    public Question copyTemplate() {
+        Question copy = new Question();
+        copy.setTurn(this.turn);
+        copy.setQuestion(this.question);
+        copy.setCorrectAnswer(this.correctAnswer);
+        copy.setQuizAnswers(this.quizAnswers);
+        copy.setManga(this.manga);
+        return copy;
+    }
+
+    public boolean isAllFieldsFilled() {
+        return question != null && !question.isEmpty() &&
+                correctAnswer != null && !correctAnswer.isEmpty() &&
+                turn >= 0 &&
+                manga != null;
+    }
 }
