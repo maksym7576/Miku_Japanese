@@ -1,7 +1,6 @@
 package com.japanese.lessons.models.LessonMicroservice.manga;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.japanese.lessons.models.Images;
 import com.japanese.lessons.models.LessonMicroservice.Lesson;
 import com.japanese.lessons.models.LessonMicroservice.test.Question;
@@ -22,7 +21,7 @@ public class Manga {
     private List<Images> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<MangaText> mangaTexts;
+    private Set<MangaDialogue> mangaDialogues;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -49,12 +48,12 @@ public class Manga {
         this.images = images;
     }
 
-    public Set<MangaText> getMangaTexts() {
-        return mangaTexts != null ? mangaTexts : Set.of();
+    public Set<MangaDialogue> getMangaTexts() {
+        return mangaDialogues != null ? mangaDialogues : Set.of();
     }
 
-    public void setMangaTexts(Set<MangaText> mangaTexts) {
-        this.mangaTexts = mangaTexts;
+    public void setMangaTexts(Set<MangaDialogue> mangaDialogues) {
+        this.mangaDialogues = mangaDialogues;
     }
 
     public Lesson getLesson() {

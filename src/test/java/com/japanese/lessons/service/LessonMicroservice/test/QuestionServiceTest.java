@@ -134,4 +134,25 @@ class QuestionServiceTest {
         });
         assertEquals("This question isn't exists", exception.getMessage());
     }
+
+    @Test
+    void delete_question_success() {
+        Long id = 1L;
+        when(iQuestionRepository.existsById(id)).thenReturn(true);
+
+        questionService.deleteQuestion(id);
+
+        verify(iQuestionRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void delete_test_error_if_not_exist() {
+        Long id = 1L;
+        when(iQuestionRepository.existsById(id)).thenReturn(false);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            questionService.deleteQuestion(id);
+        });
+        assertEquals("Question isn't exists", exception.getMessage());
+    }
 }

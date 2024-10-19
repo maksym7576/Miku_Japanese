@@ -1,7 +1,7 @@
 package com.japanese.lessons.repositories.LessonMisroservice;
 
-import com.japanese.lessons.models.LessonMicroservice.manga.MangaText;
+import com.japanese.lessons.models.LessonMicroservice.manga.MangaDialogue;
 import org.springframework.data.repository.CrudRepository;
 
-public interface IMangaTextRepository extends CrudRepository<MangaText, Long> {
+public interface IMangaTextRepository extends CrudRepository<MangaDialogue, Long> {
 }

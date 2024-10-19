@@ -1,20 +1,17 @@
 package com.japanese.lessons.service.LessonMicroservice.manga;
 
 import com.japanese.lessons.dtos.request.MangaRequest;
-import com.japanese.lessons.models.Images;
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
-import com.japanese.lessons.models.LessonMicroservice.manga.MangaText;
+import com.japanese.lessons.models.LessonMicroservice.manga.MangaDialogue;
 import com.japanese.lessons.models.LessonMicroservice.test.Answer;
 import com.japanese.lessons.models.LessonMicroservice.test.Question;
 import com.japanese.lessons.repositories.LessonMisroservice.IMangaRepository;
-import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.LessonMicroservice.test.AnswerService;
 import com.japanese.lessons.service.LessonMicroservice.test.QuestionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +21,7 @@ public class MangaService {
     IMangaRepository iMangaRepository;
 
     @Autowired
-    MangaTextService mangaTextService;
+    MangaDialogueService mangaDialogueService;
 
     @Autowired
     QuestionService questionService;
@@ -43,17 +40,17 @@ public class MangaService {
     @Transactional
     public void createManga(MangaRequest mangaRequest) {
         Manga manga = mangaRequest.getManga();
-        List<MangaText> mangaTextList = mangaRequest.getMangaTextList();
+        List<MangaDialogue> mangaDialogueList = mangaRequest.getMangaTextList();
         List<Question> questionList = mangaRequest.getQuestionList();
         List<Answer> answerList = mangaRequest.getAnswerList();
 
         Manga savedManga = saveManga(manga);
 
-        if (!mangaTextList.isEmpty()) {
-            mangaTextList.forEach(mangaText -> {
+        if (!mangaDialogueList.isEmpty()) {
+            mangaDialogueList.forEach(mangaText -> {
                 mangaText.setManga(savedManga);
             });
-            mangaTextService.saveAllMangaText(mangaTextList);
+            mangaDialogueService.saveAllMangaDialogues(mangaDialogueList);
         }
         if (!questionList.isEmpty()) {
             questionList.forEach(question -> {
