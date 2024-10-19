@@ -13,18 +13,18 @@ public class AnswerService {
     @Autowired
     IAnswerRepository iAnswerRepository;
 
+    public Answer getAnswerById(Long id) {
+      return iAnswerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Answer not found with id: " + id));
+    }
     public void saveAllAnswers(List<Answer> answerList) {
-        if(answerList != null && !answerList.isEmpty()) {
             iAnswerRepository.saveAll(answerList);
-        } else {
-            throw new IllegalArgumentException("Answer cannot have null.");
-        }
     }
     public void saveAnswer(Answer answer) {
-        if (answer != null) {
+        validAnswerIsNull(answer);
+        if (answer.isComplete()) {
             iAnswerRepository.save(answer);
         } else {
-            throw new IllegalArgumentException("Answer cannot have empty test.");
+            throw new IllegalArgumentException("No all data is completed.");
         }
     }
     public void deleteAnswer(Long id) {
@@ -34,12 +34,15 @@ public class AnswerService {
             throw new IllegalArgumentException("Answer isn't exists");
         }
     }
-    public void updateAnswer(Long id, Answer answer) {
-        if(iAnswerRepository.existsById(id)) {
-            answer.setId(id);
-            iAnswerRepository.save(answer);
-        } else {
-            throw new IllegalArgumentException("Answer isn't exists");
+    private void validAnswerIsNull(Answer answer) {
+        if(answer == null) {
+            throw new IllegalArgumentException("Answer is null");
         }
+    }
+
+    public void updateAnswer(Long id, Answer answer) {
+            Answer responseAnswer = getAnswerById(id);
+            responseAnswer.copyNonNullProperties(answer);
+            saveAnswer(responseAnswer);
     }
 }

@@ -1,9 +1,15 @@
 package com.japanese.lessons.models.LessonMicroservice.test;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Answer {
 
     @Id
@@ -21,45 +27,29 @@ public class Answer {
 
     @ManyToOne
     @JoinColumn(name = "question_id")
-    @JsonIgnore
+    @JsonBackReference
     private Question question;
 
-    public Long getId() {
-        return id;
+    public boolean isComplete() {
+        return turn > 0 && answer != null && !answer.isEmpty()
+                && isCorrect != null && question != null;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public Boolean getCorrect() {
-        return isCorrect;
-    }
-
-    public void setCorrect(Boolean correct) {
-        isCorrect = correct;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
+    public void copyNonNullProperties(Answer source) {
+        if (source == null) {
+            return;
+        }
+        if (source.getTurn() != 0) {
+            this.turn = source.getTurn();
+        }
+        if (source.getAnswer() != null) {
+            this.answer = source.getAnswer();
+        }
+        if (source.getIsCorrect() != null) {
+            this.isCorrect = source.getIsCorrect();
+        }
+        if (source.getQuestion() != null) {
+            this.question = source.getQuestion();
+        }
     }
 }
