@@ -1,21 +1,33 @@
 package com.japanese.lessons.models.LessonMicroservice.manga;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.japanese.lessons.models.Images;
 import com.japanese.lessons.models.LessonMicroservice.Lesson;
 import com.japanese.lessons.models.LessonMicroservice.test.Question;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Manga {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
+    private String name;
+
+    @Column
+    private String startDialog;
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Images> images = new ArrayList<>();
@@ -24,51 +36,29 @@ public class Manga {
     private Set<MangaDialogue> mangaDialogues;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonBackReference
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    @JsonManagedReference
     private Set<Question> questions;
 
-    public Long getId() {
-        return id;
+    public boolean isComplete() {
+        return name != null && startDialog != null;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Images> getImages() {
-        return images != null ? images : new ArrayList<>();
-    }
-
-    public void setImages(List<Images> images) {
-        this.images = images;
-    }
-
-    public Set<MangaDialogue> getMangaTexts() {
-        return mangaDialogues != null ? mangaDialogues : Set.of();
-    }
-
-    public void setMangaTexts(Set<MangaDialogue> mangaDialogues) {
-        this.mangaDialogues = mangaDialogues;
-    }
-
-    public Lesson getLesson() {
-        return lesson;
-    }
-
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
-    }
-
-    public Set<Question> getQuestions() {
-        return questions != null ? questions : Set.of();
-    }
-
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
+    public void copyNonNullProperties(Manga source) {
+        if (source == null) {
+            return;
+        }
+        if (source.getName() != null) {
+            this.name = source.getName();
+        }
+        if (source.getStartDialog() != null) {
+            this.startDialog = source.getStartDialog();
+        }
+        if (source.getMangaDialogues() != null) {
+            this.mangaDialogues = source.getMangaDialogues();
+        }
     }
 }

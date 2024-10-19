@@ -1,6 +1,5 @@
 package com.japanese.lessons.controller;
 
-import com.japanese.lessons.dtos.request.MangaRequest;
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
 import com.japanese.lessons.service.LessonMicroservice.manga.MangaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,9 @@ public class MangaController {
         return ResponseEntity.ok(manga);
     }
     @PostMapping(path = "/create")
-    public ResponseEntity<String> createManga(@RequestBody MangaRequest mangaRequest) {
+    public ResponseEntity<String> createManga(@RequestBody Manga manga) {
         try {
-            mangaService.createManga(mangaRequest);
+            mangaService.saveManga(manga);
             return ResponseEntity.status(HttpStatus.CREATED).body("Manga created successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error during manga creation process: " + e.getMessage());
