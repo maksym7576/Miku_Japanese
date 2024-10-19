@@ -15,26 +15,33 @@ public class QuestionService {
     @Autowired
     IQuestionRepository iQuestionRepository;
 
-    @Autowired
-    AnswerService answerService;
-
     public List<Question> saveAllQuestions(List<Question> questionList) {
-        if(questionList != null && !questionList.isEmpty()) {
+        for(Question question : questionList) {
+            validQuestionIsNull(question);
+            if(!question.isComplete()) {
+                throw new IllegalArgumentException("Question no all data is completed: " + question.getId());
+            }
+        }
             Iterable<Question> savedQuestions = iQuestionRepository.saveAll(questionList);
             return StreamSupport.stream(savedQuestions.spliterator(), false)
                     .collect(Collectors.toList());
-        } else {
-            throw new IllegalArgumentException("QuestionList cannot have null.");
-        }
     }
 
     public void saveQuestion(Question question) {
-        if(question != null) {
+        validQuestionIsNull(question);
+        if(question.isComplete()) {
             iQuestionRepository.save(question);
         } else {
-            throw new IllegalArgumentException("Question is empty.");
+            throw new IllegalArgumentException("Question no all data is completed.");
         }
     }
+
+    private void validQuestionIsNull(Question question) {
+        if(question == null) {
+            throw new IllegalArgumentException("Question is null: " + question.getId());
+        }
+    }
+
     public void deleteQuestion(Long id) {
         if(iQuestionRepository.existsById(id)) {
             iQuestionRepository.deleteById(id);
@@ -44,9 +51,7 @@ public class QuestionService {
     }
     public void updateQuestion(Long id, Question updatedQuestion) {
       Question responceQuestion = getQuestionById(id);
-
-      responceQuestion.setQuestion(updatedQuestion.getQuestion());
-      responceQuestion.setTurn(updatedQuestion.getTurn());
+      responceQuestion.copyNonNullProperties(updatedQuestion);
       iQuestionRepository.save(responceQuestion);
     }
     private Question getQuestionById(Long id) {

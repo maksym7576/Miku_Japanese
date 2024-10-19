@@ -1,13 +1,18 @@
 package com.japanese.lessons.models.LessonMicroservice.test;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Question {
 
     @Id
@@ -26,56 +31,34 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "manga_id", nullable = true)
-    @JsonIgnore
+    @JsonBackReference
     private Manga manga;
 
-    public Long getId() {
-        return id;
+    public boolean isComplete() {
+        return turn > 0 && question != null && !answers.isEmpty()
+                && correctAnswer != null && manga != null;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
-    public Manga getManga() {
-        return manga;
-    }
-
-    public void setManga(Manga manga) {
-        this.manga = manga;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    public void copyNonNullProperties(Question source) {
+        if (source == null) {
+            return;
+        }
+        if (source.getTurn() != 0) {
+            this.turn = source.getTurn();
+        }
+        if (source.getQuestion() != null) {
+            this.question = source.getQuestion();
+        }
+        if (source.getCorrectAnswer() != null) {
+            this.correctAnswer = source.getCorrectAnswer();
+        }
+        if (source.getAnswers() != null) {
+            this.answers = source.getAnswers();
+        }
+        if(source.getManga() != null) {
+            this.manga = source.getManga();
+        }
     }
 }
