@@ -43,9 +43,19 @@ public class Manga {
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Question> questions;
 
-    public boolean isComplete() {
-        return name != null && startDialog != null;
+    public void validateCompletion() {
+        if (name == null) {
+            throw new IllegalArgumentException("Name cannot be null.");
+        }
+        if (startDialog == null) {
+            throw new IllegalArgumentException("Start dialog cannot be null.");
+        }
+        if (lesson == null) {
+            throw new IllegalArgumentException("Lesson cannot be null.");
+        }
     }
+
+
 
     public void copyNonNullProperties(Manga source) {
         if (source == null) {

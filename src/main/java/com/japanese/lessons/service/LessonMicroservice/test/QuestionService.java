@@ -18,9 +18,7 @@ public class QuestionService {
     public List<Question> saveAllQuestions(List<Question> questionList) {
         for(Question question : questionList) {
             validQuestionIsNull(question);
-            if(!question.isComplete()) {
-                throw new IllegalArgumentException("Question no all data is completed: " + question.getId());
-            }
+            question.validateCompletion();
         }
             Iterable<Question> savedQuestions = iQuestionRepository.saveAll(questionList);
             return StreamSupport.stream(savedQuestions.spliterator(), false)
@@ -29,11 +27,8 @@ public class QuestionService {
 
     public void saveQuestion(Question question) {
         validQuestionIsNull(question);
-        if(question.isComplete()) {
-            iQuestionRepository.save(question);
-        } else {
-            throw new IllegalArgumentException("Question no all data is completed.");
-        }
+        question.validateCompletion();
+        iQuestionRepository.save(question);
     }
 
     private void validQuestionIsNull(Question question) {

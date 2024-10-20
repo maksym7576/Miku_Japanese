@@ -3,6 +3,7 @@ package com.japanese.lessons.service.LessonMicroservice.manga;
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
 import com.japanese.lessons.repositories.LessonMisroservice.IMangaRepository;
 import com.japanese.lessons.service.LessonMicroservice.test.QuestionService;
+import com.japanese.lessons.service.LessonService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ public class MangaService {
     @Autowired
     IMangaRepository iMangaRepository;
 
+    @Autowired
+    LessonService lessonService;
+
     public Manga getMangaById(Long id) {
         return iMangaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Manga not found with id: " + id));
     }
@@ -20,8 +24,11 @@ public class MangaService {
     public Manga saveManga(Manga manga) {
         if (manga == null) {
             throw new IllegalArgumentException("Manga cannot be null.");
+        } else {
+            manga.validateCompletion();
+            lessonService.getLessonById(manga.getLesson().getId());
+                return iMangaRepository.save(manga);
         }
-        return iMangaRepository.save(manga);
     }
 
     @Transactional

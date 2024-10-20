@@ -36,9 +36,22 @@ public class Question {
     @JsonBackReference
     private Manga manga;
 
-    public boolean isComplete() {
-        return turn > 0 && question != null && !answers.isEmpty()
-                && correctAnswer != null && manga != null;
+    public void validateCompletion() {
+        if (turn <= 0) {
+            throw new IllegalArgumentException("Turn must be greater than 0 " + id);
+        }
+
+        if (question == null || question.trim().isEmpty()) {
+            throw new IllegalArgumentException("Question cannot be null or empty" + id);
+        }
+
+        if (correctAnswer == null) {
+            throw new IllegalArgumentException("Correct answer cannot be null" + id);
+        }
+
+        if (manga == null) {
+            throw new IllegalArgumentException("Manga cannot be null" + id);
+        }
     }
 
     public void copyNonNullProperties(Question source) {

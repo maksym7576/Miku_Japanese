@@ -37,7 +37,8 @@ public class WebSecurityConfig {
                                 "/api/images/**",
                                 "/api/text/**",
                                 "/api/question/**",
-                                "/api/answer/**"
+                                "/api/answer/**",
+                                "/api/lesson/**"
                         ).permitAll()
 
                         .requestMatchers(

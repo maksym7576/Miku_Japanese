@@ -2,8 +2,14 @@ package com.japanese.lessons.models.LessonMicroservice;
 
 import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Lesson {
 
     @Id
@@ -13,8 +19,8 @@ public class Lesson {
     @Column
     private int position;
 
-    @Column
-    private String level;
+    @Enumerated(EnumType.STRING)
+    private ELessonLevels level;
 
     @Column(nullable = false)
     private String videoPath;
@@ -22,43 +28,30 @@ public class Lesson {
     @OneToOne(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     private Manga manga;
 
-    public Long getId() {
-        return id;
+    public void validateCompletion() {
+        if (position < 0) {
+            throw new IllegalArgumentException("Position cannot be less than 0.");
+        }
+        if (level == null) {
+            throw new IllegalArgumentException("Level cannot be null.");
+        }
+//        if (videoPath == null) {
+//            throw new IllegalArgumentException("Video path cannot be null.");
+//        }
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-    public String getVideoPath() {
-        return videoPath;
-    }
-
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
-    }
-
-    public Manga getManga() {
-        return manga;
-    }
-
-    public void setManga(Manga manga) {
-        this.manga = manga;
+    public void copyNonNullProperties(Lesson source) {
+        if (source == null) {
+            return;
+        }
+        if (source.getPosition() > 0) {
+            this.position = source.getPosition();
+        }
+        if (source.getLevel() != null) {
+            this.level = source.getLevel();
+        }
+        if (source.getVideoPath() != null) {
+            this.videoPath = source.getVideoPath();
+        }
     }
 }
