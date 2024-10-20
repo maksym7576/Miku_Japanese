@@ -1,9 +1,9 @@
 package com.japanese.lessons.service;
 
 import com.japanese.lessons.models.Images;
-import com.japanese.lessons.models.LessonMicroservice.manga.Manga;
+import com.japanese.lessons.models.Lesson.Manga;
 import com.japanese.lessons.repositories.IImagesRepository;
-import com.japanese.lessons.service.LessonMicroservice.manga.MangaService;
+import com.japanese.lessons.service.Lesson.MangaService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

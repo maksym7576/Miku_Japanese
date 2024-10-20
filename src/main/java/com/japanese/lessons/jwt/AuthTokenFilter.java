@@ -1,7 +1,7 @@
 package com.japanese.lessons.jwt;
 
 
-import com.japanese.lessons.service.JwtService;
+import com.japanese.lessons.service.Auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
