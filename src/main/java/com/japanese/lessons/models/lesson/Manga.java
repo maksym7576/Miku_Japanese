@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.Lesson;
+package com.japanese.lessons.models.lesson;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.japanese.lessons.models.Images;

@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.Lesson;
+package com.japanese.lessons.models.lesson;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.models.Lesson.Question;
+import com.japanese.lessons.models.lesson.Question;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.Lesson;
+package com.japanese.lessons.models.lesson;
 
 public enum ELessonLevels {
     N5,

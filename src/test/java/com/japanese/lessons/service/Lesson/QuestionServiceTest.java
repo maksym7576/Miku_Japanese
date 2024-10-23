@@ -1,7 +1,7 @@
 package com.japanese.lessons.service.Lesson;
-import com.japanese.lessons.models.Lesson.Answer;
-import com.japanese.lessons.models.Lesson.Question;
-import com.japanese.lessons.models.Lesson.Manga;
+import com.japanese.lessons.models.lesson.Answer;
+import com.japanese.lessons.models.lesson.Question;
+import com.japanese.lessons.models.lesson.Manga;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

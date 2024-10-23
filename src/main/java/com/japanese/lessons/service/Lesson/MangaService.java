@@ -1,6 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.models.Lesson.Manga;
+import com.japanese.lessons.models.lesson.Manga;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

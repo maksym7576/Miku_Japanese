@@ -1,6 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
-import com.japanese.lessons.models.Lesson.Answer;
+import com.japanese.lessons.models.lesson.Answer;
 import com.japanese.lessons.service.Lesson.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

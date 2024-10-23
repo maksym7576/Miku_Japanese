@@ -1,7 +1,7 @@
 package com.japanese.lessons.service;
 
 import com.japanese.lessons.models.Images;
-import com.japanese.lessons.models.Lesson.Manga;
+import com.japanese.lessons.models.lesson.Manga;
 import com.japanese.lessons.repositories.IImagesRepository;
 import com.japanese.lessons.service.Lesson.MangaService;
 import jakarta.transaction.Transactional;
