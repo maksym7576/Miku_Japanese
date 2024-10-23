@@ -5,6 +5,8 @@ import com.japanese.lessons.repositories.Lesson.ILessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LessonService {
 
@@ -21,6 +23,17 @@ public class LessonService {
         } else {
             lesson.validateCompletion();
             iLessonRepository.save(lesson);
+        }
+    }
+    public List<Lesson> getAllLessons() {
+        try {
+            List<Lesson> lessons = (List<Lesson>) iLessonRepository.findAll();
+            if (lessons == null) {
+                throw new Exception("Lessons not found");
+            }
+            return lessons;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error retrieving lessons", e);
         }
     }
 }

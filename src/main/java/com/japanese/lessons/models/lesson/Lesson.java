@@ -1,5 +1,6 @@
 package com.japanese.lessons.models.lesson;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Lesson {
     private String videoPath;
 
     @OneToOne(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Manga manga;
 
     public void validateCompletion() {

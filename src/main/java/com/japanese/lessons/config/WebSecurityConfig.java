@@ -33,7 +33,7 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/manga/**",
-                                "api/manga/create",
+                                "/api/manga/create",
                                 "/api/images/**",
                                 "/api/text/**",
                                 "/api/question/**",
