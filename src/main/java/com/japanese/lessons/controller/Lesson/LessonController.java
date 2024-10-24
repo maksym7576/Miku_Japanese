@@ -45,4 +45,17 @@ public class LessonController {
                             "message", e.getMessage()));
         }
     }
+    @GetMapping(path = "/get/sorted")
+    public ResponseEntity<?> getAllSortedLessons() {
+        try {
+            List<Lesson> lessonList = lessonService.getAllSortedLessons();
+            if (lessonList.isEmpty()) {
+                return ResponseEntity.ok().body(Map.of("message", "No lessons found", "data", lessonList));
+            }
+            return ResponseEntity.ok(lessonList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to retrieve lessons",
+                    "message", e.getMessage()));
+        }
+    }
 }
