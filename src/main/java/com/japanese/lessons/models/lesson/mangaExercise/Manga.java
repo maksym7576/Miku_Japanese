@@ -1,7 +1,8 @@
-package com.japanese.lessons.models.lesson;
+package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.japanese.lessons.models.Images;
+import com.japanese.lessons.models.lesson.Lesson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +40,7 @@ public class Manga {
     private Lesson lesson;
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Question> questions;
+    private Set<QuestionManga> questionMangas;
 
     public void validateCompletion() {
         if (name == null) {

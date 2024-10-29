@@ -1,6 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.models.lesson.Question;
+import com.japanese.lessons.models.lesson.mangaExercise.QuestionManga;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,25 +15,25 @@ public class QuestionService {
     @Autowired
     IQuestionRepository iQuestionRepository;
 
-    public List<Question> saveAllQuestions(List<Question> questionList) {
-        for(Question question : questionList) {
-            validQuestionIsNull(question);
-            question.validateCompletion();
+    public List<QuestionManga> saveAllQuestions(List<QuestionManga> questionMangaList) {
+        for(QuestionManga questionManga : questionMangaList) {
+            validQuestionIsNull(questionManga);
+            questionManga.validateCompletion();
         }
-            Iterable<Question> savedQuestions = iQuestionRepository.saveAll(questionList);
+            Iterable<QuestionManga> savedQuestions = iQuestionRepository.saveAll(questionMangaList);
             return StreamSupport.stream(savedQuestions.spliterator(), false)
                     .collect(Collectors.toList());
     }
 
-    public void saveQuestion(Question question) {
-        validQuestionIsNull(question);
-        question.validateCompletion();
-        iQuestionRepository.save(question);
+    public void saveQuestion(QuestionManga questionManga) {
+        validQuestionIsNull(questionManga);
+        questionManga.validateCompletion();
+        iQuestionRepository.save(questionManga);
     }
 
-    private void validQuestionIsNull(Question question) {
-        if(question == null) {
-            throw new IllegalArgumentException("Question is null: " + question.getId());
+    private void validQuestionIsNull(QuestionManga questionManga) {
+        if(questionManga == null) {
+            throw new IllegalArgumentException("Question is null: " + questionManga.getId());
         }
     }
 
@@ -44,12 +44,12 @@ public class QuestionService {
             throw new IllegalArgumentException("Question isn't exists");
         }
     }
-    public void updateQuestion(Long id, Question updatedQuestion) {
-      Question responceQuestion = getQuestionById(id);
-      responceQuestion.copyNonNullProperties(updatedQuestion);
-      iQuestionRepository.save(responceQuestion);
+    public void updateQuestion(Long id, QuestionManga updatedQuestionManga) {
+      QuestionManga responceQuestionManga = getQuestionById(id);
+      responceQuestionManga.copyNonNullProperties(updatedQuestionManga);
+      iQuestionRepository.save(responceQuestionManga);
     }
-    private Question getQuestionById(Long id) {
+    private QuestionManga getQuestionById(Long id) {
         return iQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("This question isn't exists"));
     }
 

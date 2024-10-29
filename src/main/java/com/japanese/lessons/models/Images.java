@@ -1,7 +1,7 @@
 package com.japanese.lessons.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.japanese.lessons.models.lesson.Manga;
+import com.japanese.lessons.models.lesson.mangaExercise.Manga;
 import jakarta.persistence.*;
 
 @Entity

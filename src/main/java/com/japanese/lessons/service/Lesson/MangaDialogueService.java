@@ -1,6 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.models.lesson.MangaDialogue;
+import com.japanese.lessons.models.lesson.mangaExercise.MangaDialogue;
 import com.japanese.lessons.repositories.Lesson.IMangaTextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

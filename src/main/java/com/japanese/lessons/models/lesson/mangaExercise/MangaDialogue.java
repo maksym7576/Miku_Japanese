@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.lesson;
+package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

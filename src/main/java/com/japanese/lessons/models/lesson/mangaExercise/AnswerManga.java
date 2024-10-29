@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.lesson;
+package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Answer {
+public class AnswerManga {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +28,14 @@ public class Answer {
     @ManyToOne
     @JoinColumn(name = "question_id")
     @JsonBackReference
-    private Question question;
+    private QuestionManga questionManga;
 
     public boolean isComplete() {
         return turn > 0 && answer != null && !answer.isEmpty()
-                && isCorrect != null && question != null;
+                && isCorrect != null && questionManga != null;
     }
 
-    public void copyNonNullProperties(Answer source) {
+    public void copyNonNullProperties(AnswerManga source) {
         if (source == null) {
             return;
         }
@@ -48,8 +48,8 @@ public class Answer {
         if (source.getIsCorrect() != null) {
             this.isCorrect = source.getIsCorrect();
         }
-        if (source.getQuestion() != null) {
-            this.question = source.getQuestion();
+        if (source.getQuestionManga() != null) {
+            this.questionManga = source.getQuestionManga();
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
-import com.japanese.lessons.models.lesson.MangaDialogue;
+import com.japanese.lessons.models.lesson.mangaExercise.MangaDialogue;
 import com.japanese.lessons.service.Lesson.MangaDialogueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

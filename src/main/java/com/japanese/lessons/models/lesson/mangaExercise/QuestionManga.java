@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.lesson;
+package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Question {
+public class QuestionManga {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +27,8 @@ public class Question {
     @Column
     private String correctAnswer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers;
+    @OneToMany(mappedBy = "questionManga", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerManga> answerMangas;
 
     @ManyToOne
     @JoinColumn(name = "manga_id", nullable = true)
@@ -53,7 +53,7 @@ public class Question {
         }
     }
 
-    public void copyNonNullProperties(Question source) {
+    public void copyNonNullProperties(QuestionManga source) {
         if (source == null) {
             return;
         }
@@ -66,8 +66,8 @@ public class Question {
         if (source.getCorrectAnswer() != null) {
             this.correctAnswer = source.getCorrectAnswer();
         }
-        if (source.getAnswers() != null) {
-            this.answers = source.getAnswers();
+        if (source.getAnswerMangas() != null) {
+            this.answerMangas = source.getAnswerMangas();
         }
         if(source.getManga() != null) {
             this.manga = source.getManga();
