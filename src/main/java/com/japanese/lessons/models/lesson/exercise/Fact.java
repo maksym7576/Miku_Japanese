@@ -1,6 +1,6 @@
 package com.japanese.lessons.models.lesson.exercise;
 
-import com.japanese.lessons.models.Images;
+import com.japanese.lessons.models.lesson.mangaExercise.Images;
 import jakarta.persistence.*;
 
 @Entity

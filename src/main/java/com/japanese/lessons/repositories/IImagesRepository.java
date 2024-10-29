@@ -1,8 +1,7 @@
 package com.japanese.lessons.repositories;
 
-import com.japanese.lessons.models.Images;
+import com.japanese.lessons.models.lesson.mangaExercise.Images;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
