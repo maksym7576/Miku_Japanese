@@ -19,13 +19,27 @@ public class QuestionManga {
     private Long id;
 
     @Column
-    private int turn;
+    private String type = "Question";
+
+    @Column
+    private int queue;
 
     @Column
     private String question;
 
     @Column
-    private String correctAnswer;
+    private String correct_answer_original;
+
+    @Column
+    private String correct_answer_hiragana_or_katakana;
+
+    @Column
+    private String correct_answer_romanized;
+
+    @Column
+    private String translation_correct_answer;
+
+    @Column
 
     @OneToMany(mappedBy = "questionManga", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerManga> answerMangas;
@@ -36,16 +50,26 @@ public class QuestionManga {
     private Manga manga;
 
     public void validateCompletion() {
-        if (turn <= 0) {
-            throw new IllegalArgumentException("Turn must be greater than 0 " + id);
+
+        if (queue <= 0) {
+            throw new IllegalArgumentException("Queue must be greater than 0 " + id);
         }
 
         if (question == null || question.trim().isEmpty()) {
             throw new IllegalArgumentException("Question cannot be null or empty" + id);
         }
 
-        if (correctAnswer == null) {
-            throw new IllegalArgumentException("Correct answer cannot be null" + id);
+        if (correct_answer_original == null) {
+            throw new IllegalArgumentException("Correct original answer cannot be null" + id);
+        }
+        if (correct_answer_hiragana_or_katakana == null) {
+            throw new IllegalArgumentException("Correct answer hiragana or katakana cannot be null" + id);
+        }
+        if (correct_answer_romanized == null) {
+            throw new IllegalArgumentException("Correct answer romanized cannot be null" + id);
+        }
+        if (translation_correct_answer == null) {
+            throw new IllegalArgumentException("Translation correct answer cannot be null" + id);
         }
 
         if (manga == null) {
@@ -57,14 +81,23 @@ public class QuestionManga {
         if (source == null) {
             return;
         }
-        if (source.getTurn() != 0) {
-            this.turn = source.getTurn();
+        if (source.getQueue() != 0) {
+            this.queue = source.getQueue();
         }
         if (source.getQuestion() != null) {
             this.question = source.getQuestion();
         }
-        if (source.getCorrectAnswer() != null) {
-            this.correctAnswer = source.getCorrectAnswer();
+        if (source.getCorrect_answer_original() != null) {
+            this.correct_answer_original = source.getCorrect_answer_original();
+        }
+        if (source.getCorrect_answer_hiragana_or_katakana() != null) {
+            this.correct_answer_hiragana_or_katakana = source.getCorrect_answer_hiragana_or_katakana();
+        }
+        if (source.getCorrect_answer_romanized() != null) {
+            this.correct_answer_romanized = source.getCorrect_answer_romanized();
+        }
+        if (source.getTranslation_correct_answer() != null) {
+            this.translation_correct_answer = source.getTranslation_correct_answer();
         }
         if (source.getAnswerMangas() != null) {
             this.answerMangas = source.getAnswerMangas();

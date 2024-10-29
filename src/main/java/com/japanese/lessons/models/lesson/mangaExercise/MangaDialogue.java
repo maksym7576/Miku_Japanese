@@ -17,10 +17,22 @@ public class MangaDialogue {
     private Long id;
 
     @Column
-    private String dialogue;
+    private String type = "Dialogue";
 
     @Column
-    private int turn;
+    private int queue;
+
+    @Column
+    private String dialogue_hiragana_katakana_kanji;
+
+    @Column
+    private String dialogue_hiragana_katakana;
+
+    @Column
+    private String dialogue_romanji;
+
+    @Column
+    private String translation;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "manga_id", nullable = true)
@@ -28,19 +40,53 @@ public class MangaDialogue {
     private Manga manga;
 
     public boolean isComplete() {
-        return turn > 0 && dialogue != null
-               && manga != null;
+        return queue > 0 && dialogue_hiragana_katakana_kanji != null && manga != null;
+    }
+
+    public void validateCompletion() {
+        if (queue <= 0) {
+            throw new IllegalArgumentException("Turn must be greater than 0: " + id);
+        }
+
+        if (dialogue_hiragana_katakana_kanji == null || dialogue_hiragana_katakana_kanji.trim().isEmpty()) {
+            throw new IllegalArgumentException("Dialogue (Hiragana/Katakana/Kanji) cannot be null or empty: " + id);
+        }
+
+        if (translation == null) {
+            throw new IllegalArgumentException("Translation cannot be null: " + id);
+        }
+
+        if (dialogue_hiragana_katakana == null) {
+            throw new IllegalArgumentException("Dialogue hiragana katakana cannot be null: " + id);
+        }
+
+        if (dialogue_romanji == null) {
+            throw new IllegalArgumentException("Dialogue romanji cannot be null: " + id);
+        }
+
+        if (manga == null) {
+            throw new IllegalArgumentException("Manga cannot be null: " + id);
+        }
     }
 
     public void copyNonNullProperties(MangaDialogue source) {
         if (source == null) {
             return;
         }
-        if (source.getTurn() != 0) {
-            this.turn = source.getTurn();
+        if (source.getQueue() != 0) {
+            this.queue = source.getQueue();
         }
-        if (source.getDialogue() != null) {
-            this.dialogue = source.getDialogue();
+        if (source.getDialogue_hiragana_katakana_kanji() != null) {
+            this.dialogue_hiragana_katakana_kanji = source.getDialogue_hiragana_katakana_kanji();
+        }
+        if (source.getDialogue_hiragana_katakana() != null) {
+            this.dialogue_hiragana_katakana = source.getDialogue_hiragana_katakana();
+        }
+        if (source.getDialogue_romanji() != null) {
+            this.dialogue_romanji = source.getDialogue_romanji();
+        }
+        if (source.getTranslation() != null) {
+            this.translation = source.getTranslation();
         }
         if (source.getManga() != null) {
             this.manga = source.getManga();

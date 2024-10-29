@@ -20,10 +20,13 @@ public class AnswerManga {
     private int turn;
 
     @Column
-    private String answer;
+    private String answerOriginal;
 
     @Column
-    private Boolean isCorrect;
+    private String answer_hiragana_katakana;
+
+    @Column
+    private String answer_romanji;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -31,8 +34,8 @@ public class AnswerManga {
     private QuestionManga questionManga;
 
     public boolean isComplete() {
-        return turn > 0 && answer != null && !answer.isEmpty()
-                && isCorrect != null && questionManga != null;
+        return turn > 0 && answerOriginal != null && !answerOriginal.isEmpty()
+                 && questionManga != null;
     }
 
     public void copyNonNullProperties(AnswerManga source) {
@@ -42,11 +45,14 @@ public class AnswerManga {
         if (source.getTurn() != 0) {
             this.turn = source.getTurn();
         }
-        if (source.getAnswer() != null) {
-            this.answer = source.getAnswer();
+        if (source.getAnswerOriginal() != null) {
+            this.answerOriginal = source.getAnswerOriginal();
         }
-        if (source.getIsCorrect() != null) {
-            this.isCorrect = source.getIsCorrect();
+        if (source.getAnswer_hiragana_katakana() != null) {
+            this.answer_hiragana_katakana = source.getAnswer_hiragana_katakana();
+        }
+        if (source.getAnswer_romanji() != null) {
+            this.answer_romanji = source.getAnswer_romanji();
         }
         if (source.getQuestionManga() != null) {
             this.questionManga = source.getQuestionManga();

@@ -53,7 +53,7 @@ class AnswerMangaServiceTest {
      answerManga.setTurn(1);
      answerManga.setIsCorrect(true);
      answerManga.setQuestionManga(questionManga);
-     answerManga.setAnswer("answer");
+     answerManga.setAnswerOriginal("answer");
 
      when(iAnswerRepository.save(answerManga)).thenReturn(answerManga);
 
@@ -116,7 +116,7 @@ class AnswerMangaServiceTest {
         answerManga.setTurn(1);
         answerManga.setIsCorrect(true);
         answerManga.setQuestionManga(questionManga);
-        answerManga.setAnswer("answer");
+        answerManga.setAnswerOriginal("answer");
 
         when(iAnswerRepository.findById(id)).thenReturn(Optional.of(answerManga));
         when(iAnswerRepository.save(answerManga)).thenReturn(answerManga);

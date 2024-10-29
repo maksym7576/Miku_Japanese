@@ -84,8 +84,8 @@ class MangaDialogueServiceTest {
     void saveMangaDialogue_ShouldSave_WhenValid() {
         Manga manga = new Manga();
         MangaDialogue mangaDialogue = new MangaDialogue();
-        mangaDialogue.setDialogue("Valid dialogue");
-        mangaDialogue.setTurn(1);
+        mangaDialogue.setDialogue_hiragana_katakana_kanji("Valid dialogue");
+        mangaDialogue.setQueue(1);
         mangaDialogue.setManga(manga);
         when(iMangaTextRepository.save(mangaDialogue)).thenReturn(mangaDialogue);
 
@@ -135,18 +135,18 @@ class MangaDialogueServiceTest {
         Manga manga = new Manga();
         MangaDialogue existingMangaDialogue = new MangaDialogue();
         existingMangaDialogue.setId(id);
-        existingMangaDialogue.setDialogue("Old dialogue");
-        existingMangaDialogue.setTurn(1);
+        existingMangaDialogue.setDialogue_hiragana_katakana_kanji("Old dialogue");
+        existingMangaDialogue.setQueue(1);
         existingMangaDialogue.setManga(manga);
 
         MangaDialogue updatedMangaDialogue = new MangaDialogue();
-        updatedMangaDialogue.setDialogue("Updated dialogue");
+        updatedMangaDialogue.setDialogue_hiragana_katakana_kanji("Updated dialogue");
 
         when(iMangaTextRepository.findById(id)).thenReturn(Optional.of(existingMangaDialogue));
         when(iMangaTextRepository.save(updatedMangaDialogue)).thenReturn(updatedMangaDialogue);
         mangaDialogueService.updateMangaDialogue(id, updatedMangaDialogue);
 
-        assertEquals("Updated dialogue", existingMangaDialogue.getDialogue());
+        assertEquals("Updated dialogue", existingMangaDialogue.getDialogue_hiragana_katakana_kanji());
         verify(iMangaTextRepository, times(1)).save(existingMangaDialogue);
     }
 

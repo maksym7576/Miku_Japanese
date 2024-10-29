@@ -34,17 +34,17 @@ class QuestionMangaServiceTest {
     void saveAllQuestions_ShouldSaveAllQuestionsWhenValid() {
         QuestionManga questionManga1 = new QuestionManga();
         questionManga1.setId(1L);
-        questionManga1.setTurn(1);
+        questionManga1.setQueue(1);
         questionManga1.setQuestion("What is the capital of Japan?");
-        questionManga1.setCorrectAnswer("Tokyo");
+        questionManga1.setCorrect_answer_original("Tokyo");
         questionManga1.setAnswerMangas(Collections.singletonList(new AnswerManga()));
         questionManga1.setManga(new Manga());
 
         QuestionManga questionManga2 = new QuestionManga();
         questionManga2.setId(2L);
-        questionManga2.setTurn(2);
+        questionManga2.setQueue(2);
         questionManga2.setQuestion("What is the national sport of Japan?");
-        questionManga2.setCorrectAnswer("Sumo");
+        questionManga2.setCorrect_answer_original("Sumo");
         questionManga2.setAnswerMangas(Collections.singletonList(new AnswerManga()));
         questionManga2.setManga(new Manga());
 
@@ -62,7 +62,7 @@ class QuestionMangaServiceTest {
     void saveAllQuestions_ShouldThrowExceptionWhenQuestionIncomplete() {
         QuestionManga questionManga1 = new QuestionManga();
         questionManga1.setId(1L);
-        questionManga1.setTurn(0);
+        questionManga1.setQueue(0);
         questionManga1.setQuestion("Incomplete question");
 
         List<QuestionManga> questionMangaList = Arrays.asList(questionManga1);
@@ -77,9 +77,9 @@ class QuestionMangaServiceTest {
     void saveQuestion_ShouldSaveQuestionWhenComplete() {
         QuestionManga questionManga = new QuestionManga();
         questionManga.setId(1L);
-        questionManga.setTurn(1);
+        questionManga.setQueue(1);
         questionManga.setQuestion("What is the capital of Japan?");
-        questionManga.setCorrectAnswer("Tokyo");
+        questionManga.setCorrect_answer_original("Tokyo");
         questionManga.setAnswerMangas(Collections.singletonList(new AnswerManga()));
         questionManga.setManga(new Manga());
 
@@ -92,7 +92,7 @@ class QuestionMangaServiceTest {
     void saveQuestion_ShouldThrowExceptionWhenIncomplete() {
         QuestionManga questionManga = new QuestionManga();
         questionManga.setId(1L);
-        questionManga.setTurn(0);
+        questionManga.setQueue(0);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             questionService.saveQuestion(questionManga);
@@ -105,12 +105,12 @@ class QuestionMangaServiceTest {
         Long id = 1L;
         QuestionManga existingQuestionManga = new QuestionManga();
         existingQuestionManga.setId(id);
-        existingQuestionManga.setTurn(1);
+        existingQuestionManga.setQueue(1);
         existingQuestionManga.setQuestion("Existing question");
-        existingQuestionManga.setCorrectAnswer("Correct");
+        existingQuestionManga.setCorrect_answer_original("Correct");
 
         QuestionManga updatedQuestionManga = new QuestionManga();
-        updatedQuestionManga.setTurn(2);
+        updatedQuestionManga.setQueue(2);
         updatedQuestionManga.setQuestion("Updated question");
 
         when(iQuestionRepository.findById(id)).thenReturn(Optional.of(existingQuestionManga));
@@ -118,7 +118,7 @@ class QuestionMangaServiceTest {
         questionService.updateQuestion(id, updatedQuestionManga);
 
         verify(iQuestionRepository, times(1)).save(existingQuestionManga);
-        assertEquals(2, existingQuestionManga.getTurn());
+        assertEquals(2, existingQuestionManga.getQueue());
         assertEquals("Updated question", existingQuestionManga.getQuestion());
     }
 
