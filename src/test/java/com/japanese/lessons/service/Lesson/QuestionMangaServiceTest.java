@@ -36,7 +36,7 @@ class QuestionMangaServiceTest {
         questionManga1.setId(1L);
         questionManga1.setQueue(1);
         questionManga1.setQuestion("What is the capital of Japan?");
-        questionManga1.setCorrect_answer_original("Tokyo");
+        questionManga1.setCorrect_answer_hiragana_katakana_kanji("Tokyo");
         questionManga1.setAnswerMangas(Collections.singletonList(new AnswerManga()));
         questionManga1.setManga(new Manga());
 
@@ -44,7 +44,7 @@ class QuestionMangaServiceTest {
         questionManga2.setId(2L);
         questionManga2.setQueue(2);
         questionManga2.setQuestion("What is the national sport of Japan?");
-        questionManga2.setCorrect_answer_original("Sumo");
+        questionManga2.setCorrect_answer_hiragana_katakana_kanji("Sumo");
         questionManga2.setAnswerMangas(Collections.singletonList(new AnswerManga()));
         questionManga2.setManga(new Manga());
 
@@ -79,7 +79,7 @@ class QuestionMangaServiceTest {
         questionManga.setId(1L);
         questionManga.setQueue(1);
         questionManga.setQuestion("What is the capital of Japan?");
-        questionManga.setCorrect_answer_original("Tokyo");
+        questionManga.setCorrect_answer_hiragana_katakana_kanji("Tokyo");
         questionManga.setAnswerMangas(Collections.singletonList(new AnswerManga()));
         questionManga.setManga(new Manga());
 
@@ -107,7 +107,7 @@ class QuestionMangaServiceTest {
         existingQuestionManga.setId(id);
         existingQuestionManga.setQueue(1);
         existingQuestionManga.setQuestion("Existing question");
-        existingQuestionManga.setCorrect_answer_original("Correct");
+        existingQuestionManga.setCorrect_answer_hiragana_katakana_kanji("Correct");
 
         QuestionManga updatedQuestionManga = new QuestionManga();
         updatedQuestionManga.setQueue(2);

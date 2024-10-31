@@ -1,6 +1,8 @@
 package com.japanese.lessons.models.lesson.mangaExercise;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,7 +18,8 @@ public class Images {
     private byte[] imageData;
 
     @Column
-    private int turn;
+    @JsonBackReference
+    private Integer queue;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "manga_id", nullable = true)
@@ -26,10 +29,10 @@ public class Images {
     public Images() {
     }
 
-    public Images(byte[] imageData, Manga manga, int turn) {
+    public Images(byte[] imageData, Manga manga, int queue) {
         this.imageData = imageData;
         this.manga = manga;
-        this.turn = turn;
+        this.queue = queue;
     }
     @JsonIgnore
     public boolean isImageEmpty() {
@@ -52,12 +55,12 @@ public class Images {
         this.imageData = imageData;
     }
 
-    public int getTurn() {
-        return turn;
+    public int getQueue() {
+        return queue;
     }
 
-    public void setTurn(int turn) {
-        this.turn = turn;
+    public void setQueue(int queue) {
+        this.queue = queue;
     }
 
     public Manga getManga() {

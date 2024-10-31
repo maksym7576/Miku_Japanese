@@ -69,4 +69,6 @@ public class Manga {
             this.mangaDialogues = source.getMangaDialogues();
         }
     }
+
+
 }

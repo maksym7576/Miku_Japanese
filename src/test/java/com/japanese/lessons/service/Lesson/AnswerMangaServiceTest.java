@@ -50,10 +50,10 @@ class AnswerMangaServiceTest {
      Long id = 1L;
      AnswerManga answerManga = new AnswerManga();
      answerManga.setId(id);
-     answerManga.setTurn(1);
+     answerManga.setQueue(1);
      answerManga.setIsCorrect(true);
      answerManga.setQuestionManga(questionManga);
-     answerManga.setAnswerOriginal("answer");
+     answerManga.setAnswer_hiragana_katakana_kanji("answer");
 
      when(iAnswerRepository.save(answerManga)).thenReturn(answerManga);
 
@@ -113,10 +113,10 @@ class AnswerMangaServiceTest {
         Long id = 1L;
         AnswerManga answerManga = new AnswerManga();
         answerManga.setId(id);
-        answerManga.setTurn(1);
+        answerManga.setQueue(1);
         answerManga.setIsCorrect(true);
         answerManga.setQuestionManga(questionManga);
-        answerManga.setAnswerOriginal("answer");
+        answerManga.setAnswer_hiragana_katakana_kanji("answer");
 
         when(iAnswerRepository.findById(id)).thenReturn(Optional.of(answerManga));
         when(iAnswerRepository.save(answerManga)).thenReturn(answerManga);

@@ -20,12 +20,8 @@ public class AnswerService {
             iAnswerRepository.saveAll(answerMangaList);
     }
     public void saveAnswer(AnswerManga answerManga) {
-        validAnswerIsNull(answerManga);
-        if (answerManga.isComplete()) {
+        answerManga.validateCompletion();
             iAnswerRepository.save(answerManga);
-        } else {
-            throw new IllegalArgumentException("No all data is completed.");
-        }
     }
     public void deleteAnswer(Long id) {
         if(iAnswerRepository.existsById(id)) {

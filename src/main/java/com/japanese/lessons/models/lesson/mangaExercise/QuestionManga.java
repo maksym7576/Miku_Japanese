@@ -19,16 +19,14 @@ public class QuestionManga {
     private Long id;
 
     @Column
-    private String type = "Question";
-
-    @Column
+    @JsonBackReference
     private int queue;
 
     @Column
     private String question;
 
     @Column
-    private String correct_answer_original;
+    private String correct_answer_hiragana_katakana_kanji;
 
     @Column
     private String correct_answer_hiragana_or_katakana;
@@ -59,7 +57,7 @@ public class QuestionManga {
             throw new IllegalArgumentException("Question cannot be null or empty" + id);
         }
 
-        if (correct_answer_original == null) {
+        if (correct_answer_hiragana_katakana_kanji == null) {
             throw new IllegalArgumentException("Correct original answer cannot be null" + id);
         }
         if (correct_answer_hiragana_or_katakana == null) {
@@ -87,8 +85,8 @@ public class QuestionManga {
         if (source.getQuestion() != null) {
             this.question = source.getQuestion();
         }
-        if (source.getCorrect_answer_original() != null) {
-            this.correct_answer_original = source.getCorrect_answer_original();
+        if (source.getCorrect_answer_hiragana_katakana_kanji() != null) {
+            this.correct_answer_hiragana_katakana_kanji = source.getCorrect_answer_hiragana_katakana_kanji();
         }
         if (source.getCorrect_answer_hiragana_or_katakana() != null) {
             this.correct_answer_hiragana_or_katakana = source.getCorrect_answer_hiragana_or_katakana();

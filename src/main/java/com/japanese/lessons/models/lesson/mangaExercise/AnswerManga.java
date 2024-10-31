@@ -17,10 +17,7 @@ public class AnswerManga {
     private Long id;
 
     @Column
-    private int turn;
-
-    @Column
-    private String answerOriginal;
+    private String answer_hiragana_katakana_kanji;
 
     @Column
     private String answer_hiragana_katakana;
@@ -34,7 +31,7 @@ public class AnswerManga {
     private QuestionManga questionManga;
 
     public boolean isComplete() {
-        return turn > 0 && answerOriginal != null && !answerOriginal.isEmpty()
+        return answer_hiragana_katakana_kanji != null && !answer_hiragana_katakana_kanji.isEmpty()
                  && questionManga != null;
     }
 
@@ -42,11 +39,8 @@ public class AnswerManga {
         if (source == null) {
             return;
         }
-        if (source.getTurn() != 0) {
-            this.turn = source.getTurn();
-        }
-        if (source.getAnswerOriginal() != null) {
-            this.answerOriginal = source.getAnswerOriginal();
+        if (source.getAnswer_hiragana_katakana_kanji() != null) {
+            this.answer_hiragana_katakana_kanji = source.getAnswer_hiragana_katakana_kanji();
         }
         if (source.getAnswer_hiragana_katakana() != null) {
             this.answer_hiragana_katakana = source.getAnswer_hiragana_katakana();
@@ -56,6 +50,21 @@ public class AnswerManga {
         }
         if (source.getQuestionManga() != null) {
             this.questionManga = source.getQuestionManga();
+        }
+    }
+
+    public void validateCompletion() {
+        if (answer_hiragana_katakana_kanji == null || answer_hiragana_katakana_kanji.trim().isEmpty()) {
+            throw new IllegalArgumentException("Answer original cannot be null or empty.");
+        }
+        if (questionManga == null) {
+            throw new IllegalArgumentException("Question manga cannot be null.");
+        }
+        if (answer_hiragana_katakana == null || answer_hiragana_katakana.trim().isEmpty()) {
+            throw new IllegalArgumentException("Hiragana/Katakana answer cannot be null or empty.");
+        }
+        if (answer_romanji == null || answer_romanji.trim().isEmpty()) {
+            throw new IllegalArgumentException("Romanji answer cannot be null or empty.");
         }
     }
 }

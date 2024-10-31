@@ -33,7 +33,7 @@ public class ImagesService {
         Images images = new Images();
         images.setImageData(imageBytes);
         images.setManga(manga);
-        images.setTurn(turn);
+        images.setQueue(turn);
 
         saveImage(images);
     }

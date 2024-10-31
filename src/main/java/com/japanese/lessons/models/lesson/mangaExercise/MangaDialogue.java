@@ -1,6 +1,8 @@
 package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,10 +19,8 @@ public class MangaDialogue {
     private Long id;
 
     @Column
-    private String type = "Dialogue";
-
-    @Column
-    private int queue;
+    @JsonBackReference
+    private Integer queue;
 
     @Column
     private String dialogue_hiragana_katakana_kanji;
@@ -39,6 +39,7 @@ public class MangaDialogue {
     @JsonBackReference
     private Manga manga;
 
+    @JsonIgnore
     public boolean isComplete() {
         return queue > 0 && dialogue_hiragana_katakana_kanji != null && manga != null;
     }
