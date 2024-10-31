@@ -12,5 +12,4 @@ public class AnswerMangaDTO {
     private String answerOriginal;
     private String answerHiraganaKatakana;
     private String answerRomanji;
-    private boolean complete;
 }

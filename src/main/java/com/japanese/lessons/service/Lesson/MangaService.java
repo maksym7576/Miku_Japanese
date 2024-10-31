@@ -1,7 +1,9 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.dtos.AnswerMangaDTO;
 import com.japanese.lessons.dtos.MangaContentDTO;
 import com.japanese.lessons.dtos.MangaDetailsDTO;
+import com.japanese.lessons.models.lesson.mangaExercise.AnswerManga;
 import com.japanese.lessons.models.lesson.mangaExercise.IncompleteMangaDataException;
 import com.japanese.lessons.models.lesson.mangaExercise.Manga;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
@@ -41,9 +43,27 @@ public class MangaService {
 
         return manga;
     }
+    public Manga getMangaByLessonID(Long lessonId) {
+        Manga manga = iMangaRepository.findByLessonId(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Manga not found with id: " + lessonId));
 
-    public List<MangaContentDTO> sortMangaByQueue(Long id) {
-        Manga reponseManga = getMangaById(id);
+        manga.validateCompletion();
+
+        if (manga.getImages().isEmpty()) {
+            throw new IncompleteMangaDataException("Images collection is empty.");
+        }
+        if (manga.getMangaDialogues().isEmpty()) {
+            throw new IncompleteMangaDataException("MangaDialogues collection is empty.");
+        }
+        if (manga.getQuestionMangas().isEmpty()) {
+            throw new IncompleteMangaDataException("QuestionMangas collection is empty.");
+        }
+
+        return manga;
+    }
+
+    public List<MangaContentDTO> sortMangaByQueue(Long lessonId) {
+        Manga reponseManga = getMangaByLessonID(lessonId);
         List<MangaContentDTO> mangaContentDTOList = new ArrayList<>();
 
         MangaDetailsDTO mangaDetailsDTO = new MangaDetailsDTO(reponseManga.getName(),reponseManga.getStartDialog());
@@ -56,9 +76,28 @@ public class MangaService {
         reponseManga.getMangaDialogues().forEach(dialogue -> mangaContentDTOList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
-        reponseManga.getQuestionMangas().forEach(question -> mangaContentDTOList.add(
-                new MangaContentDTO(question.getQueue(), "question", question)
-        ));
+        reponseManga.getQuestionMangas().forEach(question -> {
+            MangaContentDTO questionContent = new MangaContentDTO(question.getQueue(), "question", question);
+            mangaContentDTOList.add(questionContent);
+            AnswerManga correctAnswer = new AnswerManga();
+            correctAnswer.setAnswer_hiragana_katakana_kanji(question.getCorrect_answer_hiragana_katakana_kanji());
+            correctAnswer.setAnswer_hiragana_katakana(question.getCorrect_answer_hiragana_or_katakana());
+            correctAnswer.setAnswer_romanji(question.getCorrect_answer_romanized());
+            correctAnswer.setQuestionManga(question);
+
+            question.getAnswerMangas().add(correctAnswer);
+
+            question.getAnswerMangas().forEach(answer -> {
+                AnswerMangaDTO answerDTO = new AnswerMangaDTO(
+                        answer.getId(),
+                        answer.getAnswer_hiragana_katakana_kanji(),
+                        answer.getAnswer_hiragana_katakana(),
+                        answer.getAnswer_romanji()
+                );
+
+                mangaContentDTOList.add(new MangaContentDTO(question.getQueue(), "answer", answerDTO));
+            });
+        });
 
         return mangaContentDTOList.stream()
                 .sorted(Comparator.comparingInt(MangaContentDTO::getQueue))
