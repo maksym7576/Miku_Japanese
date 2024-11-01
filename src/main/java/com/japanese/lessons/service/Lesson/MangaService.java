@@ -95,7 +95,7 @@ public class MangaService {
                         answer.getAnswer_romanji()
                 );
 
-                mangaContentDTOList.add(new MangaContentDTO(question.getQueue(), "answer", answerDTO));
+//                mangaContentDTOList.add(new MangaContentDTO(question.getQueue(), "answer", answerDTO));
             });
         });
 

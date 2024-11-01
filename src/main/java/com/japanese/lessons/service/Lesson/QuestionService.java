@@ -52,7 +52,4 @@ public class QuestionService {
     private QuestionManga getQuestionById(Long id) {
         return iQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("This question isn't exists"));
     }
-
-
-
 }

@@ -21,6 +21,9 @@ public class Images {
     @JsonBackReference
     private Integer queue;
 
+    @Column
+    private String position;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "manga_id", nullable = true)
     @JsonIgnore
@@ -69,5 +72,13 @@ public class Images {
 
     public void setManga(Manga manga) {
         this.manga = manga;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }
