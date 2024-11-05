@@ -1,9 +1,11 @@
 package com.japanese.lessons.service.Lesson;
 
 import com.japanese.lessons.dtos.AnswerMangaDTO;
+import com.japanese.lessons.dtos.ImagesHasRightLeftDTO;
 import com.japanese.lessons.dtos.MangaContentDTO;
 import com.japanese.lessons.dtos.MangaDetailsDTO;
 import com.japanese.lessons.models.lesson.mangaExercise.AnswerManga;
+import com.japanese.lessons.models.lesson.mangaExercise.Images;
 import com.japanese.lessons.models.lesson.mangaExercise.IncompleteMangaDataException;
 import com.japanese.lessons.models.lesson.mangaExercise.Manga;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
@@ -70,9 +72,30 @@ public class MangaService {
 
         mangaContentDTOList.add(new MangaContentDTO(0, "manga", mangaDetailsDTO));
 
-        reponseManga.getImages().forEach(images -> mangaContentDTOList.add(
-                new MangaContentDTO(images.getQueue(), "image", images))
-        );
+        List<ImagesHasRightLeftDTO> imagesHasRightLeftDTOList = new ArrayList<>();
+        List<Images> imagesList = new ArrayList<>();
+        for (Images images : reponseManga.getImages()) {
+            if(images.getPosition().equals("center")) {
+                imagesList.add(images);
+            }
+            if(images.getPosition().equals("right")) {
+                imagesHasRightLeftDTOList.add(new ImagesHasRightLeftDTO(images, null));
+            }
+            if(images.getPosition().equals("left")) {
+                if (imagesHasRightLeftDTOList.size() > 0 && imagesHasRightLeftDTOList.get(imagesHasRightLeftDTOList.size() - 1).getImageLeft() == null) {
+                    imagesHasRightLeftDTOList.get(imagesHasRightLeftDTOList.size() - 1).setImageLeft(images);
+                } else {
+                    new IllegalArgumentException("Has occurred an error when was selecting sides left and right");
+                }
+            }
+        }
+
+        imagesList.forEach(images -> mangaContentDTOList.add(
+                new MangaContentDTO(images.getQueue(), "image", images)
+        ));
+        imagesHasRightLeftDTOList.forEach(imagesHasRightLeftDTO -> mangaContentDTOList.add(
+                new MangaContentDTO(imagesHasRightLeftDTO.getImageRight().getQueue(), "images_together", imagesHasRightLeftDTO)
+        ));
         reponseManga.getMangaDialogues().forEach(dialogue -> mangaContentDTOList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
