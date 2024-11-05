@@ -1,14 +1,17 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.dtos.AnswerMangaDTO;
-import com.japanese.lessons.dtos.ImagesHasRightLeftDTO;
-import com.japanese.lessons.dtos.MangaContentDTO;
-import com.japanese.lessons.dtos.MangaDetailsDTO;
+import com.japanese.lessons.dtos.*;
+import com.japanese.lessons.dtos.request.AnswersDTO;
+import com.japanese.lessons.dtos.response.QuizRewardsDTO;
+import com.japanese.lessons.models.Rewards;
+import com.japanese.lessons.models.TargetType;
 import com.japanese.lessons.models.lesson.mangaExercise.AnswerManga;
 import com.japanese.lessons.models.lesson.mangaExercise.Images;
 import com.japanese.lessons.models.lesson.mangaExercise.IncompleteMangaDataException;
 import com.japanese.lessons.models.lesson.mangaExercise.Manga;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
+import com.japanese.lessons.service.RewardsService;
+import com.japanese.lessons.service.UserIncorrectAnswersService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,12 @@ public class MangaService {
 
     @Autowired
     LessonService lessonService;
+
+    @Autowired
+    UserIncorrectAnswersService userIncorrectAnswersService;
+
+    @Autowired
+    RewardsService rewardsService;
 
     public Manga getMangaById(Long id) {
         Manga manga = iMangaRepository.findById(id)
@@ -152,5 +161,31 @@ public class MangaService {
         } else {
             throw new IllegalArgumentException("Manga doesn't exist.");
         }
+    }
+
+    public List<QuizRewardsDTO> concludeManga(AnswersDTO answersDTO) {
+            List<QuizRewardsDTO> quizRewardsDTOList = new ArrayList<>();
+            MangaResultDetails mangaResultDetails = new MangaResultDetails();
+            userIncorrectAnswersService.saveAllIncorrectAnswers(answersDTO.getUserIncorrectAnswersList());
+            int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
+            int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
+            mangaResultDetails.setPercentageCorrect(percentage);
+            int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
+            mangaResultDetails.setExperience(experience);
+            quizRewardsDTOList.add(new QuizRewardsDTO("Details", mangaResultDetails));
+
+            List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(TargetType.MANGA, answersDTO.getMangaId());
+            for (Rewards rewards : rewardsMangaList) {
+            }
+            return quizRewardsDTOList;
+    }
+
+    private int cuntPercentage(int correct,int incorrect) {
+        int sum = correct + incorrect;
+        int percentage = correct / sum * 100;
+        return percentage;
+    }
+    private int countExperience(int numCorrectAnswer, int percentage) {
+        return (numCorrectAnswer * 2) * percentage;
     }
 }

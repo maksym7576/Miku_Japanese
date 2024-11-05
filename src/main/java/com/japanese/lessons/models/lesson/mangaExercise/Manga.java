@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.japanese.lessons.models.lesson.Lesson;
 import jakarta.persistence.*;
 import lombok.Getter;
