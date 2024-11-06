@@ -1,6 +1,7 @@
 package com.japanese.lessons.service;
 
-import com.japanese.lessons.models.lesson.mangaExercise.Images;
+import com.japanese.lessons.models.ETargetType;
+import com.japanese.lessons.models.lesson.mangaExercise.Image;
 import com.japanese.lessons.models.lesson.mangaExercise.Manga;
 import com.japanese.lessons.repositories.IImagesRepository;
 import com.japanese.lessons.service.Lesson.MangaService;
@@ -10,36 +11,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
 @Service
 public class ImagesService {
 
     @Autowired
     IImagesRepository iImagesRepository;
 
-    @Autowired
-    MangaService mangaService;
-
-    public List<Images> getImagesByFlightId(Long manga_id) {
-        return iImagesRepository.findByMangaId(manga_id);
-    }
-
-    public void uploadImage(Long mangaId, int turn, MultipartFile file) throws Exception {
-        Manga manga = mangaService.getMangaById(mangaId);
-        if (manga == null) {
-            throw new Exception("Manga not found.");
+    public List<Image> getImagesByMangaId(Long mangaId) {
+        if (mangaId == null) {
+            throw new IllegalArgumentException("Manga ID cannot be null.");
         }
 
-        byte[] imageBytes = file.getBytes();
-        Images images = new Images();
-        images.setImageData(imageBytes);
-        images.setManga(manga);
-        images.setQueue(turn);
+        List<Image> images = iImagesRepository.findByTargetTypeAndTargetId(ETargetType.MANGA, mangaId);
 
-        saveImage(images);
+        if (images == null || images.isEmpty()) {
+            throw new IllegalArgumentException("No images found for manga ID: " + mangaId);
+        }
+
+        return images;
     }
 
     @Transactional
-    public Images saveImage(Images images) {
-        return iImagesRepository.save(images);
+    public Image saveImage(Image image) {
+        return iImagesRepository.save(image);
     }
+
 }

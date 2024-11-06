@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,8 +31,10 @@ public class MangaPhotoDescription {
     @Column
     private String translation;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
-    @JoinColumn(name = "image_id")
-    private Images images;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_type", nullable = false)
+    private ETargetType targetType;
+
+    @Column(name = "target_id", nullable = false)
+    private Long targetId;
 }

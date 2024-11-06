@@ -1,6 +1,6 @@
 package com.japanese.lessons.models.lesson.exercise;
 
-import com.japanese.lessons.models.lesson.mangaExercise.Images;
+import com.japanese.lessons.models.lesson.mangaExercise.Image;
 import jakarta.persistence.*;
 
 @Entity
@@ -25,5 +25,5 @@ public class Fact {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
-    private Images image;
+    private Image image;
 }

@@ -1,6 +1,6 @@
 package com.japanese.lessons.controller;
 
-import com.japanese.lessons.models.lesson.mangaExercise.Images;
+import com.japanese.lessons.models.lesson.mangaExercise.Image;
 import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.Lesson.MangaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +22,26 @@ public class ImagesController {
     MangaService mangaService;
 
     @GetMapping("/{mangaId}")
-    public List<Images> getImagesByFlightId(@PathVariable Long mangaId) {
-        return imagesService.getImagesByFlightId(mangaId);
+    public List<Image> getImagesByFlightId(@PathVariable Long mangaId) {
+        return imagesService.getImagesByMangaId(mangaId);
     }
 
-    @PostMapping("/create/{mangaId}")
-    public ResponseEntity<?> uploadFlightImage(
-            @PathVariable Long mangaId,
-            @RequestParam int turn,
-            @RequestParam("file") MultipartFile file) {
-        try {
-            if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body("File cannot be empty.");
-            }
-
-            imagesService.uploadImage(mangaId, turn, file);
-            return ResponseEntity.ok("Image uploaded successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error saving image: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/create/{mangaId}")
+//    public ResponseEntity<?> uploadFlightImage(
+//            @PathVariable Long mangaId,
+//            @RequestParam int turn,
+//            @RequestParam("file") MultipartFile file) {
+//        try {
+//            if (file.isEmpty()) {
+//                return ResponseEntity.badRequest().body("File cannot be empty.");
+//            }
+//
+//            imagesService.uploadImage(mangaId, turn, file);
+//            return ResponseEntity.ok("Image uploaded successfully.");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("Error saving image: " + e.getMessage());
+//        }
+//    }
 
 
 }

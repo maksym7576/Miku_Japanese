@@ -29,7 +29,7 @@ public class Rewards {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
-    private TargetType targetType;
+    private ETargetType targetType;
 
     @Column(name = "target_id", nullable = false)
     private Long targetId;

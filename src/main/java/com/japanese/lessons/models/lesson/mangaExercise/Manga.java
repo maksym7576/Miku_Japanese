@@ -29,9 +29,6 @@ public class Manga {
     private String startDialog;
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Images> images = new ArrayList<>();
-
-    @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<MangaDialogue> mangaDialogues;
 
     @OneToOne(fetch = FetchType.LAZY)

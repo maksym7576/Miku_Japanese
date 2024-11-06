@@ -1,5 +1,7 @@
 package com.japanese.lessons.models;
 
-public enum TargetType {
+public enum ETargetType {
     MANGA,
+    IMAGE,
+
 }

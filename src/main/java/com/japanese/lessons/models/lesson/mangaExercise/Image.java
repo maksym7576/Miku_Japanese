@@ -1,16 +1,14 @@
 package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 @Entity
 @Getter
 @Setter
-public class Images {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,20 +26,18 @@ public class Images {
     @Column
     private String position;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "manga_id", nullable = true)
-    @JsonIgnore
-    private Manga manga;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_type", nullable = false)
+    private ETargetType targetType;  // Correctly named field
 
-    @OneToOne(mappedBy = "images", cascade = CascadeType.ALL, orphanRemoval = true)
-    private MangaPhotoDescription mangaPhotoDescription;
+    @Column(name = "target_id", nullable = false)
+    private Long targetId;
 
-    public Images() {
+    public Image() {
     }
 
-    public Images(byte[] imageData, Manga manga, int queue) {
+    public Image(byte[] imageData, int queue) {
         this.imageData = imageData;
-        this.manga = manga;
         this.queue = queue;
     }
 }
