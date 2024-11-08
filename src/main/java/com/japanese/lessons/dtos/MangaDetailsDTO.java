@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class MangaDetailsDTO {
-
+    private Long id;
     private String name;
     private String startDialogue;
 }

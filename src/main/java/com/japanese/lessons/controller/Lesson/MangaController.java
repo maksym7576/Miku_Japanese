@@ -1,6 +1,8 @@
 package com.japanese.lessons.controller.Lesson;
 
 import com.japanese.lessons.dtos.MangaContentDTO;
+import com.japanese.lessons.dtos.request.AnswersDTO;
+import com.japanese.lessons.dtos.response.QuizRewardsDTO;
 import com.japanese.lessons.models.lesson.mangaExercise.IncompleteMangaDataException;
 import com.japanese.lessons.models.lesson.mangaExercise.Manga;
 import com.japanese.lessons.service.Lesson.MangaService;
@@ -40,6 +42,26 @@ public class MangaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping(path = "/finish")
+    public ResponseEntity<?> returnResultWithCreatingIncorrectAnswers(@RequestBody AnswersDTO answersDTO) {
+        try {
+
+            // Викликаємо сервіс для завершення манґи
+            List<QuizRewardsDTO> rewards = mangaService.concludeManga(answersDTO);
+
+            // Якщо все добре, повертаємо 200 OK з результатами
+            return ResponseEntity.ok(rewards);
+
+        } catch (Exception e) {
+            // Загальна обробка помилок для інших випадків
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+
+
 
     @PostMapping(path = "/create")
     public ResponseEntity<String> createManga(@RequestBody Manga manga) {

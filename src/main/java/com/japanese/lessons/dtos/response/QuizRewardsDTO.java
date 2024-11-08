@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class QuizRewardsDTO {
   private String type;
-  private Object object;
+  private Object reward;
+  private Object image;
 }

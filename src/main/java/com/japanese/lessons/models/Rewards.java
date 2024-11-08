@@ -8,7 +8,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 public class Rewards {
 
     @Id
@@ -23,9 +22,6 @@ public class Rewards {
 
     @Column
     private String type;
-
-    @Column
-    private Long image_id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)

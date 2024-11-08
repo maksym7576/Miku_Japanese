@@ -21,11 +21,6 @@ public class ImagesController {
     @Autowired
     MangaService mangaService;
 
-    @GetMapping("/{mangaId}")
-    public List<Image> getImagesByFlightId(@PathVariable Long mangaId) {
-        return imagesService.getImagesByMangaId(mangaId);
-    }
-
 //    @PostMapping("/create/{mangaId}")
 //    public ResponseEntity<?> uploadFlightImage(
 //            @PathVariable Long mangaId,

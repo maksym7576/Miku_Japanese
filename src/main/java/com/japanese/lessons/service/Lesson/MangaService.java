@@ -1,15 +1,20 @@
 package com.japanese.lessons.service.Lesson;
 
 import com.japanese.lessons.dtos.*;
+import com.japanese.lessons.dtos.request.AnswerDataDTO;
 import com.japanese.lessons.dtos.request.AnswersDTO;
 import com.japanese.lessons.dtos.response.QuizRewardsDTO;
 import com.japanese.lessons.models.Rewards;
 import com.japanese.lessons.models.ETargetType;
+import com.japanese.lessons.models.User.User;
+import com.japanese.lessons.models.User.UserIncorrectAnswers;
 import com.japanese.lessons.models.lesson.mangaExercise.*;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
 import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.RewardsService;
 import com.japanese.lessons.service.UserIncorrectAnswersService;
+import com.japanese.lessons.service.UserService;
+import jakarta.persistence.GeneratedValue;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +41,9 @@ public class MangaService {
 
     @Autowired
     ImagesService imagesService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     MangaPhotoDescriptionService mangaPhotoDescriptionService;
@@ -73,10 +81,10 @@ public class MangaService {
 
     public List<MangaContentDTO> sortMangaByQueue(Long lessonId) {
         Manga reponseManga = getMangaByLessonID(lessonId);
-        List<Image> responceImageList = imagesService.getImagesByMangaId(reponseManga.getId());
+        List<Image> responceImageList = imagesService.getImagesByObjectId(ETargetType.MANGA,reponseManga.getId());
         List<MangaContentDTO> mangaContentDTOList = new ArrayList<>();
 
-        MangaDetailsDTO mangaDetailsDTO = new MangaDetailsDTO(reponseManga.getName(),reponseManga.getStartDialog());
+        MangaDetailsDTO mangaDetailsDTO = new MangaDetailsDTO(reponseManga.getId(), reponseManga.getName(),reponseManga.getStartDialog());
 
         mangaContentDTOList.add(new MangaContentDTO(0, "manga", mangaDetailsDTO));
         List<ImageMangaDTO> imageMangaDTOList = new ArrayList<>();
@@ -169,27 +177,39 @@ public class MangaService {
 
     public List<QuizRewardsDTO> concludeManga(AnswersDTO answersDTO) {
             List<QuizRewardsDTO> quizRewardsDTOList = new ArrayList<>();
-            MangaResultDetails mangaResultDetails = new MangaResultDetails();
-            userIncorrectAnswersService.saveAllIncorrectAnswers(answersDTO.getUserIncorrectAnswersList());
+            List<UserIncorrectAnswers> incorrectAnswersList = new ArrayList<>();
+            User user = userService.getUserById(answersDTO.getUserId());
+            for (AnswerDataDTO answerDataDTO : answersDTO.getUserIncorrectAnswersList()) {
+                UserIncorrectAnswers userIncorrectAnswers = new UserIncorrectAnswers();
+                userIncorrectAnswers.setUser(user);
+                userIncorrectAnswers.setType(answerDataDTO.getType());
+                userIncorrectAnswers.setObjectId(answerDataDTO.getObjectId());
+                incorrectAnswersList.add(userIncorrectAnswers);
+            }
+            userIncorrectAnswersService.saveAllIncorrectAnswers(incorrectAnswersList);
             int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
             int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
-            mangaResultDetails.setPercentageCorrect(percentage);
             int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
-            mangaResultDetails.setExperience(experience);
-            quizRewardsDTOList.add(new QuizRewardsDTO("Details", mangaResultDetails));
-
+            quizRewardsDTOList.add(new QuizRewardsDTO("Percentage", percentage, null));
+            quizRewardsDTOList.add(new QuizRewardsDTO("Experience", experience, null));
             List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA, answersDTO.getMangaId());
             for (Rewards rewards : rewardsMangaList) {
+                List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD, rewards.getId());
+                quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
             }
             return quizRewardsDTOList;
     }
 
     private int cuntPercentage(int correct,int incorrect) {
         int sum = correct + incorrect;
-        int percentage = correct / sum * 100;
-        return percentage;
+        if(sum == 0) return 0;
+        double percentage = (double) correct / sum * 100;
+        return (int) percentage;
     }
     private int countExperience(int numCorrectAnswer, int percentage) {
-        return (numCorrectAnswer * 2) * percentage;
+        double sum = numCorrectAnswer * 2;  //
+        double experience = sum * (percentage / 100.0);
+        return (int) Math.floor(experience);
     }
+
 }

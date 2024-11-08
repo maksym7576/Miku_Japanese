@@ -12,8 +12,7 @@ import java.util.List;
 @Setter
 public class AnswersDTO {
     private Integer numCorrectAnswers;
-    private List<UserIncorrectAnswers> userIncorrectAnswersList;
+    private List<AnswerDataDTO> userIncorrectAnswersList;
     private Long userId;
     private Long mangaId;
-
 }
