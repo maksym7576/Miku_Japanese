@@ -1,7 +1,7 @@
 package com.japanese.lessons.repositories;
 
 import com.japanese.lessons.models.ETargetType;
-import com.japanese.lessons.models.lesson.mangaExercise.Image;
+import com.japanese.lessons.models.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

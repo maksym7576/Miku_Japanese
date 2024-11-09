@@ -1,16 +1,11 @@
-package com.japanese.lessons.models.lesson.mangaExercise;
+package com.japanese.lessons.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.japanese.lessons.models.lesson.Lesson;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter

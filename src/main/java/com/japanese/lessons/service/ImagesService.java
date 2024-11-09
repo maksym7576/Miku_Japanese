@@ -1,7 +1,7 @@
 package com.japanese.lessons.service;
 
 import com.japanese.lessons.models.ETargetType;
-import com.japanese.lessons.models.lesson.mangaExercise.Image;
+import com.japanese.lessons.models.Image;
 import com.japanese.lessons.repositories.IImagesRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

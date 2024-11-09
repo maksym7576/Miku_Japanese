@@ -1,6 +1,6 @@
 package com.japanese.lessons.repositories.Lesson;
 
-import com.japanese.lessons.models.lesson.mangaExercise.Manga;
+import com.japanese.lessons.models.Manga;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

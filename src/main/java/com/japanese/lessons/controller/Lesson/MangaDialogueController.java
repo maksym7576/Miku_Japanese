@@ -1,6 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
-import com.japanese.lessons.models.lesson.mangaExercise.MangaDialogue;
+import com.japanese.lessons.models.lesson.mangaExercise.Text;
 import com.japanese.lessons.service.Lesson.MangaDialogueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,9 +26,9 @@ public class MangaDialogueController {
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<String> updateText(@PathVariable Long id, @RequestBody MangaDialogue mangaDialogue) {
+    public ResponseEntity<String> updateText(@PathVariable Long id, @RequestBody Text text) {
         try {
-            mangaDialogueService.updateMangaDialogue(id, mangaDialogue);
+            mangaDialogueService.updateMangaDialogue(id, text);
             return ResponseEntity.status(HttpStatus.OK).body("Text updated successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());

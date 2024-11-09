@@ -1,5 +1,8 @@
-package com.japanese.lessons.models.lesson.exercise;
+package com.japanese.lessons.models;
 
+import com.japanese.lessons.models.lesson.exercise.ExerciseColocate;
+import com.japanese.lessons.models.lesson.exercise.ExerciseSelect;
+import com.japanese.lessons.models.lesson.exercise.Fact;
 import jakarta.persistence.*;
 
 import java.util.List;

@@ -2,7 +2,6 @@ package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MangaDialogue {
+public class Text {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,7 +68,7 @@ public class MangaDialogue {
         }
     }
 
-    public void copyNonNullProperties(MangaDialogue source) {
+    public void copyNonNullProperties(Text source) {
         if (source == null) {
             return;
         }
@@ -86,7 +85,7 @@ public class MangaDialogue {
             this.dialogue_romanji = source.getDialogue_romanji();
         }
         if (source.getTranslation() != null) {
-            this.translation = source.getTranslation();
+           this.translation = source.getTranslation();
         }
     }
 }

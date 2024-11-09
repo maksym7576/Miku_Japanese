@@ -4,7 +4,7 @@ import com.japanese.lessons.dtos.MangaContentDTO;
 import com.japanese.lessons.dtos.request.AnswersDTO;
 import com.japanese.lessons.dtos.response.QuizRewardsDTO;
 import com.japanese.lessons.models.lesson.mangaExercise.IncompleteMangaDataException;
-import com.japanese.lessons.models.lesson.mangaExercise.Manga;
+import com.japanese.lessons.models.Manga;
 import com.japanese.lessons.service.Lesson.MangaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

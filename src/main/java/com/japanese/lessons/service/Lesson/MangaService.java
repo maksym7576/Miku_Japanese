@@ -4,10 +4,14 @@ import com.japanese.lessons.dtos.*;
 import com.japanese.lessons.dtos.request.AnswerDataDTO;
 import com.japanese.lessons.dtos.request.AnswersDTO;
 import com.japanese.lessons.dtos.response.QuizRewardsDTO;
+import com.japanese.lessons.models.Image;
+import com.japanese.lessons.models.Manga;
 import com.japanese.lessons.models.Rewards;
 import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.models.User.User;
 import com.japanese.lessons.models.User.UserIncorrectAnswers;
+import com.japanese.lessons.models.lesson.exercise.Answer;
+import com.japanese.lessons.models.lesson.exercise.Question;
 import com.japanese.lessons.models.lesson.mangaExercise.*;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
 import com.japanese.lessons.service.ImagesService;
@@ -32,7 +36,6 @@ public class MangaService {
     @Autowired private RewardsService rewardsService;
     @Autowired private ImagesService imagesService;
     @Autowired private UserService userService;
-    @Autowired private MangaPhotoDescriptionService mangaPhotoDescriptionService;
     @Autowired private QuestionService questionService;
     @Autowired private MangaDialogueService mangaDialogueService;
 
@@ -60,10 +63,10 @@ public class MangaService {
         List<ImageMangaDTO> imagesWithTextList = new ArrayList<>();
 
         for (Image image : responseImageList) {
-            List<MangaPhotoDescription> textList = mangaPhotoDescriptionService.getMangaPhotoDescriptionByImageId(image.getId());
+            List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.IMAGE ,image.getId());
 
             if (!textList.isEmpty()) {
-                MangaPhotoDescription text = textList.get(0);
+                Text text = textList.get(0);
                 imagesWithTextList.add(new ImageMangaDTO(image, text));
             }
         }
@@ -103,8 +106,8 @@ public class MangaService {
     }
 
     private void addMangaDialogue(Manga manga, List<MangaContentDTO> contenetList) {
-        List<MangaDialogue> mangaDialogueList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA, manga.getId());
-        mangaDialogueList.forEach(dialogue -> contenetList.add(
+        List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA, manga.getId());
+        textList.forEach(dialogue -> contenetList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
     }

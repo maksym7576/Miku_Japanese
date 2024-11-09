@@ -1,35 +1,29 @@
-package com.japanese.lessons.models.lesson.mangaExercise;
+package com.japanese.lessons.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class MangaPhotoDescription {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String dialogue_hiragana_katakana_kanji;
+    @JsonBackReference
+    private Integer queue;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(nullable = false, length = 16 * 1024 * 1024)
+    private byte[] imageData;
 
     @Column
-    private String dialogue_hiragana_katakana;
-
-    @Column
-    private String dialogue_romanji;
-
-    @Column
-    private String translation;
+    private String layoutPosition;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
@@ -37,4 +31,12 @@ public class MangaPhotoDescription {
 
     @Column(name = "target_id", nullable = false)
     private Long targetId;
+
+    public Image() {
+    }
+
+    public Image(byte[] imageData, int queue) {
+        this.imageData = imageData;
+        this.queue = queue;
+    }
 }

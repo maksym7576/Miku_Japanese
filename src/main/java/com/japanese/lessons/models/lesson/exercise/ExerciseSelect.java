@@ -1,4 +1,5 @@
 package com.japanese.lessons.models.lesson.exercise;
+import com.japanese.lessons.models.Exercise;
 import jakarta.persistence.*;
 
 @Entity

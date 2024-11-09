@@ -1,7 +1,7 @@
 package com.japanese.lessons.repositories.Lesson;
 
 import com.japanese.lessons.models.ETargetType;
-import com.japanese.lessons.models.lesson.mangaExercise.Question;
+import com.japanese.lessons.models.lesson.exercise.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

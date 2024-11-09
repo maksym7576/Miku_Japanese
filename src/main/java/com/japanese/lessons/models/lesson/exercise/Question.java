@@ -1,4 +1,4 @@
-package com.japanese.lessons.models.lesson.mangaExercise;
+package com.japanese.lessons.models.lesson.exercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.japanese.lessons.models.ETargetType;

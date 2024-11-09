@@ -1,15 +1,10 @@
 package com.japanese.lessons.controller;
 
-import com.japanese.lessons.models.lesson.mangaExercise.Image;
 import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.Lesson.MangaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/images")

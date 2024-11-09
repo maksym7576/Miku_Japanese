@@ -1,7 +1,7 @@
 package com.japanese.lessons.dtos;
 
-import com.japanese.lessons.models.lesson.mangaExercise.Image;
-import com.japanese.lessons.models.lesson.mangaExercise.MangaPhotoDescription;
+import com.japanese.lessons.models.Image;
+import com.japanese.lessons.models.lesson.mangaExercise.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ import lombok.Setter;
 public class ImageMangaDTO {
 
     private Image image;
-    private MangaPhotoDescription mangaPhotoDescription;
+    private Text mangaPhotoDescription;
 }
