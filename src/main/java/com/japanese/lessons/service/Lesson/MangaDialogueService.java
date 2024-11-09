@@ -1,5 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.models.lesson.mangaExercise.MangaDialogue;
 import com.japanese.lessons.repositories.Lesson.IMangaTextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,9 @@ public class MangaDialogueService {
         MangaDialogue existingMangaDialogue = getMangaDialogueById(id);
         existingMangaDialogue.copyNonNullProperties(updatedMangaDialogue);
         saveMangaDialogue(existingMangaDialogue);
+    }
+
+    public List<MangaDialogue> getAllTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
+        return iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
     }
 }

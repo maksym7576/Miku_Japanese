@@ -3,6 +3,7 @@ package com.japanese.lessons.models.lesson.mangaExercise;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,14 +35,16 @@ public class MangaDialogue {
     @Column
     private String translation;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "manga_id", nullable = true)
-    @JsonBackReference
-    private Manga manga;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_type", nullable = false)
+    private ETargetType targetType;
+
+    @Column(name = "target_id", nullable = false)
+    private Long targetId;
 
     @JsonIgnore
     public boolean isComplete() {
-        return queue > 0 && dialogue_hiragana_katakana_kanji != null && manga != null;
+        return queue > 0 && dialogue_hiragana_katakana_kanji != null;
     }
 
     public void validateCompletion() {
@@ -64,10 +67,6 @@ public class MangaDialogue {
         if (dialogue_romanji == null) {
             throw new IllegalArgumentException("Dialogue romanji cannot be null: " + id);
         }
-
-        if (manga == null) {
-            throw new IllegalArgumentException("Manga cannot be null: " + id);
-        }
     }
 
     public void copyNonNullProperties(MangaDialogue source) {
@@ -88,9 +87,6 @@ public class MangaDialogue {
         }
         if (source.getTranslation() != null) {
             this.translation = source.getTranslation();
-        }
-        if (source.getManga() != null) {
-            this.manga = source.getManga();
         }
     }
 }

@@ -51,15 +51,14 @@ public class MangaService {
     @Autowired
     QuestionService questionService;
 
+    @Autowired
+    MangaDialogueService mangaDialogueService;
+
     public Manga getMangaById(Long id) {
         Manga manga = iMangaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Manga not found with id: " + id));
 
         manga.validateCompletion();
-
-        if (manga.getMangaDialogues().isEmpty()) {
-            throw new IncompleteMangaDataException("MangaDialogues collection is empty.");
-        }
 
         return manga;
     }
@@ -68,10 +67,6 @@ public class MangaService {
                 .orElseThrow(() -> new IllegalArgumentException("Manga not found with id: " + lessonId));
 
         manga.validateCompletion();
-
-        if (manga.getMangaDialogues().isEmpty()) {
-            throw new IncompleteMangaDataException("MangaDialogues collection is empty.");
-        }
 
         return manga;
     }
@@ -114,7 +109,8 @@ public class MangaService {
         imagesHasRightLeftDTOList.forEach(imagesHasRightLeftDTO -> mangaContentDTOList.add(
                 new MangaContentDTO(imagesHasRightLeftDTO.getImageRight().getImage().getQueue(), "images_together", imagesHasRightLeftDTO)
         ));
-        reponseManga.getMangaDialogues().forEach(dialogue -> mangaContentDTOList.add(
+        List<MangaDialogue> mangaDialogueList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA, reponseManga.getId());
+        mangaDialogueList.forEach(dialogue -> mangaContentDTOList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
         List<QuestionManga> questionMangaList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA, reponseManga.getId());

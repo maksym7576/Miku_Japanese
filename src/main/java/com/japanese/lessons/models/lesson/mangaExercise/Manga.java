@@ -28,9 +28,6 @@ public class Manga {
     @Column
     private String startDialog;
 
-    @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<MangaDialogue> mangaDialogues;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "lesson_id")
@@ -60,9 +57,6 @@ public class Manga {
         }
         if (source.getStartDialog() != null) {
             this.startDialog = source.getStartDialog();
-        }
-        if (source.getMangaDialogues() != null) {
-            this.mangaDialogues = source.getMangaDialogues();
         }
     }
 
