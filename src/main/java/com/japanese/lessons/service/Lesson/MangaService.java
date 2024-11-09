@@ -123,7 +123,7 @@ public class MangaService {
             question.getAnswerMangases().add(correctAnswer);
 
             question.getAnswerMangases().forEach(answer -> {
-                AnswerMangaDTO answerDTO = new AnswerMangaDTO(
+                new AnswerMangaDTO(
                         answer.getId(),
                         answer.getAnswer_hiragana_katakana_kanji(),
                         answer.getAnswer_hiragana_katakana(),
