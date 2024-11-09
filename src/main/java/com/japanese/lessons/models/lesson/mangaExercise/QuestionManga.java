@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.lesson.mangaExercise;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,10 +43,12 @@ public class QuestionManga {
     @OneToMany(mappedBy = "questionManga", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerManga> answerMangas;
 
-    @ManyToOne
-    @JoinColumn(name = "manga_id", nullable = true)
-    @JsonBackReference
-    private Manga manga;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_type", nullable = false)
+    private ETargetType targetType;
+
+    @Column(name = "target_id", nullable = false)
+    private Long targetId;
 
     public void validateCompletion() {
 
@@ -70,9 +73,6 @@ public class QuestionManga {
             throw new IllegalArgumentException("Translation correct answer cannot be null" + id);
         }
 
-        if (manga == null) {
-            throw new IllegalArgumentException("Manga cannot be null" + id);
-        }
     }
 
     public void copyNonNullProperties(QuestionManga source) {
@@ -99,9 +99,6 @@ public class QuestionManga {
         }
         if (source.getAnswerMangas() != null) {
             this.answerMangas = source.getAnswerMangas();
-        }
-        if(source.getManga() != null) {
-            this.manga = source.getManga();
         }
     }
 }

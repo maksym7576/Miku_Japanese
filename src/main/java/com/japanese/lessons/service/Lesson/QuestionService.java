@@ -1,10 +1,12 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.models.lesson.mangaExercise.QuestionManga;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.annotation.ElementType;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -51,5 +53,14 @@ public class QuestionService {
     }
     private QuestionManga getQuestionById(Long id) {
         return iQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("This question isn't exists"));
+    }
+
+    public List<QuestionManga> getAllQuestionsByTypeAndObjectId(ETargetType targetType, Long objectId) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("Object ID cannot be null.");
+        }
+        List<QuestionManga> response = iQuestionRepository.findByTargetTypeAndTargetId(targetType, objectId);
+
+        return response;
     }
 }

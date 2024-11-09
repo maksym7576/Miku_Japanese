@@ -36,8 +36,6 @@ public class Manga {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<QuestionManga> questionMangas;
 
     public void validateCompletion() {
         if (name == null) {
