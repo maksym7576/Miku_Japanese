@@ -26,37 +26,19 @@ import java.util.stream.Collectors;
 @Service
 public class MangaService {
 
-    @Autowired
-    IMangaRepository iMangaRepository;
-
-    @Autowired
-    LessonService lessonService;
-
-    @Autowired
-    UserIncorrectAnswersService userIncorrectAnswersService;
-
-    @Autowired
-    RewardsService rewardsService;
-
-    @Autowired
-    ImagesService imagesService;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    MangaPhotoDescriptionService mangaPhotoDescriptionService;
-
-    @Autowired
-    QuestionService questionService;
-
-    @Autowired
-    MangaDialogueService mangaDialogueService;
+    @Autowired private IMangaRepository iMangaRepository;
+    @Autowired private LessonService lessonService;
+    @Autowired private UserIncorrectAnswersService userIncorrectAnswersService;
+    @Autowired private RewardsService rewardsService;
+    @Autowired private ImagesService imagesService;
+    @Autowired private UserService userService;
+    @Autowired private MangaPhotoDescriptionService mangaPhotoDescriptionService;
+    @Autowired private QuestionService questionService;
+    @Autowired private MangaDialogueService mangaDialogueService;
 
     public Manga getMangaById(Long id) {
         Manga manga = iMangaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Manga not found with id: " + id));
-
         manga.validateCompletion();
 
         return manga;
@@ -64,58 +46,74 @@ public class MangaService {
     public Manga getMangaByLessonID(Long lessonId) {
         Manga manga = iMangaRepository.findByLessonId(lessonId)
                 .orElseThrow(() -> new IllegalArgumentException("Manga not found with id: " + lessonId));
-
         manga.validateCompletion();
-
         return manga;
     }
 
-    public List<MangaContentDTO> sortMangaByQueue(Long lessonId) {
-        Manga reponseManga = getMangaByLessonID(lessonId);
-        List<Image> responceImageList = imagesService.getImagesByObjectId(ETargetType.MANGA,reponseManga.getId());
-        List<MangaContentDTO> mangaContentDTOList = new ArrayList<>();
+    private void addManga(Manga manga, List<MangaContentDTO> contenetList) {
+        MangaDetailsDTO mangaDetailsDTO = new MangaDetailsDTO(manga.getId(), manga.getName(),manga.getStartDialog());
+        contenetList.add(new MangaContentDTO(0, "manga", mangaDetailsDTO));
+    }
 
-        MangaDetailsDTO mangaDetailsDTO = new MangaDetailsDTO(reponseManga.getId(), reponseManga.getName(),reponseManga.getStartDialog());
+    private void addImage(Manga manga, List<MangaContentDTO> contentList) {
+        List<Image> responseImageList = imagesService.getImagesByObjectId(ETargetType.MANGA, manga.getId());
+        List<ImageMangaDTO> imagesWithTextList = new ArrayList<>();
 
-        mangaContentDTOList.add(new MangaContentDTO(0, "manga", mangaDetailsDTO));
-        List<ImageMangaDTO> imageMangaDTOList = new ArrayList<>();
-        for(Image image : responceImageList) {
-            List<MangaPhotoDescription> mangaPhotoDescriptionList = mangaPhotoDescriptionService.getMangaPhotoDescriptionByImageId(image.getId());
-            MangaPhotoDescription mangaPhotoDescription = mangaPhotoDescriptionList.get(0);
-            imageMangaDTOList.add( new ImageMangaDTO(image, mangaPhotoDescription));
-        }
-        List<ImagesHasRightLeftDTO> imagesHasRightLeftDTOList = new ArrayList<>();
-        List<ImageMangaDTO> imagesToReturn = new ArrayList<>();
-        for (ImageMangaDTO imageManga : imageMangaDTOList) {
-            if(imageManga.getImage().getPosition().equals("center")) {
-                imagesToReturn.add(imageManga);
-            }
-            if(imageManga.getImage().getPosition().equals("right")) {
-                imagesHasRightLeftDTOList.add(new ImagesHasRightLeftDTO(imageManga, null));
-            }
-            if(imageManga.getImage().getPosition().equals("left")) {
-                if (imagesHasRightLeftDTOList.size() > 0 && imagesHasRightLeftDTOList.get(imagesHasRightLeftDTOList.size() - 1).getImageLeft() == null) {
-                    imagesHasRightLeftDTOList.get(imagesHasRightLeftDTOList.size() - 1).setImageLeft(imageManga);
-                } else {
-                    new IllegalArgumentException("Has occurred an error when was selecting sides left and right");
-                }
+        for (Image image : responseImageList) {
+            List<MangaPhotoDescription> textList = mangaPhotoDescriptionService.getMangaPhotoDescriptionByImageId(image.getId());
+
+            if (!textList.isEmpty()) {
+                MangaPhotoDescription text = textList.get(0);
+                imagesWithTextList.add(new ImageMangaDTO(image, text));
             }
         }
+        List<ImageMangaDTO> centerImages = new ArrayList<>();
+        List<ImagesHasRightLeftDTO> rightLeftImages = new ArrayList<>();
 
-        imagesToReturn.forEach(mangaDTO -> mangaContentDTOList.add(
-                new MangaContentDTO(mangaDTO.getImage().getQueue(), "image", mangaDTO)
-        ));
-        imagesHasRightLeftDTOList.forEach(imagesHasRightLeftDTO -> mangaContentDTOList.add(
-                new MangaContentDTO(imagesHasRightLeftDTO.getImageRight().getImage().getQueue(), "images_together", imagesHasRightLeftDTO)
-        ));
-        List<MangaDialogue> mangaDialogueList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA, reponseManga.getId());
-        mangaDialogueList.forEach(dialogue -> mangaContentDTOList.add(
+        for (ImageMangaDTO imageManga : imagesWithTextList) {
+            String layoutPosition = imageManga.getImage().getLayoutPosition();
+
+            switch (layoutPosition) {
+                case "center":
+                    centerImages.add(imageManga);
+                    break;
+
+                case "right":
+                    rightLeftImages.add(new ImagesHasRightLeftDTO(imageManga, null));
+                    break;
+
+                case "left":
+                    if (!rightLeftImages.isEmpty() && rightLeftImages.get(rightLeftImages.size() - 1).getImageLeft() == null) {
+                        rightLeftImages.get(rightLeftImages.size() - 1).setImageLeft(imageManga);
+                    } else {
+                        throw new IllegalArgumentException("Error: unmatched 'left' image without corresponding 'right' image.");
+                    }
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown position type: " + layoutPosition);
+            }
+        }
+        centerImages.forEach(imageMangaDTO ->
+                contentList.add(new MangaContentDTO(imageMangaDTO.getImage().getQueue(), "image", imageMangaDTO))
+        );
+        rightLeftImages.forEach(imagesPair ->
+                contentList.add(new MangaContentDTO(imagesPair.getImageRight().getImage().getQueue(), "images_together", imagesPair))
+        );
+    }
+
+    private void addMangaDialogue(Manga manga, List<MangaContentDTO> contenetList) {
+        List<MangaDialogue> mangaDialogueList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA, manga.getId());
+        mangaDialogueList.forEach(dialogue -> contenetList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
-        List<Question> questionList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA, reponseManga.getId());
+    }
+
+    private void addQuestion(Manga manga, List<MangaContentDTO> contenetList) {
+        List<Question> questionList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA, manga.getId());
         questionList.forEach(question -> {
             MangaContentDTO questionContent = new MangaContentDTO(question.getQueue(), "question", question);
-            mangaContentDTOList.add(questionContent);
+            contenetList.add(questionContent);
             Answer correctAnswer = new Answer();
             correctAnswer.setAnswer_hiragana_katakana_kanji(question.getCorrect_answer_hiragana_katakana_kanji());
             correctAnswer.setAnswer_hiragana_katakana(question.getCorrect_answer_hiragana_or_katakana());
@@ -131,12 +129,19 @@ public class MangaService {
                         answer.getAnswer_hiragana_katakana(),
                         answer.getAnswer_romanji()
                 );
-
-//                mangaContentDTOList.add(new MangaContentDTO(question.getQueue(), "answer", answerDTO));
             });
         });
+    }
 
-        return mangaContentDTOList.stream()
+    public List<MangaContentDTO> sortMangaByQueue(Long lessonId) {
+        Manga manga = getMangaByLessonID(lessonId);
+        List<MangaContentDTO> contentList = new ArrayList<>();
+        addManga(manga, contentList);
+        addImage(manga, contentList);
+        addMangaDialogue(manga, contentList);
+        addQuestion(manga, contentList);
+
+        return contentList.stream()
                 .sorted(Comparator.comparingInt(MangaContentDTO::getQueue))
                 .collect(Collectors.toList());
     }
@@ -149,7 +154,7 @@ public class MangaService {
         } else {
             manga.validateCompletion();
             lessonService.getLessonById(manga.getLesson().getId());
-                return iMangaRepository.save(manga);
+            return iMangaRepository.save(manga);
         }
     }
 
@@ -169,28 +174,28 @@ public class MangaService {
     }
 
     public List<QuizRewardsDTO> concludeManga(AnswersDTO answersDTO) {
-            List<QuizRewardsDTO> quizRewardsDTOList = new ArrayList<>();
-            List<UserIncorrectAnswers> incorrectAnswersList = new ArrayList<>();
-            User user = userService.getUserById(answersDTO.getUserId());
-            for (AnswerDataDTO answerDataDTO : answersDTO.getUserIncorrectAnswersList()) {
-                UserIncorrectAnswers userIncorrectAnswers = new UserIncorrectAnswers();
-                userIncorrectAnswers.setUser(user);
-                userIncorrectAnswers.setType(answerDataDTO.getType());
-                userIncorrectAnswers.setObjectId(answerDataDTO.getObjectId());
-                incorrectAnswersList.add(userIncorrectAnswers);
-            }
-            userIncorrectAnswersService.saveAllIncorrectAnswers(incorrectAnswersList);
-            int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
-            int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
-            int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
-            quizRewardsDTOList.add(new QuizRewardsDTO("Percentage", percentage, null));
-            quizRewardsDTOList.add(new QuizRewardsDTO("Experience", experience, null));
-            List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA, answersDTO.getMangaId());
-            for (Rewards rewards : rewardsMangaList) {
-                List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD, rewards.getId());
-                quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
-            }
-            return quizRewardsDTOList;
+        List<QuizRewardsDTO> quizRewardsDTOList = new ArrayList<>();
+        List<UserIncorrectAnswers> incorrectAnswersList = new ArrayList<>();
+        User user = userService.getUserById(answersDTO.getUserId());
+        for (AnswerDataDTO answerDataDTO : answersDTO.getUserIncorrectAnswersList()) {
+            UserIncorrectAnswers userIncorrectAnswers = new UserIncorrectAnswers();
+            userIncorrectAnswers.setUser(user);
+            userIncorrectAnswers.setType(answerDataDTO.getType());
+            userIncorrectAnswers.setObjectId(answerDataDTO.getObjectId());
+            incorrectAnswersList.add(userIncorrectAnswers);
+        }
+        userIncorrectAnswersService.saveAllIncorrectAnswers(incorrectAnswersList);
+        int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
+        int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
+        int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
+        quizRewardsDTOList.add(new QuizRewardsDTO("Percentage", percentage, null));
+        quizRewardsDTOList.add(new QuizRewardsDTO("Experience", experience, null));
+        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA, answersDTO.getMangaId());
+        for (Rewards rewards : rewardsMangaList) {
+            List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD, rewards.getId());
+            quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
+        }
+        return quizRewardsDTOList;
     }
 
     private int cuntPercentage(int correct,int incorrect) {

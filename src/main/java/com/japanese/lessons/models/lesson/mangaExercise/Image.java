@@ -24,7 +24,7 @@ public class Image {
     private byte[] imageData;
 
     @Column
-    private String position;
+    private String layoutPosition;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
