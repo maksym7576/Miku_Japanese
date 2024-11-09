@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class QuestionManga {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +39,8 @@ public class QuestionManga {
     private String translation_correct_answer;
 
     @Column
-
-    @OneToMany(mappedBy = "questionManga", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AnswerManga> answerMangas;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answerMangases;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
@@ -75,7 +74,7 @@ public class QuestionManga {
 
     }
 
-    public void copyNonNullProperties(QuestionManga source) {
+    public void copyNonNullProperties(Question source) {
         if (source == null) {
             return;
         }
@@ -97,8 +96,8 @@ public class QuestionManga {
         if (source.getTranslation_correct_answer() != null) {
             this.translation_correct_answer = source.getTranslation_correct_answer();
         }
-        if (source.getAnswerMangas() != null) {
-            this.answerMangas = source.getAnswerMangas();
+        if (source.getAnswerMangases() != null) {
+            this.answerMangases = source.getAnswerMangases();
         }
     }
 }

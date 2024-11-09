@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AnswerManga {
+public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +28,14 @@ public class AnswerManga {
     @ManyToOne
     @JoinColumn(name = "question_id")
     @JsonBackReference
-    private QuestionManga questionManga;
+    private Question question;
 
     public boolean isComplete() {
         return answer_hiragana_katakana_kanji != null && !answer_hiragana_katakana_kanji.isEmpty()
-                 && questionManga != null;
+                 && question != null;
     }
 
-    public void copyNonNullProperties(AnswerManga source) {
+    public void copyNonNullProperties(Answer source) {
         if (source == null) {
             return;
         }
@@ -48,8 +48,8 @@ public class AnswerManga {
         if (source.getAnswer_romanji() != null) {
             this.answer_romanji = source.getAnswer_romanji();
         }
-        if (source.getQuestionManga() != null) {
-            this.questionManga = source.getQuestionManga();
+        if (source.getQuestion() != null) {
+            this.question = source.getQuestion();
         }
     }
 
@@ -57,7 +57,7 @@ public class AnswerManga {
         if (answer_hiragana_katakana_kanji == null || answer_hiragana_katakana_kanji.trim().isEmpty()) {
             throw new IllegalArgumentException("Answer original cannot be null or empty.");
         }
-        if (questionManga == null) {
+        if (question == null) {
             throw new IllegalArgumentException("Question manga cannot be null.");
         }
         if (answer_hiragana_katakana == null || answer_hiragana_katakana.trim().isEmpty()) {

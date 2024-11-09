@@ -6,6 +6,7 @@ import com.japanese.lessons.repositories.Lesson.IMangaTextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -57,6 +58,7 @@ public class MangaDialogueService {
     }
 
     public List<MangaDialogue> getAllTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
-        return iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
+        List<MangaDialogue> response = iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
+        return response != null ? response : Collections.emptyList();
     }
 }

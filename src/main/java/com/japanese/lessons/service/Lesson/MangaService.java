@@ -14,7 +14,6 @@ import com.japanese.lessons.service.ImagesService;
 import com.japanese.lessons.service.RewardsService;
 import com.japanese.lessons.service.UserIncorrectAnswersService;
 import com.japanese.lessons.service.UserService;
-import jakarta.persistence.GeneratedValue;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -113,19 +112,19 @@ public class MangaService {
         mangaDialogueList.forEach(dialogue -> mangaContentDTOList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
-        List<QuestionManga> questionMangaList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA, reponseManga.getId());
-        questionMangaList.forEach(question -> {
+        List<Question> questionList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA, reponseManga.getId());
+        questionList.forEach(question -> {
             MangaContentDTO questionContent = new MangaContentDTO(question.getQueue(), "question", question);
             mangaContentDTOList.add(questionContent);
-            AnswerManga correctAnswer = new AnswerManga();
+            Answer correctAnswer = new Answer();
             correctAnswer.setAnswer_hiragana_katakana_kanji(question.getCorrect_answer_hiragana_katakana_kanji());
             correctAnswer.setAnswer_hiragana_katakana(question.getCorrect_answer_hiragana_or_katakana());
             correctAnswer.setAnswer_romanji(question.getCorrect_answer_romanized());
-            correctAnswer.setQuestionManga(question);
+            correctAnswer.setQuestion(question);
 
-            question.getAnswerMangas().add(correctAnswer);
+            question.getAnswerMangases().add(correctAnswer);
 
-            question.getAnswerMangas().forEach(answer -> {
+            question.getAnswerMangases().forEach(answer -> {
                 AnswerMangaDTO answerDTO = new AnswerMangaDTO(
                         answer.getId(),
                         answer.getAnswer_hiragana_katakana_kanji(),

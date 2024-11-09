@@ -1,6 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
-import com.japanese.lessons.models.lesson.mangaExercise.QuestionManga;
+import com.japanese.lessons.models.lesson.mangaExercise.Question;
 import com.japanese.lessons.service.Lesson.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,9 @@ public class QuestionController {
     QuestionService questionService;
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<String> updateQuestion(@PathVariable Long id, @RequestBody QuestionManga questionManga) {
+    public ResponseEntity<String> updateQuestion(@PathVariable Long id, @RequestBody Question question) {
         try {
-            questionService.updateQuestion(id, questionManga);
+            questionService.updateQuestion(id, question);
             return ResponseEntity.status(HttpStatus.OK).body("Question updated successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
@@ -34,9 +34,9 @@ public class QuestionController {
         }
     }
     @PostMapping(path = "/create")
-    public ResponseEntity<String> createQuestion(@RequestBody QuestionManga questionManga) {
+    public ResponseEntity<String> createQuestion(@RequestBody Question question) {
     try {
-        questionService.saveQuestion(questionManga);
+        questionService.saveQuestion(question);
         return ResponseEntity.status(HttpStatus.CREATED).body("Question is created");
     } catch (IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());

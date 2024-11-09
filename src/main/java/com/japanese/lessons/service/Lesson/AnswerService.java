@@ -1,6 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.models.lesson.mangaExercise.AnswerManga;
+import com.japanese.lessons.models.lesson.mangaExercise.Answer;
 import com.japanese.lessons.repositories.Lesson.IAnswerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,15 +13,15 @@ public class AnswerService {
     @Autowired
     IAnswerRepository iAnswerRepository;
 
-    public AnswerManga getAnswerById(Long id) {
+    public Answer getAnswerById(Long id) {
       return iAnswerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Answer not found with id: " + id));
     }
-    public void saveAllAnswers(List<AnswerManga> answerMangaList) {
-            iAnswerRepository.saveAll(answerMangaList);
+    public void saveAllAnswers(List<Answer> answerList) {
+            iAnswerRepository.saveAll(answerList);
     }
-    public void saveAnswer(AnswerManga answerManga) {
-        answerManga.validateCompletion();
-            iAnswerRepository.save(answerManga);
+    public void saveAnswer(Answer answer) {
+        answer.validateCompletion();
+            iAnswerRepository.save(answer);
     }
     public void deleteAnswer(Long id) {
         if(iAnswerRepository.existsById(id)) {
@@ -30,15 +30,15 @@ public class AnswerService {
             throw new IllegalArgumentException("Answer isn't exists");
         }
     }
-    private void validAnswerIsNull(AnswerManga answerManga) {
-        if(answerManga == null) {
+    private void validAnswerIsNull(Answer answer) {
+        if(answer == null) {
             throw new IllegalArgumentException("Answer is null");
         }
     }
 
-    public void updateAnswer(Long id, AnswerManga answerManga) {
-            AnswerManga responseAnswerManga = getAnswerById(id);
-            responseAnswerManga.copyNonNullProperties(answerManga);
-            saveAnswer(responseAnswerManga);
+    public void updateAnswer(Long id, Answer answer) {
+            Answer responseAnswer = getAnswerById(id);
+            responseAnswer.copyNonNullProperties(answer);
+            saveAnswer(responseAnswer);
     }
 }

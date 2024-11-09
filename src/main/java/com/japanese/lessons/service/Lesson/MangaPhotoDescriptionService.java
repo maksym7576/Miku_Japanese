@@ -6,6 +6,7 @@ import com.japanese.lessons.repositories.Lesson.IMangaPhotoDescriptionRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -16,17 +17,8 @@ public class MangaPhotoDescriptionService {
     IMangaPhotoDescriptionRepository iMangaPhotoDescriptionRepository;
 
     public List<MangaPhotoDescription> getMangaPhotoDescriptionByImageId(Long imageId) {
-        if (imageId == null) {
-            throw new IllegalArgumentException("Image ID cannot be null.");
-        }
-
-        List<MangaPhotoDescription> descriptions = iMangaPhotoDescriptionRepository.findByTargetTypeAndTargetId(ETargetType.IMAGE, imageId);
-
-        if (descriptions == null || descriptions.isEmpty()) {
-            throw new IllegalArgumentException("No descriptions found for image ID: " + imageId);
-        }
-
-        return descriptions;
+        List<MangaPhotoDescription> response = iMangaPhotoDescriptionRepository.findByTargetTypeAndTargetId(ETargetType.IMAGE, imageId);
+        return response != null ? response : Collections.emptyList();
     }
 
 }

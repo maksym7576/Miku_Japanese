@@ -1,6 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
-import com.japanese.lessons.models.lesson.mangaExercise.AnswerManga;
+import com.japanese.lessons.models.lesson.mangaExercise.Answer;
 import com.japanese.lessons.service.Lesson.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,9 @@ public class AnswerController {
     AnswerService answerService;
 
     @PostMapping(path = "/create")
-    public ResponseEntity<String> createAnswer(@Validated @RequestBody AnswerManga answerManga) {
+    public ResponseEntity<String> createAnswer(@Validated @RequestBody Answer answer) {
         try {
-            answerService.saveAnswer(answerManga);
+            answerService.saveAnswer(answer);
             return ResponseEntity.status(HttpStatus.CREATED).body("Answer has been created");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
@@ -35,9 +35,9 @@ public class AnswerController {
         }
     }
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<String> updateAnswer(@PathVariable Long id, @RequestBody AnswerManga answerManga) {
+    public ResponseEntity<String> updateAnswer(@PathVariable Long id, @RequestBody Answer answer) {
         try {
-            answerService.updateAnswer(id, answerManga);
+            answerService.updateAnswer(id, answer);
             return ResponseEntity.status(HttpStatus.OK).body("Answer has been updated");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
