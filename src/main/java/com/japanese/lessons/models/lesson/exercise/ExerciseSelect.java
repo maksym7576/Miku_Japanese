@@ -27,7 +27,4 @@ public class ExerciseSelect {
     @Column
     private String version4;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise")
-    private Exercise exercise;
 }

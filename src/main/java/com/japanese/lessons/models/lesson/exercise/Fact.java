@@ -20,10 +20,6 @@ public class Fact {
     @Column
     private int exerciseTurn;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise")
-    private Exercise exercise;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;

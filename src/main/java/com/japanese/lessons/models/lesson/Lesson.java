@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.lesson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.japanese.lessons.models.Exercise;
 import com.japanese.lessons.models.Manga;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,6 +30,10 @@ public class Lesson {
     @OneToOne(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Manga manga;
+
+    @OneToOne(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Exercise exercise;
 
     public void validateCompletion() {
         if (position < 0) {

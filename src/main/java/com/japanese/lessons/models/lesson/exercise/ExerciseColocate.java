@@ -21,7 +21,4 @@ public class ExerciseColocate {
     @OneToMany(mappedBy = "exerciseColocate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WordsToColocate> wordsToColocateList;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise")
-    private Exercise exercise;
 }
