@@ -25,6 +25,12 @@ public class Answer {
     @Column
     private String answer_romanji;
 
+    @Column
+    private String translation;
+
+    @Column
+    private boolean isCorrect;
+
     @ManyToOne
     @JoinColumn(name = "question_id")
     @JsonBackReference

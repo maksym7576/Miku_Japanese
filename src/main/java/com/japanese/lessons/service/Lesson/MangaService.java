@@ -118,14 +118,6 @@ public class MangaService {
         questionList.forEach(question -> {
             MangaContentDTO questionContent = new MangaContentDTO(question.getQueue(), "question", question);
             contenetList.add(questionContent);
-            Answer correctAnswer = new Answer();
-            correctAnswer.setAnswer_hiragana_katakana_kanji(question.getCorrect_answer_hiragana_katakana_kanji());
-            correctAnswer.setAnswer_hiragana_katakana(question.getCorrect_answer_hiragana_or_katakana());
-            correctAnswer.setAnswer_romanji(question.getCorrect_answer_romanized());
-            correctAnswer.setQuestion(question);
-
-            question.getAnswerMangas().add(correctAnswer);
-
             question.getAnswerMangas().forEach(answer -> {
                 new AnswerMangaDTO(
                         answer.getId(),

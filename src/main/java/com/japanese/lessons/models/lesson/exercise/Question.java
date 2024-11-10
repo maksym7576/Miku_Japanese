@@ -27,18 +27,6 @@ public class Question {
     private String question;
 
     @Column
-    private String correct_answer_hiragana_katakana_kanji;
-
-    @Column
-    private String correct_answer_hiragana_or_katakana;
-
-    @Column
-    private String correct_answer_romanized;
-
-    @Column
-    private String translation_correct_answer;
-
-    @Column
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answerMangas;
 
@@ -58,20 +46,6 @@ public class Question {
         if (question == null || question.trim().isEmpty()) {
             throw new IllegalArgumentException("Question cannot be null or empty" + id);
         }
-
-        if (correct_answer_hiragana_katakana_kanji == null) {
-            throw new IllegalArgumentException("Correct original answer cannot be null" + id);
-        }
-        if (correct_answer_hiragana_or_katakana == null) {
-            throw new IllegalArgumentException("Correct answer hiragana or katakana cannot be null" + id);
-        }
-        if (correct_answer_romanized == null) {
-            throw new IllegalArgumentException("Correct answer romanized cannot be null" + id);
-        }
-        if (translation_correct_answer == null) {
-            throw new IllegalArgumentException("Translation correct answer cannot be null" + id);
-        }
-
     }
 
     public void copyNonNullProperties(Question source) {
@@ -83,21 +57,6 @@ public class Question {
         }
         if (source.getQuestion() != null) {
             this.question = source.getQuestion();
-        }
-        if (source.getCorrect_answer_hiragana_katakana_kanji() != null) {
-            this.correct_answer_hiragana_katakana_kanji = source.getCorrect_answer_hiragana_katakana_kanji();
-        }
-        if (source.getCorrect_answer_hiragana_or_katakana() != null) {
-            this.correct_answer_hiragana_or_katakana = source.getCorrect_answer_hiragana_or_katakana();
-        }
-        if (source.getCorrect_answer_romanized() != null) {
-            this.correct_answer_romanized = source.getCorrect_answer_romanized();
-        }
-        if (source.getTranslation_correct_answer() != null) {
-            this.translation_correct_answer = source.getTranslation_correct_answer();
-        }
-        if (source.getAnswerMangas() != null) {
-            this.answerMangas = source.getAnswerMangas();
         }
     }
 }
