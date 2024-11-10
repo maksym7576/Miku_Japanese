@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -123,9 +124,9 @@ public class MangaService {
             correctAnswer.setAnswer_romanji(question.getCorrect_answer_romanized());
             correctAnswer.setQuestion(question);
 
-            question.getAnswerMangases().add(correctAnswer);
+            question.getAnswerMangas().add(correctAnswer);
 
-            question.getAnswerMangases().forEach(answer -> {
+            question.getAnswerMangas().forEach(answer -> {
                 new AnswerMangaDTO(
                         answer.getId(),
                         answer.getAnswer_hiragana_katakana_kanji(),
@@ -176,6 +177,33 @@ public class MangaService {
         }
     }
 
+    private void saveUniqueIncorrectAnswers(Long userId,List<UserIncorrectAnswers> newAnswers) {
+        List<UserIncorrectAnswers> responseWords = userIncorrectAnswersService.getAllUserWordsToLEarn(userId);
+        Set<String> existingKeys = responseWords.stream()
+                        .map((answer -> answer.getObjectId() + "_" + answer.getType()))
+                                .collect(Collectors.toSet());
+        List<UserIncorrectAnswers> uniqueExercisesToSave = newAnswers.stream()
+                .filter(answer -> !existingKeys.contains(answer.getObjectId() + "_" + answer.getType()))
+                        .collect(Collectors.toList());
+        userIncorrectAnswersService.saveAllIncorrectAnswers(uniqueExercisesToSave);
+    }
+
+    private void addPercentageAndExperience(AnswersDTO answersDTO, List<QuizRewardsDTO> quizRewardsDTOList) {
+        int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
+        int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
+        int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
+        quizRewardsDTOList.add(new QuizRewardsDTO("Percentage", percentage, null));
+        quizRewardsDTOList.add(new QuizRewardsDTO("Experience", experience, null));
+    }
+
+    private void addItem(AnswersDTO answersDTO, List<QuizRewardsDTO> quizRewardsDTOList) {
+        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA, answersDTO.getMangaId());
+        for (Rewards rewards : rewardsMangaList) {
+            List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD, rewards.getId());
+            quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
+        }
+    }
+
     public List<QuizRewardsDTO> concludeManga(AnswersDTO answersDTO) {
         List<QuizRewardsDTO> quizRewardsDTOList = new ArrayList<>();
         List<UserIncorrectAnswers> incorrectAnswersList = new ArrayList<>();
@@ -187,17 +215,9 @@ public class MangaService {
             userIncorrectAnswers.setObjectId(answerDataDTO.getObjectId());
             incorrectAnswersList.add(userIncorrectAnswers);
         }
-        userIncorrectAnswersService.saveAllIncorrectAnswers(incorrectAnswersList);
-        int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
-        int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
-        int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
-        quizRewardsDTOList.add(new QuizRewardsDTO("Percentage", percentage, null));
-        quizRewardsDTOList.add(new QuizRewardsDTO("Experience", experience, null));
-        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA, answersDTO.getMangaId());
-        for (Rewards rewards : rewardsMangaList) {
-            List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD, rewards.getId());
-            quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
-        }
+        saveUniqueIncorrectAnswers(answersDTO.getUserId(), incorrectAnswersList);
+        addPercentageAndExperience(answersDTO, quizRewardsDTOList);
+        addItem(answersDTO, quizRewardsDTOList);
         return quizRewardsDTOList;
     }
 
@@ -208,7 +228,7 @@ public class MangaService {
         return (int) percentage;
     }
     private int countExperience(int numCorrectAnswer, int percentage) {
-        double sum = numCorrectAnswer * 2;  //
+        double sum = numCorrectAnswer * 2;
         double experience = sum * (percentage / 100.0);
         return (int) Math.floor(experience);
     }

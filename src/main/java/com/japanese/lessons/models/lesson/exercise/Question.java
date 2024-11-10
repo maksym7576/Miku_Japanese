@@ -40,7 +40,7 @@ public class Question {
 
     @Column
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answerMangases;
+    private List<Answer> answerMangas;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
@@ -96,8 +96,8 @@ public class Question {
         if (source.getTranslation_correct_answer() != null) {
             this.translation_correct_answer = source.getTranslation_correct_answer();
         }
-        if (source.getAnswerMangases() != null) {
-            this.answerMangases = source.getAnswerMangases();
+        if (source.getAnswerMangas() != null) {
+            this.answerMangas = source.getAnswerMangas();
         }
     }
 }
