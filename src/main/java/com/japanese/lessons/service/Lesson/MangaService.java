@@ -4,20 +4,14 @@ import com.japanese.lessons.dtos.*;
 import com.japanese.lessons.dtos.request.AnswerDataDTO;
 import com.japanese.lessons.dtos.request.AnswersDTO;
 import com.japanese.lessons.dtos.response.QuizRewardsDTO;
-import com.japanese.lessons.models.Image;
-import com.japanese.lessons.models.Manga;
-import com.japanese.lessons.models.Rewards;
-import com.japanese.lessons.models.ETargetType;
+import com.japanese.lessons.models.*;
 import com.japanese.lessons.models.User.User;
 import com.japanese.lessons.models.User.UserIncorrectAnswers;
 import com.japanese.lessons.models.lesson.exercise.Answer;
 import com.japanese.lessons.models.lesson.exercise.Question;
 import com.japanese.lessons.models.lesson.mangaExercise.*;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
-import com.japanese.lessons.service.ImagesService;
-import com.japanese.lessons.service.RewardsService;
-import com.japanese.lessons.service.UserIncorrectAnswersService;
-import com.japanese.lessons.service.UserService;
+import com.japanese.lessons.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +33,7 @@ public class MangaService {
     @Autowired private UserService userService;
     @Autowired private QuestionService questionService;
     @Autowired private MangaDialogueService mangaDialogueService;
+    @Autowired private AudioService audioService;
 
     public Manga getMangaById(Long id) {
         Manga manga = iMangaRepository.findById(id)
@@ -65,10 +60,10 @@ public class MangaService {
 
         for (Image image : responseImageList) {
             List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.IMAGE ,image.getId());
-
+            Audio audio = audioService.getByTypeAndObjectId(ETargetType.IMAGE, image.getId());
             if (!textList.isEmpty()) {
                 Text text = textList.get(0);
-                imagesWithTextList.add(new ImageMangaDTO(image, text));
+                imagesWithTextList.add(new ImageMangaDTO(image, text, audio));
             }
         }
         List<ImageMangaDTO> centerImages = new ArrayList<>();

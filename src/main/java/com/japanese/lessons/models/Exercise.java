@@ -3,9 +3,6 @@ package com.japanese.lessons.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.japanese.lessons.dtos.TypeObjectDTO;
 import com.japanese.lessons.models.lesson.Lesson;
-import com.japanese.lessons.models.lesson.exercise.ExerciseColocate;
-import com.japanese.lessons.models.lesson.exercise.ExerciseSelect;
-import com.japanese.lessons.models.lesson.exercise.Fact;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +17,12 @@ public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
+    private String topic;
+
+    @Column
+    private String description;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference

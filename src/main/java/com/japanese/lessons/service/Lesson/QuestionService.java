@@ -51,7 +51,7 @@ public class QuestionService {
       responceQuestion.copyNonNullProperties(updatedQuestion);
       iQuestionRepository.save(responceQuestion);
     }
-    private Question getQuestionById(Long id) {
+    public Question getQuestionById(Long id) {
         return iQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("This question isn't exists"));
     }
 

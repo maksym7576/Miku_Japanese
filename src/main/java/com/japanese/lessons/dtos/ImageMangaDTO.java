@@ -1,5 +1,6 @@
 package com.japanese.lessons.dtos;
 
+import com.japanese.lessons.models.Audio;
 import com.japanese.lessons.models.Image;
 import com.japanese.lessons.models.lesson.mangaExercise.Text;
 import lombok.AllArgsConstructor;
@@ -15,4 +16,5 @@ public class ImageMangaDTO {
 
     private Image image;
     private Text mangaPhotoDescription;
+    private Audio audio;
 }
