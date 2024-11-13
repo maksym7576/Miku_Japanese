@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface IOrdered_objects_repository extends JpaRepository<Ordered_objects, Long> {
-    List<Ordered_objects> findByTargetTypeAndParentObjectId(ETargetType targetType, Long parentObjectId);
+    List<Ordered_objects> findByParentObjectTypeAndParentObjectId(ETargetType parentObjectType, Long parentObjectId);
 }

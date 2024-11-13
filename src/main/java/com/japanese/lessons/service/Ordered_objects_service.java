@@ -15,7 +15,7 @@ public class Ordered_objects_service {
     @Autowired private IOrdered_objects_repository iOrderedObjectsRepository;
 
     public List<Ordered_objects> getOrderedObjectsListByOrderedIdAndType(ETargetType eTargetType, Long parentObjectId) {
-        List<Ordered_objects> orderedObjectsList = iOrderedObjectsRepository.findByTargetTypeAndParentObjectId(eTargetType, parentObjectId);
+        List<Ordered_objects> orderedObjectsList = iOrderedObjectsRepository.findByParentObjectTypeAndParentObjectId(eTargetType, parentObjectId);
         return orderedObjectsList != null ? orderedObjectsList : Collections.emptyList();
     }
 
