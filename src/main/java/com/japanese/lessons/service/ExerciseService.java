@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ExerciseService {
@@ -39,23 +38,25 @@ public class ExerciseService {
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question", questionAnswerDTO));
     }
 
-    private void addSelect(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
-        Question questionSelect = questionService.getQuestionById(object.getObjectId());
-        List<Text> answerList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionSelect.getId());
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionSelect, answerList);
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("question_select", questionAnswerDTO));
-    }
-
     private void addColocate(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
-        logger.debug("add colocate with id: {}", object.getId());
-        Question questionColocate = questionService.getQuestionById(object.getObjectId());
-        List<Text> answerList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionColocate.getId());
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionColocate, answerList);
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("question_colocate", questionAnswerDTO));
+        Question questionSelect = questionService.getQuestionById(object.getObjectId());
+        List<Text> questioSelectWordsList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionSelect.getId());
+        Collections.shuffle(questioSelectWordsList);
+        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionSelect, questioSelectWordsList);
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("question_select", questionAnswerDTO));
+
     }
 
     private void addFact(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
 
+    }
+
+    private void addMultipleAnswerQuestion(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
+        logger.debug("add colocate with id: {}", object.getId());
+        Question questionColocate = questionService.getQuestionById(object.getObjectId());
+        List<Text> answerList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionColocate.getId());
+        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionColocate, answerList);
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("question_multiple_answer", questionAnswerDTO));
     }
 
     public List<StructuredDataForExercisesDTO> getExercisesFromAllTables (Long lessonId) {
@@ -65,14 +66,15 @@ public class ExerciseService {
         MangaDetailsDTO exerciseDetails = new MangaDetailsDTO(exercise.getId(),exercise.getTopic(), exercise.getDescription());
         exercisesToReturn.add(new StructuredDataForExercisesDTO("details", exerciseDetails));
         List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByOrderedIdAndType(ETargetType.EXERCISE_TABLE, exercise.getId());
+        orderedObjectsList.sort(Comparator.comparing(Ordered_objects:: getOrderIndex));
         logger.debug("by id: {}", exercise.getId());
         for (Ordered_objects index : orderedObjectsList) {
             logger.debug("Index: {}", index.toString());
             switch (index.getTargetType()) {
                 case EXERCISE_QUESTION -> addQuestion(index, exercisesToReturn);
-                case EXERCISE_SELECT -> addSelect(index, exercisesToReturn);
                 case EXERCISE_COLOCATE -> addColocate(index, exercisesToReturn);
                 case EXERCISE_FACT ->  addFact(index, exercisesToReturn);
+                case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
                 default -> {}
             }
         }
