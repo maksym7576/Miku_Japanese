@@ -1,7 +1,6 @@
 package com.japanese.lessons.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.japanese.lessons.dtos.TypeObjectDTO;
 import com.japanese.lessons.models.lesson.Lesson;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,7 +28,4 @@ public class Exercise {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @ElementCollection
-    @CollectionTable(name = "id_and_type_list", joinColumns = @JoinColumn(name = "data_entety_id"))
-    private List<TypeObjectDTO> objectList;
 }

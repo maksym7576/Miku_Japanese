@@ -17,10 +17,5 @@ public class Fact {
     @Column
     private String description;
 
-    @Column
-    private int exerciseTurn;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", referencedColumnName = "id")
-    private Image image;
 }
