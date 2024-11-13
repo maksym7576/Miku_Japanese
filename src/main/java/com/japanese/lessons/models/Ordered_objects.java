@@ -25,7 +25,7 @@ public class Ordered_objects {
     private Long objectId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target", nullable = false)
+    @Column(name = "parent_type", nullable = false)
     private ETargetType parentObjectType;
 
     @Column

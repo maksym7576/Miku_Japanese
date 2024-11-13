@@ -52,7 +52,7 @@ public class ExerciseService {
     exercisesToReturn.add(new StructuredDataForExercisesDTO("details", exerciseDetails));
     List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByOrderedIdAndType(ETargetType.EXERCISE, exercise.getId());
     for (Ordered_objects index : orderedObjectsList) {
-        switch (index.getTargetType()) {
+        switch (index.getParentObjectType()) {
             case EXERCISE_QUESTION -> addQuestion(index, exercisesToReturn);
             case EXERCISE_SELECT -> addSelect(index, exercisesToReturn);
             case EXERCISE_COLOCATE -> addColocate(index, exercisesToReturn);
