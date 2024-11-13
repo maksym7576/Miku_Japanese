@@ -7,7 +7,6 @@ import com.japanese.lessons.dtos.response.QuizRewardsDTO;
 import com.japanese.lessons.models.*;
 import com.japanese.lessons.models.User.User;
 import com.japanese.lessons.models.User.UserIncorrectAnswers;
-import com.japanese.lessons.models.lesson.exercise.Answer;
 import com.japanese.lessons.models.lesson.exercise.Question;
 import com.japanese.lessons.models.lesson.mangaExercise.*;
 import com.japanese.lessons.repositories.Lesson.IMangaRepository;
@@ -55,12 +54,12 @@ public class MangaService {
     }
 
     private void addImage(Manga manga, List<MangaContentDTO> contentList) {
-        List<Image> responseImageList = imagesService.getImagesByObjectId(ETargetType.MANGA, manga.getId());
+        List<Image> responseImageList = imagesService.getImagesByObjectId(ETargetType.MANGA_TABLE, manga.getId());
         List<ImageMangaDTO> imagesWithTextList = new ArrayList<>();
 
         for (Image image : responseImageList) {
-            List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.IMAGE ,image.getId());
-            Audio audio = audioService.getByTypeAndObjectId(ETargetType.IMAGE, image.getId());
+            List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.IMAGE_TABLE,image.getId());
+            Audio audio = audioService.getByTypeAndObjectId(ETargetType.IMAGE_TABLE, image.getId());
             if (!textList.isEmpty()) {
                 Text text = textList.get(0);
                 imagesWithTextList.add(new ImageMangaDTO(image, text, audio));
@@ -102,23 +101,24 @@ public class MangaService {
     }
 
     private void addMangaDialogue(Manga manga, List<MangaContentDTO> contenetList) {
-        List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA, manga.getId());
+        List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA_TABLE, manga.getId());
         textList.forEach(dialogue -> contenetList.add(
                 new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
         ));
     }
 
     private void addQuestion(Manga manga, List<MangaContentDTO> contenetList) {
-        List<Question> questionList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA, manga.getId());
+        List<Question> questionList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA_TABLE, manga.getId());
         questionList.forEach(question -> {
             MangaContentDTO questionContent = new MangaContentDTO(question.getQueue(), "question", question);
             contenetList.add(questionContent);
-            question.getAnswerMangas().forEach(answer -> {
+            List<Text> questionAnswers = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, question.getId());
+            questionAnswers.forEach(answer -> {
                 new AnswerMangaDTO(
                         answer.getId(),
-                        answer.getAnswer_hiragana_katakana_kanji(),
-                        answer.getAnswer_hiragana_katakana(),
-                        answer.getAnswer_romanji()
+                        answer.getKanji(),
+                        answer.getHiragana_or_katakana(),
+                        answer.getRomanji()
                 );
             });
         });
@@ -184,9 +184,9 @@ public class MangaService {
     }
 
     private void addItem(AnswersDTO answersDTO, List<QuizRewardsDTO> quizRewardsDTOList) {
-        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA, answersDTO.getMangaId());
+        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA_TABLE, answersDTO.getMangaId());
         for (Rewards rewards : rewardsMangaList) {
-            List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD, rewards.getId());
+            List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD_TABLE, rewards.getId());
             quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
         }
     }

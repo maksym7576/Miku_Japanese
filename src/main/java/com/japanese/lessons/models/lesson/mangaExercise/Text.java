@@ -23,13 +23,13 @@ public class Text {
     private Integer queue;
 
     @Column
-    private String dialogue_hiragana_katakana_kanji;
+    private String kanji;
 
     @Column
-    private String dialogue_hiragana_katakana;
+    private String hiragana_or_katakana;
 
     @Column
-    private String dialogue_romanji;
+    private String romanji;
 
     @Column
     private String translation;
@@ -43,7 +43,7 @@ public class Text {
 
     @JsonIgnore
     public boolean isComplete() {
-        return queue > 0 && dialogue_hiragana_katakana_kanji != null;
+        return queue > 0 && kanji != null;
     }
 
     public void validateCompletion() {
@@ -51,7 +51,7 @@ public class Text {
             throw new IllegalArgumentException("Turn must be greater than 0: " + id);
         }
 
-        if (dialogue_hiragana_katakana_kanji == null || dialogue_hiragana_katakana_kanji.trim().isEmpty()) {
+        if (kanji == null || kanji.trim().isEmpty()) {
             throw new IllegalArgumentException("Dialogue (Hiragana/Katakana/Kanji) cannot be null or empty: " + id);
         }
 
@@ -59,11 +59,11 @@ public class Text {
             throw new IllegalArgumentException("Translation cannot be null: " + id);
         }
 
-        if (dialogue_hiragana_katakana == null) {
+        if (hiragana_or_katakana == null) {
             throw new IllegalArgumentException("Dialogue hiragana katakana cannot be null: " + id);
         }
 
-        if (dialogue_romanji == null) {
+        if (romanji == null) {
             throw new IllegalArgumentException("Dialogue romanji cannot be null: " + id);
         }
     }
@@ -75,14 +75,14 @@ public class Text {
         if (source.getQueue() != 0) {
             this.queue = source.getQueue();
         }
-        if (source.getDialogue_hiragana_katakana_kanji() != null) {
-            this.dialogue_hiragana_katakana_kanji = source.getDialogue_hiragana_katakana_kanji();
+        if (source.getKanji() != null) {
+            this.kanji = source.getKanji();
         }
-        if (source.getDialogue_hiragana_katakana() != null) {
-            this.dialogue_hiragana_katakana = source.getDialogue_hiragana_katakana();
+        if (source.getHiragana_or_katakana() != null) {
+            this.hiragana_or_katakana = source.getHiragana_or_katakana();
         }
-        if (source.getDialogue_romanji() != null) {
-            this.dialogue_romanji = source.getDialogue_romanji();
+        if (source.getRomanji() != null) {
+            this.romanji = source.getRomanji();
         }
         if (source.getTranslation() != null) {
            this.translation = source.getTranslation();

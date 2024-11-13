@@ -18,15 +18,15 @@ public class Ordered_objects {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_type", nullable = false)
-    private ETargetType targetType;
+    @Column(name = "parent_type", nullable = false)
+    private ETargetType parentObjectType;
 
     @Column
     private Long objectId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "parent_type", nullable = false)
-    private ETargetType parentObjectType;
+    @Column(name = "target_type", nullable = false)
+    private ETargetType targetType;
 
     @Column
     private Long parentObjectId;

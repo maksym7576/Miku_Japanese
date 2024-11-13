@@ -27,8 +27,7 @@ public class Question {
     private String question;
 
     @Column
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answerMangas;
+    private String correct_answer;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
