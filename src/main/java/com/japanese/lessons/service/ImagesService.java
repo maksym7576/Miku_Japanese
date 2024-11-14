@@ -21,6 +21,10 @@ public class ImagesService {
         return response != null ? response : Collections.emptyList();
     }
 
+    public Image getImageById(Long id) {
+        return iImagesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Image no found by id: " + id));
+    }
+
     @Transactional
     public Image saveImage(Image image) {
         return iImagesRepository.save(image);

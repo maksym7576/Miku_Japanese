@@ -20,10 +20,6 @@ public class Question {
     private Long id;
 
     @Column
-    @JsonBackReference
-    private int queue;
-
-    @Column
     private String question;
 
     @Column
@@ -38,10 +34,6 @@ public class Question {
 
     public void validateCompletion() {
 
-        if (queue <= 0) {
-            throw new IllegalArgumentException("Queue must be greater than 0 " + id);
-        }
-
         if (question == null || question.trim().isEmpty()) {
             throw new IllegalArgumentException("Question cannot be null or empty" + id);
         }
@@ -50,9 +42,6 @@ public class Question {
     public void copyNonNullProperties(Question source) {
         if (source == null) {
             return;
-        }
-        if (source.getQueue() != 0) {
-            this.queue = source.getQueue();
         }
         if (source.getQuestion() != null) {
             this.question = source.getQuestion();

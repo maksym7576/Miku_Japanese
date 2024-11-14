@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StructuredDataForExercisesDTO {
     private String type;
-    private Object object;
+    private Object content;
 }

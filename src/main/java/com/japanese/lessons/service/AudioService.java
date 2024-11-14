@@ -13,6 +13,6 @@ public class AudioService {
     private IAudioRepository iAudioRepository;
 
     public Audio getByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
-        return iAudioRepository.findByTargetTypeAndTargetId(eTargetType, objectId).orElseThrow(() -> new IllegalArgumentException("Audio no found with id: " + objectId));
+        return iAudioRepository.findByTargetTypeAndTargetId(eTargetType, objectId).orElse(null);
     }
 }

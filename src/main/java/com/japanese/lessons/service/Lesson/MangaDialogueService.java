@@ -58,7 +58,10 @@ public class MangaDialogueService {
     }
 
     public List<Text> getAllTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
-        List<Text> response = iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
+        List<Text> response = iMangaTextRepository.findAllByTargetTypeAndTargetId(eTargetType, objectId);
         return response != null ? response : Collections.emptyList();
+    }
+    public Text getTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
+        return iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
     }
 }

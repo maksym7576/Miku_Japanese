@@ -19,10 +19,6 @@ public class Text {
     private Long id;
 
     @Column
-    @JsonBackReference
-    private Integer queue;
-
-    @Column
     private String kanji;
 
     @Column
@@ -35,45 +31,20 @@ public class Text {
     private String translation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_type", nullable = false)
+    @Column(name = "target_type", nullable = true)
     private ETargetType targetType;
 
-    @Column(name = "target_id", nullable = false)
+    @Column(name = "target_id", nullable = true)
     private Long targetId;
 
     @JsonIgnore
     public boolean isComplete() {
-        return queue > 0 && kanji != null;
-    }
-
-    public void validateCompletion() {
-        if (queue <= 0) {
-            throw new IllegalArgumentException("Turn must be greater than 0: " + id);
-        }
-
-        if (kanji == null || kanji.trim().isEmpty()) {
-            throw new IllegalArgumentException("Dialogue (Hiragana/Katakana/Kanji) cannot be null or empty: " + id);
-        }
-
-        if (translation == null) {
-            throw new IllegalArgumentException("Translation cannot be null: " + id);
-        }
-
-        if (hiragana_or_katakana == null) {
-            throw new IllegalArgumentException("Dialogue hiragana katakana cannot be null: " + id);
-        }
-
-        if (romanji == null) {
-            throw new IllegalArgumentException("Dialogue romanji cannot be null: " + id);
-        }
+        return kanji != null;
     }
 
     public void copyNonNullProperties(Text source) {
         if (source == null) {
             return;
-        }
-        if (source.getQueue() != 0) {
-            this.queue = source.getQueue();
         }
         if (source.getKanji() != null) {
             this.kanji = source.getKanji();

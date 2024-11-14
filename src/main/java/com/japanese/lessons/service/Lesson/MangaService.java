@@ -3,6 +3,7 @@ package com.japanese.lessons.service.Lesson;
 import com.japanese.lessons.dtos.*;
 import com.japanese.lessons.dtos.request.AnswerDataDTO;
 import com.japanese.lessons.dtos.request.AnswersDTO;
+import com.japanese.lessons.dtos.request.QuestionAnswerDTO;
 import com.japanese.lessons.dtos.response.QuizRewardsDTO;
 import com.japanese.lessons.models.*;
 import com.japanese.lessons.models.User.User;
@@ -15,10 +16,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +32,7 @@ public class MangaService {
     @Autowired private QuestionService questionService;
     @Autowired private MangaDialogueService mangaDialogueService;
     @Autowired private AudioService audioService;
+    @Autowired private Ordered_objects_service orderedObjectsService;
 
     public Manga getMangaById(Long id) {
         Manga manga = iMangaRepository.findById(id)
@@ -48,93 +48,91 @@ public class MangaService {
         return manga;
     }
 
-    private void addManga(Manga manga, List<MangaContentDTO> contenetList) {
+    private void addManga(Manga manga, List<StructuredDataForExercisesDTO> contenetList) {
         MangaDetailsDTO mangaDetailsDTO = new MangaDetailsDTO(manga.getId(), manga.getName(),manga.getStartDialog());
-        contenetList.add(new MangaContentDTO(0, "manga", mangaDetailsDTO));
+        contenetList.add(new StructuredDataForExercisesDTO("manga", mangaDetailsDTO));
     }
 
-    private void addImage(Manga manga, List<MangaContentDTO> contentList) {
-        List<Image> responseImageList = imagesService.getImagesByObjectId(ETargetType.MANGA_TABLE, manga.getId());
-        List<ImageMangaDTO> imagesWithTextList = new ArrayList<>();
-
-        for (Image image : responseImageList) {
+    private void addImage(Ordered_objects index, List<StructuredDataForExercisesDTO> contentList) {
+        Image image = imagesService.getImageById(index.getObjectId());
             List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.IMAGE_TABLE,image.getId());
             Audio audio = audioService.getByTypeAndObjectId(ETargetType.IMAGE_TABLE, image.getId());
+            ImageMangaDTO imagesWithTextAndAudio = new ImageMangaDTO();
             if (!textList.isEmpty()) {
                 Text text = textList.get(0);
-                imagesWithTextList.add(new ImageMangaDTO(image, text, audio));
+                imagesWithTextAndAudio.setImage(image);
+                imagesWithTextAndAudio.setMangaPhotoDescription(text);
+                imagesWithTextAndAudio.setAudio(audio);
+            }
+                contentList.add(new StructuredDataForExercisesDTO( "image", imagesWithTextAndAudio));
+    }
+
+    private void addImagesTogether(Ordered_objects index, List<StructuredDataForExercisesDTO> contentList) {
+        Image image = imagesService.getImageById(index.getObjectId());
+        Text text = mangaDialogueService.getTextByTypeAndObjectId(ETargetType.IMAGES_TOGETHER, image.getId());
+        Audio audio = audioService.getByTypeAndObjectId(ETargetType.IMAGES_TOGETHER, image.getId());
+        boolean added = false;
+
+        // Перевірка наявності зображення в контенті
+        for (StructuredDataForExercisesDTO data : contentList) {
+            if (data.getType().equals("images_together") && data.getContent() instanceof ImagesHasRightLeftDTO) {
+                ImagesHasRightLeftDTO dto = (ImagesHasRightLeftDTO) data.getContent();
+
+                // Спочатку додаємо зображення на праву сторону, якщо праве ще немає
+                if (dto.getImageRight() == null) {
+                    ImageMangaDTO imageRightHasTextAudio = new ImageMangaDTO(image, text, audio);
+                    dto.setImageRight(imageRightHasTextAudio);
+                    added = true;
+                    break;
+                }
+
+                // Якщо праве зображення вже є, додаємо на ліву сторону
+                if (dto.getImageLeft() == null) {
+                    ImageMangaDTO imageLeftHasTextAudio = new ImageMangaDTO(image, text, audio);
+                    dto.setImageLeft(imageLeftHasTextAudio);
+                    added = true;
+                    break;
+                }
             }
         }
-        List<ImageMangaDTO> centerImages = new ArrayList<>();
-        List<ImagesHasRightLeftDTO> rightLeftImages = new ArrayList<>();
 
-        for (ImageMangaDTO imageManga : imagesWithTextList) {
-            String layoutPosition = imageManga.getImage().getLayoutPosition();
-
-            switch (layoutPosition) {
-                case "center":
-                    centerImages.add(imageManga);
-                    break;
-
-                case "right":
-                    rightLeftImages.add(new ImagesHasRightLeftDTO(imageManga, null));
-                    break;
-
-                case "left":
-                    if (!rightLeftImages.isEmpty() && rightLeftImages.get(rightLeftImages.size() - 1).getImageLeft() == null) {
-                        rightLeftImages.get(rightLeftImages.size() - 1).setImageLeft(imageManga);
-                    } else {
-                        throw new IllegalArgumentException("Error: unmatched 'left' image without corresponding 'right' image.");
-                    }
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Unknown position type: " + layoutPosition);
-            }
+        // Якщо зображення ще не додано, додаємо новий об'єкт з правим зображенням
+        if (!added) {
+            ImageMangaDTO imageRight = new ImageMangaDTO(image, text, audio);
+            ImagesHasRightLeftDTO newDto = new ImagesHasRightLeftDTO(imageRight, null); // Початково праве зображення
+            contentList.add(new StructuredDataForExercisesDTO("images_together", newDto));
         }
-        centerImages.forEach(imageMangaDTO ->
-                contentList.add(new MangaContentDTO(imageMangaDTO.getImage().getQueue(), "image", imageMangaDTO))
-        );
-        rightLeftImages.forEach(imagesPair ->
-                contentList.add(new MangaContentDTO(imagesPair.getImageRight().getImage().getQueue(), "images_together", imagesPair))
-        );
     }
 
-    private void addMangaDialogue(Manga manga, List<MangaContentDTO> contenetList) {
-        List<Text> textList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.MANGA_TABLE, manga.getId());
-        textList.forEach(dialogue -> contenetList.add(
-                new MangaContentDTO(dialogue.getQueue(), "dialogue", dialogue)
-        ));
+    private void addMangaDialogue(Ordered_objects index, List<StructuredDataForExercisesDTO> contenetList) {
+        Text text = mangaDialogueService.getMangaDialogueById(index.getObjectId());
+        contenetList.add(new StructuredDataForExercisesDTO("dialogue", text));
     }
 
-    private void addQuestion(Manga manga, List<MangaContentDTO> contenetList) {
-        List<Question> questionList = questionService.getAllQuestionsByTypeAndObjectId(ETargetType.MANGA_TABLE, manga.getId());
-        questionList.forEach(question -> {
-            MangaContentDTO questionContent = new MangaContentDTO(question.getQueue(), "question", question);
-            contenetList.add(questionContent);
-            List<Text> questionAnswers = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, question.getId());
-            questionAnswers.forEach(answer -> {
-                new AnswerMangaDTO(
-                        answer.getId(),
-                        answer.getKanji(),
-                        answer.getHiragana_or_katakana(),
-                        answer.getRomanji()
-                );
-            });
-        });
+    private void addQuestion(Ordered_objects index, List<StructuredDataForExercisesDTO> contenetList) {
+        Question question = questionService.getQuestionById(index.getObjectId());
+        List<Text> questionAnswers = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, question.getId());
+            QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, questionAnswers);
+            contenetList.add(new StructuredDataForExercisesDTO("question", questionAnswerDTO));
     }
 
-    public List<MangaContentDTO> sortMangaByQueue(Long lessonId) {
+    public List<StructuredDataForExercisesDTO> sortMangaByQueue(Long lessonId) {
         Manga manga = getMangaByLessonID(lessonId);
-        List<MangaContentDTO> contentList = new ArrayList<>();
+        List<Ordered_objects> objectsList = orderedObjectsService.getOrderedObjectsListByOrderedIdAndType(ETargetType.MANGA_TABLE, manga.getId());
+        Collections.sort(objectsList, Comparator.comparing(Ordered_objects:: getOrderIndex));
+        List<StructuredDataForExercisesDTO> contentList = new ArrayList<>();
         addManga(manga, contentList);
-        addImage(manga, contentList);
-        addMangaDialogue(manga, contentList);
-        addQuestion(manga, contentList);
+        for (Ordered_objects index : objectsList) {
+            switch (index.getTargetType()) {
+                case IMAGE_TABLE -> addImage(index, contentList);
+                case IMAGES_TOGETHER -> addImagesTogether(index, contentList);
+                case MANGA_DIALOGUE -> addMangaDialogue(index, contentList);
+                case EXERCISE_QUESTION -> addQuestion(index, contentList);
+                default -> {}
+            }
+        }
 
-        return contentList.stream()
-                .sorted(Comparator.comparingInt(MangaContentDTO::getQueue))
-                .collect(Collectors.toList());
+        return contentList;
     }
 
 

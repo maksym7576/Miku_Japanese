@@ -13,23 +13,16 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    @JsonBackReference
-    private Integer queue;
-
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(nullable = false, length = 16 * 1024 * 1024)
     private byte[] imageData;
 
-    @Column
-    private String layoutPosition;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_type", nullable = false)
+    @Column(name = "target_type", nullable = true)
     private ETargetType targetType;
 
-    @Column(name = "target_id", nullable = false)
+    @Column(name = "target_id", nullable = true)
     private Long targetId;
 
     public Image() {
@@ -37,6 +30,5 @@ public class Image {
 
     public Image(byte[] imageData, int queue) {
         this.imageData = imageData;
-        this.queue = queue;
     }
 }

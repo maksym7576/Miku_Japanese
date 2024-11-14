@@ -1,6 +1,7 @@
 package com.japanese.lessons.controller.Lesson;
 
 import com.japanese.lessons.dtos.MangaContentDTO;
+import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.request.AnswersDTO;
 import com.japanese.lessons.dtos.response.QuizRewardsDTO;
 import com.japanese.lessons.models.lesson.mangaExercise.IncompleteMangaDataException;
@@ -36,7 +37,7 @@ public class MangaController {
     @GetMapping(path = "/sorted/{id}")
     public ResponseEntity<?> getMangaByIDSortedByQueue(@PathVariable Long id) {
         try {
-            List<MangaContentDTO> mangaContentDTOList = mangaService.sortMangaByQueue(id);
+            List<StructuredDataForExercisesDTO> mangaContentDTOList = mangaService.sortMangaByQueue(id);
             return ResponseEntity.status(HttpStatus.OK).body(mangaContentDTOList);
         } catch (IncompleteMangaDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
