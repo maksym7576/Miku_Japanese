@@ -45,17 +45,14 @@ public class MangaController {
     }
 
     @PostMapping(path = "/finish")
-    public ResponseEntity<?> returnResultWithCreatingIncorrectAnswers(@RequestBody AnswersDTO answersDTO) {
+    public ResponseEntity<?> returnResultWithCreatingIncorrectAnswers(@RequestBody List<AnswersDTO> answersDTO, @RequestParam Long userId, @RequestParam Long mangaId) {
         try {
 
-            // Викликаємо сервіс для завершення манґи
-            List<QuizRewardsDTO> rewards = mangaService.concludeManga(answersDTO);
+            List<QuizRewardsDTO> rewards = mangaService.concludeManga(answersDTO, userId, mangaId);
 
-            // Якщо все добре, повертаємо 200 OK з результатами
             return ResponseEntity.ok(rewards);
 
         } catch (Exception e) {
-            // Загальна обробка помилок для інших випадків
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An unexpected error occurred: " + e.getMessage());
         }

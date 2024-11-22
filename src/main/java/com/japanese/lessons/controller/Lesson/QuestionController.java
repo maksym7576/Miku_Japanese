@@ -1,5 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
+import com.japanese.lessons.dtos.response.ResponseEvaluationDTO;
 import com.japanese.lessons.models.lesson.exercise.Question;
 import com.japanese.lessons.service.Lesson.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +43,13 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
     }
     }
+//    @PostMapping(path = "/check/question")
+//    public ResponseEntity<?> checkIsCorrectAnswer(@RequestParam Long userId, @RequestParam Long questionId, @RequestParam Long answerId) {
+//        try {
+//            ResponseEvaluationDTO responseEvaluationDTO = questionService.checkQuestionIsCorrect(questionId, answerId, userId);
+//            return ResponseEntity.status(HttpStatus.OK).body(responseEvaluationDTO);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+//        }
+//    }
 }

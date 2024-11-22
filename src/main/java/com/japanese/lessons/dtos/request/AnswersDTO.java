@@ -11,8 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class AnswersDTO {
-    private Integer numCorrectAnswers;
-    private List<AnswerDataDTO> userIncorrectAnswersList;
-    private Long userId;
-    private Long mangaId;
+    private String type;
+    private Long answerId;
+    private boolean isCorrect;
 }

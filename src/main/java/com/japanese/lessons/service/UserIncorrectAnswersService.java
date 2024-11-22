@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserIncorrectAnswersService {
@@ -23,5 +25,16 @@ public class UserIncorrectAnswersService {
     public List<UserIncorrectAnswers> getAllUserWordsToLEarn(Long userId) {
         List<UserIncorrectAnswers> response = iUserIncorrectAnswers.findAllByUserId(userId);
         return response != null ? response : Collections.emptyList();
+    }
+
+    public void saveUniqueIncorrectAnswers(Long userId,List<UserIncorrectAnswers> newAnswers) {
+        List<UserIncorrectAnswers> responseWords = getAllUserWordsToLEarn(userId);
+        Set<String> existingKeys = responseWords.stream()
+                .map((answer -> answer.getObjectId() + "_" + answer.getType()))
+                .collect(Collectors.toSet());
+        List<UserIncorrectAnswers> uniqueExercisesToSave = newAnswers.stream()
+                .filter(answer -> !existingKeys.contains(answer.getObjectId() + "_" + answer.getType()))
+                .collect(Collectors.toList());
+        saveAllIncorrectAnswers(uniqueExercisesToSave);
     }
 }

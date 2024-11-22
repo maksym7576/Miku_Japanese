@@ -1,21 +1,32 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.dtos.request.AnswerDataDTO;
+import com.japanese.lessons.dtos.response.ResponseEvaluationDTO;
 import com.japanese.lessons.models.ETargetType;
+import com.japanese.lessons.models.User.User;
+import com.japanese.lessons.models.User.UserIncorrectAnswers;
 import com.japanese.lessons.models.lesson.exercise.Question;
+import com.japanese.lessons.models.lesson.mangaExercise.Text;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
+import com.japanese.lessons.service.UserIncorrectAnswersService;
+import com.japanese.lessons.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class QuestionService {
 
-    @Autowired
-    IQuestionRepository iQuestionRepository;
+    @Autowired private IQuestionRepository iQuestionRepository;
+    @Autowired private MangaDialogueService mangaDialogueService;
+    @Autowired private UserIncorrectAnswersService userIncorrectAnswersService;
+    @Autowired private UserService userService;
 
     public List<Question> saveAllQuestions(List<Question> questionList) {
         for(Question question : questionList) {
@@ -60,4 +71,26 @@ public class QuestionService {
 
         return response != null ? response : Collections.emptyList();
     }
+
+//    public ResponseEvaluationDTO checkQuestionIsCorrect(Long questionId, Long answerId, Long userId) {
+//        Boolean isCorrect;
+//        Question question = getQuestionById(questionId);
+//        Text answer = mangaDialogueService.getMangaDialogueById(answerId);
+//        Text correctAnswer = mangaDialogueService.getMangaDialogueById(question.getCorrect_answer_id());
+//        if(answer == correctAnswer) {
+//            isCorrect = true;
+//        } else {
+//            List<UserIncorrectAnswers> userIncorrectAnswersList = new ArrayList<>();
+//            User user = userService.getUserById(userId);
+//            UserIncorrectAnswers userIncorrectAnswers = new UserIncorrectAnswers();
+//            userIncorrectAnswers.setUser(user);
+//            userIncorrectAnswers.setType("question");
+//            userIncorrectAnswers.setObjectId(questionId);
+//            userIncorrectAnswersList.add(userIncorrectAnswers);
+//            userIncorrectAnswersService.saveUniqueIncorrectAnswers(userId, userIncorrectAnswersList);
+//            isCorrect = false;
+//        }
+//        ResponseEvaluationDTO responseEvaluationDTO = new ResponseEvaluationDTO(isCorrect, correctAnswer, question.getDescription());
+//        return responseEvaluationDTO;
+//    }
 }

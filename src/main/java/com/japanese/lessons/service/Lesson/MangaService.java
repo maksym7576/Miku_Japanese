@@ -73,12 +73,10 @@ public class MangaService {
         Audio audio = audioService.getByTypeAndObjectId(ETargetType.IMAGES_TOGETHER, image.getId());
         boolean added = false;
 
-        // Перевірка наявності зображення в контенті
         for (StructuredDataForExercisesDTO data : contentList) {
             if (data.getType().equals("images_together") && data.getContent() instanceof ImagesHasRightLeftDTO) {
                 ImagesHasRightLeftDTO dto = (ImagesHasRightLeftDTO) data.getContent();
 
-                // Спочатку додаємо зображення на праву сторону, якщо праве ще немає
                 if (dto.getImageRight() == null) {
                     ImageMangaDTO imageRightHasTextAudio = new ImageMangaDTO(image, text, audio);
                     dto.setImageRight(imageRightHasTextAudio);
@@ -86,7 +84,6 @@ public class MangaService {
                     break;
                 }
 
-                // Якщо праве зображення вже є, додаємо на ліву сторону
                 if (dto.getImageLeft() == null) {
                     ImageMangaDTO imageLeftHasTextAudio = new ImageMangaDTO(image, text, audio);
                     dto.setImageLeft(imageLeftHasTextAudio);
@@ -96,7 +93,6 @@ public class MangaService {
             }
         }
 
-        // Якщо зображення ще не додано, додаємо новий об'єкт з правим зображенням
         if (!added) {
             ImageMangaDTO imageRight = new ImageMangaDTO(image, text, audio);
             ImagesHasRightLeftDTO newDto = new ImagesHasRightLeftDTO(imageRight, null); // Початково праве зображення
@@ -131,7 +127,6 @@ public class MangaService {
                 default -> {}
             }
         }
-
         return contentList;
     }
 
@@ -162,47 +157,44 @@ public class MangaService {
         }
     }
 
-    private void saveUniqueIncorrectAnswers(Long userId,List<UserIncorrectAnswers> newAnswers) {
-        List<UserIncorrectAnswers> responseWords = userIncorrectAnswersService.getAllUserWordsToLEarn(userId);
-        Set<String> existingKeys = responseWords.stream()
-                        .map((answer -> answer.getObjectId() + "_" + answer.getType()))
-                                .collect(Collectors.toSet());
-        List<UserIncorrectAnswers> uniqueExercisesToSave = newAnswers.stream()
-                .filter(answer -> !existingKeys.contains(answer.getObjectId() + "_" + answer.getType()))
-                        .collect(Collectors.toList());
-        userIncorrectAnswersService.saveAllIncorrectAnswers(uniqueExercisesToSave);
-    }
-
-    private void addPercentageAndExperience(AnswersDTO answersDTO, List<QuizRewardsDTO> quizRewardsDTOList) {
-        int numIncorrectAnswers = answersDTO.getUserIncorrectAnswersList().size();
-        int percentage = cuntPercentage(answersDTO.getNumCorrectAnswers(), numIncorrectAnswers);
-        int experience = countExperience(answersDTO.getNumCorrectAnswers(), percentage);
+    private void addPercentageAndExperience(List<AnswersDTO> answersDTOList, List<QuizRewardsDTO> quizRewardsDTOList) {
+        int numIncorrectAnswers = 0;
+        int numCorrectAnswers = 0;
+        for (AnswersDTO answersDTO : answersDTOList) {
+            if(answersDTO.isCorrect()) {
+                numCorrectAnswers +=1;
+            } else {
+                numIncorrectAnswers +=1;
+            }
+        }
+        int percentage = cuntPercentage(numCorrectAnswers, numIncorrectAnswers);
+        int experience = countExperience(numCorrectAnswers, percentage);
         quizRewardsDTOList.add(new QuizRewardsDTO("Percentage", percentage, null));
         quizRewardsDTOList.add(new QuizRewardsDTO("Experience", experience, null));
     }
 
-    private void addItem(AnswersDTO answersDTO, List<QuizRewardsDTO> quizRewardsDTOList) {
-        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA_TABLE, answersDTO.getMangaId());
+    private void addItem(Long mangaId, List<QuizRewardsDTO> quizRewardsDTOList) {
+        List<Rewards> rewardsMangaList = rewardsService.getRewardsByTarget(ETargetType.MANGA_TABLE, mangaId);
         for (Rewards rewards : rewardsMangaList) {
             List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.REWARD_TABLE, rewards.getId());
             quizRewardsDTOList.add(new QuizRewardsDTO("Item", rewards, imageList.get(0)));
         }
     }
 
-    public List<QuizRewardsDTO> concludeManga(AnswersDTO answersDTO) {
+    public List<QuizRewardsDTO> concludeManga(List<AnswersDTO> answersDTOList, Long userId, Long mangaId) {
         List<QuizRewardsDTO> quizRewardsDTOList = new ArrayList<>();
         List<UserIncorrectAnswers> incorrectAnswersList = new ArrayList<>();
-        User user = userService.getUserById(answersDTO.getUserId());
-        for (AnswerDataDTO answerDataDTO : answersDTO.getUserIncorrectAnswersList()) {
+        User user = userService.getUserById(userId);
+        for (AnswersDTO answersDTO : answersDTOList) {
             UserIncorrectAnswers userIncorrectAnswers = new UserIncorrectAnswers();
             userIncorrectAnswers.setUser(user);
-            userIncorrectAnswers.setType(answerDataDTO.getType());
-            userIncorrectAnswers.setObjectId(answerDataDTO.getObjectId());
+            userIncorrectAnswers.setType(answersDTO.getType());
+            userIncorrectAnswers.setObjectId(answersDTO.getAnswerId());
             incorrectAnswersList.add(userIncorrectAnswers);
         }
-        saveUniqueIncorrectAnswers(answersDTO.getUserId(), incorrectAnswersList);
-        addPercentageAndExperience(answersDTO, quizRewardsDTOList);
-        addItem(answersDTO, quizRewardsDTOList);
+        userIncorrectAnswersService.saveUniqueIncorrectAnswers(userId, incorrectAnswersList);
+        addPercentageAndExperience(answersDTOList, quizRewardsDTOList);
+        addItem(mangaId, quizRewardsDTOList);
         return quizRewardsDTOList;
     }
 

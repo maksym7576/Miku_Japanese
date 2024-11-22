@@ -23,13 +23,16 @@ public class Question {
     private String question;
 
     @Column
-    private String correct_answer;
+    private Long correct_answer_id;
+
+    @Column
+    private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_type", nullable = false)
+    @Column(name = "target_type", nullable = true)
     private ETargetType targetType;
 
-    @Column(name = "target_id", nullable = false)
+    @Column(name = "target_id", nullable = true)
     private Long targetId;
 
     public void validateCompletion() {
