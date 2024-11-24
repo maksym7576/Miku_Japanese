@@ -1,5 +1,6 @@
 package com.japanese.lessons.service;
 
+import com.japanese.lessons.dtos.ExplanationWithTableDTO;
 import com.japanese.lessons.dtos.MangaDetailsDTO;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.request.QuestionAnswerDTO;
@@ -25,7 +26,7 @@ public class ExerciseService {
     @Autowired private QuestionService questionService;
     @Autowired private Ordered_objects_service orderedObjectsService;
     @Autowired private MangaDialogueService mangaDialogueService;
-
+    @Autowired private GuidanceService guidanceService;
     private Exercise getExerciseByLessonId(Long lessonId) {
         return iExerciseRepository.findByLessonId(lessonId).orElseThrow(() -> new IllegalArgumentException("Exercise is not found"));
     }
@@ -48,6 +49,15 @@ public class ExerciseService {
     }
 
     private void addFact(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
+
+    }
+
+    private void addStudyContentNewWords(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
+        ExplanationWithTableDTO explanationWithTableDTO = guidanceService.getExplanationWithTables(object.getObjectId());
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("explanation_with_table", explanationWithTableDTO));
+    }
+
+    private void addStudyContentPhrases(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
 
     }
 
@@ -75,6 +85,7 @@ public class ExerciseService {
                 case EXERCISE_COLOCATE -> addColocate(index, exercisesToReturn);
                 case EXERCISE_FACT ->  addFact(index, exercisesToReturn);
                 case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
+                case STUDY_CONTENT_WORDS -> addStudyContentNewWords(index, exercisesToReturn);
                 default -> {}
             }
         }
