@@ -15,4 +15,8 @@ public class VocabularyService {
     public List<Vocabulary> getAllVocabularyByIdsList(List<Long> ids) {
         return iVocabularyRepository.findAllById(ids);
     }
+
+    public Vocabulary getVocabularyById(Long id) {
+        return iVocabularyRepository.getById(id);
+    }
 }

@@ -2,11 +2,10 @@ package com.japanese.lessons.service;
 
 import com.japanese.lessons.dtos.ExplanationWithTableDTO;
 import com.japanese.lessons.dtos.MangaDetailsDTO;
+import com.japanese.lessons.dtos.ObjectWithAudioDTO;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.request.QuestionAnswerDTO;
-import com.japanese.lessons.models.ETargetType;
-import com.japanese.lessons.models.Exercise;
-import com.japanese.lessons.models.Ordered_objects;
+import com.japanese.lessons.models.*;
 import com.japanese.lessons.models.lesson.exercise.Question;
 import com.japanese.lessons.models.lesson.mangaExercise.Text;
 import com.japanese.lessons.repositories.IExerciseRepository;
@@ -27,6 +26,8 @@ public class ExerciseService {
     @Autowired private Ordered_objects_service orderedObjectsService;
     @Autowired private MangaDialogueService mangaDialogueService;
     @Autowired private GuidanceService guidanceService;
+    @Autowired private VocabularyService vocabularyService;
+    @Autowired private AudioService audioService;
     private Exercise getExerciseByLessonId(Long lessonId) {
         return iExerciseRepository.findByLessonId(lessonId).orElseThrow(() -> new IllegalArgumentException("Exercise is not found"));
     }
@@ -69,6 +70,15 @@ public class ExerciseService {
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question_multiple_answer", questionAnswerDTO));
     }
 
+    private void addFlashCardPopup(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
+        Vocabulary vocabulary = vocabularyService.getVocabularyById(object.getObjectId());
+        ObjectWithAudioDTO objectWithAudioDTO = new ObjectWithAudioDTO();
+        objectWithAudioDTO.setObject(vocabulary);
+        Audio audio = audioService.getByTypeAndObjectId(ETargetType.VOCABULARY_TABLE, object.getObjectId());
+        objectWithAudioDTO.setAudio(audio);
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("flash_card_popup", objectWithAudioDTO));
+    }
+
     public List<StructuredDataForExercisesDTO> getExercisesFromAllTables (Long lessonId) {
         logger.debug("Getting exercises for lesson ID: {}", lessonId);
         List<StructuredDataForExercisesDTO> exercisesToReturn = new ArrayList<>();
@@ -85,6 +95,7 @@ public class ExerciseService {
                 case EXERCISE_COLOCATE -> addColocate(index, exercisesToReturn);
                 case EXERCISE_FACT ->  addFact(index, exercisesToReturn);
                 case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
+                case FLASHCARD_POPUP -> addFlashCardPopup(index, exercisesToReturn);
                 case STUDY_CONTENT_WORDS -> addStudyContentNewWords(index, exercisesToReturn);
                 default -> {}
             }
