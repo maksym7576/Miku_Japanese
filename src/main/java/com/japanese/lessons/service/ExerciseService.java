@@ -28,6 +28,7 @@ public class ExerciseService {
     @Autowired private GuidanceService guidanceService;
     @Autowired private VocabularyService vocabularyService;
     @Autowired private AudioService audioService;
+    @Autowired private ImagesService imagesService;
     private Exercise getExerciseByLessonId(Long lessonId) {
         return iExerciseRepository.findByLessonId(lessonId).orElseThrow(() -> new IllegalArgumentException("Exercise is not found"));
     }
@@ -76,6 +77,8 @@ public class ExerciseService {
         objectWithAudioDTO.setObject(vocabulary);
         Audio audio = audioService.getByTypeAndObjectId(ETargetType.VOCABULARY_TABLE, object.getObjectId());
         objectWithAudioDTO.setAudio(audio);
+        List<Image> imageList = imagesService.getImagesByObjectId(ETargetType.FLASHCARD_POPUP, vocabulary.getId());
+        objectWithAudioDTO.setImage(imageList.get(0));
         exercisesToReturn.add(new StructuredDataForExercisesDTO("flash_card_popup", objectWithAudioDTO));
     }
 
