@@ -4,6 +4,7 @@ import com.japanese.lessons.dtos.ExplanationWithTableDTO;
 import com.japanese.lessons.dtos.MangaDetailsDTO;
 import com.japanese.lessons.dtos.ObjectWithAudioDTO;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
+import com.japanese.lessons.dtos.request.ExplanationWithPhrasesTableDTO;
 import com.japanese.lessons.dtos.request.QuestionAnswerDTO;
 import com.japanese.lessons.models.*;
 import com.japanese.lessons.models.lesson.exercise.Question;
@@ -61,7 +62,8 @@ public class ExerciseService {
     }
 
     private void addStudyContentPhrases(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
-
+        ExplanationWithPhrasesTableDTO explanationWithPhrasesTableDTO = guidanceService.getExplanationWithPhrasesTable(object.getObjectId());
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("explanation_with_phrases", explanationWithPhrasesTableDTO));
     }
 
     private void addMultipleAnswerQuestion(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
@@ -101,6 +103,7 @@ public class ExerciseService {
                 case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
                 case FLASHCARD_POPUP -> addFlashCardPopup(index, exercisesToReturn);
                 case STUDY_CONTENT_WORDS -> addStudyContentNewWords(index, exercisesToReturn);
+                case STUDY_CONTENT_PHRASES -> addStudyContentPhrases(index, exercisesToReturn);
                 default -> {}
             }
         }

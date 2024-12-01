@@ -64,4 +64,8 @@ public class MangaDialogueService {
     public Text getTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
         return iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
     }
+
+    public List<Text> getTextByIdsList(List<Long> ids) {
+        return iMangaTextRepository.findAllById(ids);
+    }
 }
