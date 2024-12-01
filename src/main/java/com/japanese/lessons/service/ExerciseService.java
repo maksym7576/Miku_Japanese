@@ -36,7 +36,8 @@ public class ExerciseService {
     private void addQuestion(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
         Question question = questionService.getQuestionById(object.getObjectId());
         List<Text> answerList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, question.getId());
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, answerList);
+        List<Image> image = imagesService.getImagesByObjectId(ETargetType.QUESTION_TABLE, question.getId());
+        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, answerList, image.get(0));
         logger.debug("Get question: {}", question);
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question", questionAnswerDTO));
     }
@@ -45,7 +46,7 @@ public class ExerciseService {
         Question questionSelect = questionService.getQuestionById(object.getObjectId());
         List<Text> questioSelectWordsList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionSelect.getId());
         Collections.shuffle(questioSelectWordsList);
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionSelect, questioSelectWordsList);
+        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionSelect, questioSelectWordsList, null);
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question_select", questionAnswerDTO));
 
     }
@@ -67,7 +68,7 @@ public class ExerciseService {
         logger.debug("add colocate with id: {}", object.getId());
         Question questionColocate = questionService.getQuestionById(object.getObjectId());
         List<Text> answerList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionColocate.getId());
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionColocate, answerList);
+        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionColocate, answerList, null);
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question_multiple_answer", questionAnswerDTO));
     }
 

@@ -108,7 +108,7 @@ public class MangaService {
     private void addQuestion(Ordered_objects index, List<StructuredDataForExercisesDTO> contenetList) {
         Question question = questionService.getQuestionById(index.getObjectId());
         List<Text> questionAnswers = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, question.getId());
-            QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, questionAnswers);
+            QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, questionAnswers, null);
             contenetList.add(new StructuredDataForExercisesDTO("question", questionAnswerDTO));
     }
 
