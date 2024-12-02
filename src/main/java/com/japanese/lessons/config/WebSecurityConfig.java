@@ -40,7 +40,9 @@ public class WebSecurityConfig {
                                 "/api/answer/**",
                                 "/api/lesson/**",
                                 "/api/user/**",
-                                "/api/exercise/**"
+                                "/api/exercise/**",
+                                "/api/video/**",
+                                "/api/url/**"
                         ).permitAll()
 
                         .requestMatchers(

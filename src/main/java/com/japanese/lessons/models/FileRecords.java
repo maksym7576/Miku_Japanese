@@ -1,7 +1,6 @@
-package com.japanese.lessons.models.lesson.exercise;
-import com.japanese.lessons.models.EGuidanceType;
+package com.japanese.lessons.models;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,21 +11,16 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Guidance {
+public class FileRecords {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String topic;
-
-    @Column
-//    @Size(max = 500)
-    private String description;
+    @Column(nullable = false)
+    private String url;
 
     @Enumerated(EnumType.STRING)
     @Column
-    private EGuidanceType eGuidanceType;
-
+    private EFileURLType fileURLType;
 }
