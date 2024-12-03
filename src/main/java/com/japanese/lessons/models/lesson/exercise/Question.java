@@ -1,13 +1,11 @@
 package com.japanese.lessons.models.lesson.exercise;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.japanese.lessons.models.EFileURLType;
 import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -34,6 +32,13 @@ public class Question {
 
     @Column(name = "target_id", nullable = true)
     private Long targetId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_to_show")
+    private EFileURLType eFileURLType;
+
+    @Column(name = "type_to_show_id")
+    private Long objectIdURL;
 
     public void validateCompletion() {
 

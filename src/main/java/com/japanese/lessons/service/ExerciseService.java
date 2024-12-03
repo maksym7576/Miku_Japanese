@@ -1,9 +1,6 @@
 package com.japanese.lessons.service;
 
-import com.japanese.lessons.dtos.ExplanationWithTableDTO;
-import com.japanese.lessons.dtos.MangaDetailsDTO;
-import com.japanese.lessons.dtos.ObjectWithAudioDTO;
-import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
+import com.japanese.lessons.dtos.*;
 import com.japanese.lessons.dtos.request.ExplanationWithPhrasesTableDTO;
 import com.japanese.lessons.dtos.request.QuestionAnswerDTO;
 import com.japanese.lessons.models.*;
@@ -30,6 +27,7 @@ public class ExerciseService {
     @Autowired private VocabularyService vocabularyService;
     @Autowired private AudioService audioService;
     @Autowired private ImagesService imagesService;
+    @Autowired private FileRecordService fileRecordService;
     private Exercise getExerciseByLessonId(Long lessonId) {
         return iExerciseRepository.findByLessonId(lessonId).orElseThrow(() -> new IllegalArgumentException("Exercise is not found"));
     }
@@ -37,19 +35,53 @@ public class ExerciseService {
     private void addQuestion(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
         Question question = questionService.getQuestionById(object.getObjectId());
         List<Text> answerList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, question.getId());
-        List<Image> image = imagesService.getImagesByObjectId(ETargetType.QUESTION_TABLE, question.getId());
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, answerList, image.get(0));
+        List<Image> image = new ArrayList<>();
+        if(question.getEFileURLType() == EFileURLType.image) {
+            image = imagesService.getImagesByObjectId(ETargetType.QUESTION_TABLE, question.getId());
+        }
+        FileRecords fileRecords = new FileRecords();
+        if(question.getEFileURLType() == EFileURLType.video) {
+            fileRecords = fileRecordService.getFileRecordsById(question.getObjectIdURL());
+        }
+        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(question, answerList, question.getEFileURLType() == EFileURLType.image ? image.get(0) : fileRecords );
         logger.debug("Get question: {}", question);
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question", questionAnswerDTO));
     }
 
     private void addColocate(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
-        Question questionSelect = questionService.getQuestionById(object.getObjectId());
-        List<Text> questioSelectWordsList = mangaDialogueService.getAllTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, questionSelect.getId());
-        Collections.shuffle(questioSelectWordsList);
-        QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO(questionSelect, questioSelectWordsList, null);
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("question_select", questionAnswerDTO));
+        Question question = questionService.getQuestionById(object.getObjectId());
+        Audio audio = new Audio();
+        Text text = mangaDialogueService.getTextByTypeAndObjectId(ETargetType.QUESTION_TABLE, object.getObjectId());
+        if(question.getEFileURLType() == EFileURLType.audio) {
+            audio = audioService.getByTypeAndObjectId(ETargetType.QUESTION_TABLE, object.getObjectId());
+        }
+        String[] arrayKanji = text.getKanji().split(",");
+        String kanjiPhrase = String.join(" ", arrayKanji);
+        String[] arrayHiragana_katakana = text.getHiragana_or_katakana().split(",");
+        String hiragana_katakanaPhrase = String.join(" ", arrayHiragana_katakana);
+        String[] arrayRomanji = text.getRomanji().split(",");
+        String romanjiPhrase = String.join(" ", arrayRomanji);
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < arrayKanji.length; i++) {
+            indices.add(i);
+        }
+        Collections.shuffle(indices);
+        String[] shuffledKanji = new String[arrayKanji.length];
+        String[] shuffledHiraganaKatakana = new String[arrayHiragana_katakana.length];
+        String[] shuffledRomanji = new String[arrayRomanji.length];
 
+        for (int i = 0; i < indices.size(); i++) {
+            int shuffledIndex = indices.get(i);
+            shuffledKanji[i] = arrayKanji[shuffledIndex];
+            shuffledHiraganaKatakana[i] = arrayHiragana_katakana[shuffledIndex];
+            shuffledRomanji[i] = arrayRomanji[shuffledIndex];
+        }
+        ColocateWordsDTO colocateWordsDTO = new ColocateWordsDTO(
+                text.getId(), kanjiPhrase, hiragana_katakanaPhrase, romanjiPhrase, text.getTranslation(),
+                shuffledKanji, shuffledHiraganaKatakana, shuffledRomanji
+        );
+        ColocateExerciseDTO colocateExerciseDTO = new ColocateExerciseDTO(question, colocateWordsDTO, audio);
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("exercise_colocate", colocateExerciseDTO));
     }
 
     private void addFact(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
@@ -84,6 +116,15 @@ public class ExerciseService {
         objectWithAudioDTO.setImage(imageList.get(0));
         exercisesToReturn.add(new StructuredDataForExercisesDTO("flash_card_popup", objectWithAudioDTO));
     }
+    private void addFlashCardPopupPhrases(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
+        Text text = mangaDialogueService.getMangaDialogueById(object.getObjectId());
+        FileRecords fileRecords = new FileRecords();
+        if(text.getTargetType() == ETargetType.FILE_RECORDS_TABLE) {
+            fileRecords = fileRecordService.getFileRecordsById(text.getTargetId());
+        }
+        ObjectWithVideoDTO objectWithVideoDTO = new ObjectWithVideoDTO(text ,fileRecords);
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("flash_card_popup_phrases", objectWithVideoDTO));
+    }
 
     public List<StructuredDataForExercisesDTO> getExercisesFromAllTables (Long lessonId) {
         logger.debug("Getting exercises for lesson ID: {}", lessonId);
@@ -104,6 +145,7 @@ public class ExerciseService {
                 case FLASHCARD_POPUP -> addFlashCardPopup(index, exercisesToReturn);
                 case STUDY_CONTENT_WORDS -> addStudyContentNewWords(index, exercisesToReturn);
                 case STUDY_CONTENT_PHRASES -> addStudyContentPhrases(index, exercisesToReturn);
+                case FLASHCARD_POPUP_PHRASES -> addFlashCardPopupPhrases(index, exercisesToReturn);
                 default -> {}
             }
         }

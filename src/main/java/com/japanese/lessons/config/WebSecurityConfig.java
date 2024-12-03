@@ -41,7 +41,6 @@ public class WebSecurityConfig {
                                 "/api/lesson/**",
                                 "/api/user/**",
                                 "/api/exercise/**",
-                                "/api/video/**",
                                 "/api/url/**"
                         ).permitAll()
 

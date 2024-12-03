@@ -13,4 +13,7 @@ public class FileRecordService {
     public FileRecords saveFileRecords(FileRecords fileRecords) {
         return iFileRecordRepository.save(fileRecords);
     }
+    public FileRecords getFileRecordsById(Long id) {
+        return iFileRecordRepository.getReferenceById(id);
+    }
 }

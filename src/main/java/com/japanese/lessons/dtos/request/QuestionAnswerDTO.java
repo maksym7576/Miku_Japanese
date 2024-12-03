@@ -16,5 +16,5 @@ public class QuestionAnswerDTO {
 
     private Question question;
     private List<Text> answerList;
-    private Image image;
+    private Object image;
 }
