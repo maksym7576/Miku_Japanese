@@ -1,20 +1,20 @@
-package com.japanese.lessons.controller;
-
-import com.japanese.lessons.service.ImagesService;
-import com.japanese.lessons.service.Lesson.MangaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-@Controller
-@RequestMapping("/api/images")
-public class ImagesController {
-
-    @Autowired
-    ImagesService imagesService;
-
-    @Autowired
-    MangaService mangaService;
+//package com.japanese.lessons.controller;
+//
+//import com.japanese.lessons.service.ImagesService;
+//import com.japanese.lessons.service.Lesson.MangaService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Controller;
+//import org.springframework.web.bind.annotation.*;
+//
+//@Controller
+//@RequestMapping("/api/images")
+//public class ImagesController {
+//
+//    @Autowired
+//    ImagesService imagesService;
+//
+//    @Autowired
+//    MangaService mangaService;
 
 //    @PostMapping("/create/{mangaId}")
 //    public ResponseEntity<?> uploadFlightImage(
@@ -34,4 +34,4 @@ public class ImagesController {
 //    }
 
 
-}
+//}

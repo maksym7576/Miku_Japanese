@@ -1,6 +1,6 @@
 package com.japanese.lessons.service;
 
-import com.japanese.lessons.models.Rewards;
+import com.japanese.lessons.models.third.Rewards;
 import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.repositories.IRewardsRepository;
 import org.springframework.beans.factory.annotation.Autowired;

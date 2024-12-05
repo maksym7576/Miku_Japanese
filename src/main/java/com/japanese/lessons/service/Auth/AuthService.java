@@ -2,7 +2,7 @@ package com.japanese.lessons.service.Auth;
 
 import com.japanese.lessons.dtos.request.LoginRequest;
 import com.japanese.lessons.dtos.request.RegisterRequest;
-import com.japanese.lessons.dtos.response.AuthResponse;
+import com.japanese.lessons.dtos.response.auth.AuthResponse;
 import com.japanese.lessons.models.User.ERole;
 import com.japanese.lessons.models.User.User;
 import com.japanese.lessons.repositories.UserRepository;

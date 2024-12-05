@@ -1,19 +1,20 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.ETargetType;
-import com.japanese.lessons.models.lesson.mangaExercise.Text;
+import com.japanese.lessons.models.sixsth.Text;
 import com.japanese.lessons.repositories.Lesson.IMangaTextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 public class MangaDialogueService {
 
-    @Autowired
-    IMangaTextRepository iMangaTextRepository;
+    @Autowired private IMangaTextRepository iMangaTextRepository;
 
     public Text getMangaDialogueById(Long id) {
         return iMangaTextRepository.findById(id)
@@ -57,15 +58,39 @@ public class MangaDialogueService {
         saveMangaDialogue(existingText);
     }
 
-    public List<Text> getAllTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
-        List<Text> response = iMangaTextRepository.findAllByTargetTypeAndTargetId(eTargetType, objectId);
-        return response != null ? response : Collections.emptyList();
-    }
-    public Text getTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
-        return iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
-    }
+//    public List<Text> getAllTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
+////        List<Text> response = iMangaTextRepository.findAllByTargetTypeAndTargetId(eTargetType, objectId);
+////        return response != null ? response : Collections.emptyList();
+//    }
+//    public Text getTextByTypeAndObjectId(ETargetType eTargetType, Long objectId) {
+////        return iMangaTextRepository.findByTargetTypeAndTargetId(eTargetType, objectId);
+//    }
 
     public List<Text> getTextByIdsList(List<Long> ids) {
         return iMangaTextRepository.findAllById(ids);
+    }
+
+    private TextDTO formTextDTO(Text text) {
+        return new TextDTO(text.getId(),
+                text.getKanji(),text.getHiragana_or_katakana(),
+                text.getRomanji(), text.getTranslation());
+    }
+
+    private List<TextDTO> formTextDTOList(List<Text> textList) {
+        List<TextDTO> textDTOList = new ArrayList<>();
+        for (Text text : textList) {
+            textDTOList.add(formTextDTO(text));
+        }
+        return textDTOList;
+    }
+
+    public List<TextDTO>  getTextDTOListByIdsList(List<Long> idsList) {
+        List<Text> textList = getTextByIdsList(idsList);
+        return formTextDTOList(textList);
+    }
+
+    public TextDTO createTextDTOByTargetId(Long targetId) {
+        Text text = getMangaDialogueById(targetId);
+        return formTextDTO(text);
     }
 }

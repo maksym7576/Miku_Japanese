@@ -2,7 +2,7 @@ package com.japanese.lessons.controller;
 
 import com.japanese.lessons.dtos.request.LoginRequest;
 import com.japanese.lessons.dtos.request.RegisterRequest;
-import com.japanese.lessons.dtos.response.AuthResponse;
+import com.japanese.lessons.dtos.response.auth.AuthResponse;
 import com.japanese.lessons.service.Auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

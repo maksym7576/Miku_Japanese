@@ -1,6 +1,6 @@
 package com.japanese.lessons.repositories;
 
-import com.japanese.lessons.models.Rewards;
+import com.japanese.lessons.models.third.Rewards;
 import com.japanese.lessons.models.ETargetType;
 import org.springframework.data.jpa.repository.JpaRepository;
 

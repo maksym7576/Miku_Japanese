@@ -18,7 +18,7 @@ public class ExerciseController {
 
     @Autowired private ExerciseService exerciseService;
 
-    @GetMapping(path = "/structured/{lesson_id}")
+    @GetMapping(path = "/structured/{lesson_id}/test")
     public ResponseEntity<List<StructuredDataForExercisesDTO>> getAllStructuredExerciseDataByLessonId(@PathVariable Long lesson_id) {
         try {
             List<StructuredDataForExercisesDTO> result = exerciseService.getExercisesFromAllTables(lesson_id);

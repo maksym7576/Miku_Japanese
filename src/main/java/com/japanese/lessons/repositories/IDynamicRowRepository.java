@@ -1,7 +1,6 @@
 package com.japanese.lessons.repositories;
 
-import com.japanese.lessons.models.DynamicRow;
-import com.japanese.lessons.models.ETargetType;
+import com.japanese.lessons.models.fifth.DynamicRow;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

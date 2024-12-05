@@ -1,53 +1,30 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.dtos.request.AnswerDataDTO;
-import com.japanese.lessons.dtos.response.ResponseEvaluationDTO;
-import com.japanese.lessons.models.ETargetType;
-import com.japanese.lessons.models.User.User;
-import com.japanese.lessons.models.User.UserIncorrectAnswers;
-import com.japanese.lessons.models.lesson.exercise.Question;
-import com.japanese.lessons.models.lesson.mangaExercise.Text;
+import com.japanese.lessons.dtos.ObjectWithMediaDTO;
+import com.japanese.lessons.dtos.QuestionWithAnswerDTO;
+import com.japanese.lessons.dtos.response.question.ColocateExerciseDTO;
+import com.japanese.lessons.dtos.response.question.ColocateWordsDTO;
+import com.japanese.lessons.dtos.response.models.QuestionDTO;
+import com.japanese.lessons.dtos.response.models.TextDTO;
+import com.japanese.lessons.models.fourth.Question;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
-import com.japanese.lessons.service.UserIncorrectAnswersService;
-import com.japanese.lessons.service.UserService;
+import com.japanese.lessons.service.FileRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class QuestionService {
 
     @Autowired private IQuestionRepository iQuestionRepository;
     @Autowired private MangaDialogueService mangaDialogueService;
-    @Autowired private UserIncorrectAnswersService userIncorrectAnswersService;
-    @Autowired private UserService userService;
-
-    public List<Question> saveAllQuestions(List<Question> questionList) {
-        for(Question question : questionList) {
-            validQuestionIsNull(question);
-            question.validateCompletion();
-        }
-            Iterable<Question> savedQuestions = iQuestionRepository.saveAll(questionList);
-            return StreamSupport.stream(savedQuestions.spliterator(), false)
-                    .collect(Collectors.toList());
-    }
+    @Autowired private FileRecordService fileRecordService;
 
     public void saveQuestion(Question question) {
-        validQuestionIsNull(question);
-        question.validateCompletion();
         iQuestionRepository.save(question);
-    }
-
-    private void validQuestionIsNull(Question question) {
-        if(question == null) {
-            throw new IllegalArgumentException("Question is null: " + question.getId());
-        }
     }
 
     public void deleteQuestion(Long id) {
@@ -59,38 +36,61 @@ public class QuestionService {
     }
     public void updateQuestion(Long id, Question updatedQuestion) {
       Question responceQuestion = getQuestionById(id);
-      responceQuestion.copyNonNullProperties(updatedQuestion);
       iQuestionRepository.save(responceQuestion);
     }
-    public Question getQuestionById(Long id) {
+    private Question getQuestionById(Long id) {
         return iQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("This question isn't exists"));
     }
 
-    public List<Question> getAllQuestionsByTypeAndObjectId(ETargetType targetType, Long objectId) {
-        List<Question> response = iQuestionRepository.findByTargetTypeAndTargetId(targetType, objectId);
-
-        return response != null ? response : Collections.emptyList();
+    private QuestionDTO formQuestion(Question question) {
+        return new QuestionDTO(question.getId(), question.getQuestion(), question.getDescription(), question.getCorrect_answer_id());
     }
 
-//    public ResponseEvaluationDTO checkQuestionIsCorrect(Long questionId, Long answerId, Long userId) {
-//        Boolean isCorrect;
-//        Question question = getQuestionById(questionId);
-//        Text answer = mangaDialogueService.getMangaDialogueById(answerId);
-//        Text correctAnswer = mangaDialogueService.getMangaDialogueById(question.getCorrect_answer_id());
-//        if(answer == correctAnswer) {
-//            isCorrect = true;
-//        } else {
-//            List<UserIncorrectAnswers> userIncorrectAnswersList = new ArrayList<>();
-//            User user = userService.getUserById(userId);
-//            UserIncorrectAnswers userIncorrectAnswers = new UserIncorrectAnswers();
-//            userIncorrectAnswers.setUser(user);
-//            userIncorrectAnswers.setType("question");
-//            userIncorrectAnswers.setObjectId(questionId);
-//            userIncorrectAnswersList.add(userIncorrectAnswers);
-//            userIncorrectAnswersService.saveUniqueIncorrectAnswers(userId, userIncorrectAnswersList);
-//            isCorrect = false;
-//        }
-//        ResponseEvaluationDTO responseEvaluationDTO = new ResponseEvaluationDTO(isCorrect, correctAnswer, question.getDescription());
-//        return responseEvaluationDTO;
-//    }
+    private QuestionWithAnswerDTO getQuestionWithAnswers(Question question) {
+        List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsList(question.getIdsAnswers());
+        return new QuestionWithAnswerDTO(formQuestion(question), answerDTOList);
+    }
+
+    private ColocateExerciseDTO getColocateWithWords(Question question) {
+        List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(question.getIdsAnswers());
+        TextDTO text = textDTOList.get(0);
+        String[] arrayKanji = text.getKanji_word().split(" ");
+        String kanjiPhrase = String.join("", arrayKanji);
+        String[] arrayHiragana_katakana = text.getHiragana_or_katakana().split(" ");
+        String hiragana_katakanaPhrase = String.join("", arrayHiragana_katakana);
+        String[] arrayRomanji = text.getRomanji_word().split(" ");
+        String romanjiPhrase = String.join(" ", arrayRomanji);
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < arrayKanji.length; i++) {
+            indices.add(i);
+        }
+        Collections.shuffle(indices);
+        String[] shuffledKanji = new String[arrayKanji.length];
+        String[] shuffledHiraganaKatakana = new String[arrayHiragana_katakana.length];
+        String[] shuffledRomanji = new String[arrayRomanji.length];
+
+        for (int i = 0; i < indices.size(); i++) {
+            int shuffledIndex = indices.get(i);
+            shuffledKanji[i] = arrayKanji[shuffledIndex];
+            shuffledHiraganaKatakana[i] = arrayHiragana_katakana[shuffledIndex];
+            shuffledRomanji[i] = arrayRomanji[shuffledIndex];
+        }
+        ColocateWordsDTO colocateWordsDTO = new ColocateWordsDTO(
+                text.getId(), kanjiPhrase, hiragana_katakanaPhrase, romanjiPhrase, text.getTranslation(),
+                shuffledKanji, shuffledHiraganaKatakana, shuffledRomanji
+        );
+       return new ColocateExerciseDTO(question, colocateWordsDTO);
+    }
+
+    public ObjectWithMediaDTO addMediaToQuestion(Long questionId, String questionType) {
+        Question question = getQuestionById(questionId);
+        ObjectWithMediaDTO objectWithMediaDTO = new ObjectWithMediaDTO();
+        switch (questionType) {
+            case "QUESTION" ->  objectWithMediaDTO.setObject(getQuestionWithAnswers(question));
+            case "COLOCATE" -> objectWithMediaDTO.setObject(getColocateWithWords(question));
+            default -> {}
+        };
+        objectWithMediaDTO.setFileRecordsList(fileRecordService.createListFileRecordsDTOByIdsList(question.getIdsMedia()));
+        return objectWithMediaDTO;
+    }
 }

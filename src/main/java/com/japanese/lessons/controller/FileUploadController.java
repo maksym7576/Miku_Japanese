@@ -1,17 +1,13 @@
 package com.japanese.lessons.controller;
 
-import com.japanese.lessons.models.FileRecords;
 import com.japanese.lessons.service.ExerciseService;
-import com.japanese.lessons.service.FileUpload;
 import com.japanese.lessons.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
