@@ -1,14 +1,12 @@
 package com.japanese.lessons.service.Lesson;
 
 import com.japanese.lessons.dtos.response.models.TextDTO;
-import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.models.sixsth.Text;
 import com.japanese.lessons.repositories.Lesson.IMangaTextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service

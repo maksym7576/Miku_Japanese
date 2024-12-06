@@ -22,7 +22,7 @@ public class DynamicRow {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "VARCHAR(100) COLLATE utf8mb4_general_ci")
     private String tableName;
 
     @Column(name = "guidance_id", nullable = true)

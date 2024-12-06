@@ -1,5 +1,6 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.dtos.AnswerDTO;
 import com.japanese.lessons.dtos.ObjectWithMediaDTO;
 import com.japanese.lessons.dtos.QuestionWithAnswerDTO;
 import com.japanese.lessons.dtos.response.question.ColocateExerciseDTO;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -43,16 +46,25 @@ public class QuestionService {
     }
 
     private QuestionDTO formQuestion(Question question) {
-        return new QuestionDTO(question.getId(), question.getQuestion(), question.getDescription(), question.getCorrect_answer_id());
+        Map<Long, Boolean> answersMap = question.getIdsAnswers();
+        List<AnswerDTO> answerDTOList = answersMap.entrySet()
+                .stream()
+                .map(entry -> new AnswerDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+        return new QuestionDTO(question.getId(), question.getQuestion(), question.getDescription(), answerDTOList);
     }
 
     private QuestionWithAnswerDTO getQuestionWithAnswers(Question question) {
-        List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsList(question.getIdsAnswers());
+        Map<Long, Boolean> answersMap = question.getIdsAnswers();
+        List<Long> ids = new ArrayList<>(answersMap.keySet());
+        List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsList(ids);
         return new QuestionWithAnswerDTO(formQuestion(question), answerDTOList);
     }
 
     private ColocateExerciseDTO getColocateWithWords(Question question) {
-        List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(question.getIdsAnswers());
+        Map<Long, Boolean> answersMap = question.getIdsAnswers();
+        List<Long> ids = new ArrayList<>(answersMap.keySet());
+        List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(ids);
         TextDTO text = textDTOList.get(0);
         String[] arrayKanji = text.getKanji_word().split(" ");
         String kanjiPhrase = String.join("", arrayKanji);
@@ -79,7 +91,7 @@ public class QuestionService {
                 text.getId(), kanjiPhrase, hiragana_katakanaPhrase, romanjiPhrase, text.getTranslation(),
                 shuffledKanji, shuffledHiraganaKatakana, shuffledRomanji
         );
-       return new ColocateExerciseDTO(question, colocateWordsDTO);
+       return new ColocateExerciseDTO(formQuestion(question), colocateWordsDTO);
     }
 
     public ObjectWithMediaDTO addMediaToQuestion(Long questionId, String questionType) {

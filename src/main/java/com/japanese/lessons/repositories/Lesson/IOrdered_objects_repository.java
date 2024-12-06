@@ -1,6 +1,5 @@
 package com.japanese.lessons.repositories.Lesson;
 
-import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.models.third.Ordered_objects;
 import org.springframework.data.jpa.repository.JpaRepository;
 

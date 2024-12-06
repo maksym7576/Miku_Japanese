@@ -1,7 +1,6 @@
 package com.japanese.lessons.models.sixsth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,13 +27,6 @@ public class Text {
 
     @Column
     private String translation;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "target_type", nullable = true)
-//    private ETargetType targetType;
-//
-//    @Column(name = "target_id", nullable = true)
-//    private Long targetId;
 
     @JsonIgnore
     public boolean isComplete() {

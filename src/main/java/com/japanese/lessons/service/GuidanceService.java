@@ -2,6 +2,7 @@ package com.japanese.lessons.service;
 
 import com.japanese.lessons.dtos.guidance.TableDTO;
 import com.japanese.lessons.dtos.guidance.ExplanationWithTableDTO;
+import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.fifth.DynamicRow;
 import com.japanese.lessons.models.fourth.Guidance;
 import com.japanese.lessons.models.sixsth.Text;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GuidanceService {
@@ -38,8 +40,19 @@ public class GuidanceService {
     private List<TableDTO> formPhrasesTableList(List<DynamicRow> dynamicRowList) {
         List<TableDTO> tableDTOList = new ArrayList<>();
         for (DynamicRow dynamicRow : dynamicRowList) {
-            List<Text> textList = mangaDialogueService.getTextByIdsList(dynamicRow.getIds());
-            tableDTOList.add(new TableDTO(dynamicRowService.formDynamicRowDTO(dynamicRow), textList));
+            List<TextDTO> textList = mangaDialogueService.getTextDTOListByIdsList(dynamicRow.getIds());
+            List<TextDTO> cleanedTextList = textList.stream()
+                    .map(textDTO -> {
+                        TextDTO cleanedTextDTO = new TextDTO();
+                        cleanedTextDTO.setKanji_word(textDTO.getKanji_word().replaceAll("\\s+", ""));
+                        cleanedTextDTO.setHiragana_or_katakana(textDTO.getHiragana_or_katakana().replaceAll("\\s+", ""));
+                        cleanedTextDTO.setRomanji_word(textDTO.getRomanji_word());
+                        cleanedTextDTO.setTranslation(textDTO.getTranslation());
+                        cleanedTextDTO.setId(textDTO.getId());
+                        return cleanedTextDTO;
+                    })
+                    .collect(Collectors.toList());
+            tableDTOList.add(new TableDTO(dynamicRowService.formDynamicRowDTO(dynamicRow), cleanedTextList));
         }
         return tableDTOList;
     }

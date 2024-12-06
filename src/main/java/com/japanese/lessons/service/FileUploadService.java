@@ -31,15 +31,17 @@ public class FileUploadService {
         } else {
             throw new IllegalArgumentException("Unsupported file type. Please upload an image or video.");
         }
+        String resourceType = fileRecords.getFileURLType() == EFileURLType.audio ? "raw" : fileRecords.getFileURLType().toString();
 
-        Map<String, Object> uploadResult = cloudinary.uploader()
-                .upload(multipartFile.getBytes(),
-                Map.of("resource_type", fileRecords.getFileURLType().toString(),
-                           "public_id", UUID.randomUUID().toString()
-                ));
-
+        Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                multipartFile.getBytes(),
+                Map.of(
+                        "resource_type", resourceType,
+                        "public_id", UUID.randomUUID().toString()
+                )
+        );
         fileRecords.setUrl(uploadResult.get("url").toString());
-        FileRecords fileRecordsSaved = fileRecordService.saveFileRecords(fileRecords);
+        fileRecordService.saveFileRecords(fileRecords);
     }
 
 }

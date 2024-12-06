@@ -1,6 +1,5 @@
 package com.japanese.lessons.models.third;
 
-import com.japanese.lessons.models.ETargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,9 +22,9 @@ public class Rewards {
     @Column
     private String type;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "target_type", nullable = false)
-    private ETargetType targetType;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "target_type", nullable = false)
+//    private ETargetType targetType;
 
     @Column(name = "target_id", nullable = false)
     private Long targetId;

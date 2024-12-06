@@ -1,6 +1,5 @@
 package com.japanese.lessons.service;
 
-import com.japanese.lessons.models.ETargetType;
 import com.japanese.lessons.models.third.Ordered_objects;
 import com.japanese.lessons.repositories.Lesson.IOrdered_objects_repository;
 import org.springframework.beans.factory.annotation.Autowired;

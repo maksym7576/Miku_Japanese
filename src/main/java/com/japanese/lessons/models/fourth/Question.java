@@ -1,13 +1,13 @@
 package com.japanese.lessons.models.fourth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -24,34 +24,39 @@ public class Question {
     private String question;
 
     @Column
-    private Long correct_answer_id;
-
-    @Column
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type_to_show")
     private EMediaType eMediaType;
 
-    @Column(name = "ids_answers")
-    private String idsAnswersString;
+    @Column(name = "ids_answers_json", columnDefinition = "TEXT")
+    private String idsAnswersJson;
 
     @Column(name = "ids_media")
     private String idsMediaString;
 
-    public void setIdsAnswers(List<Long> ids) {
-        this.idsAnswersString = ids.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-    }
-
-    public List<Long> getIdsAnswers() {
-        if (idsAnswersString == null || idsAnswersString.isEmpty()) {
-            return new ArrayList<>();
+    public void setIdsAnswers(Map<Long, Boolean> answers) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            this.idsAnswersJson = objectMapper.writeValueAsString(answers);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            this.idsAnswersJson = "{}";
         }
-        return Arrays.stream(idsAnswersString.split(","))
-                .map(Long::parseLong)
-                .collect(Collectors.toList());
+    }
+    public Map<Long, Boolean> getIdsAnswers() {
+        if (idsAnswersJson == null || idsAnswersJson.isEmpty()) {
+            return new HashMap<>();
+        }
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(idsAnswersJson,
+                    objectMapper.getTypeFactory().constructMapType(Map.class, Long.class, Boolean.class));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return new HashMap<>();
+        }
     }
 
     public void setIdsMedia(List<Long> ids) {
