@@ -41,18 +41,7 @@ public class GuidanceService {
         List<TableDTO> tableDTOList = new ArrayList<>();
         for (DynamicRow dynamicRow : dynamicRowList) {
             List<TextDTO> textList = mangaDialogueService.getTextDTOListByIdsList(dynamicRow.getIds());
-            List<TextDTO> cleanedTextList = textList.stream()
-                    .map(textDTO -> {
-                        TextDTO cleanedTextDTO = new TextDTO();
-                        cleanedTextDTO.setKanji_word(textDTO.getKanji_word().replaceAll("\\s+", ""));
-                        cleanedTextDTO.setHiragana_or_katakana(textDTO.getHiragana_or_katakana().replaceAll("\\s+", ""));
-                        cleanedTextDTO.setRomanji_word(textDTO.getRomanji_word());
-                        cleanedTextDTO.setTranslation(textDTO.getTranslation());
-                        cleanedTextDTO.setId(textDTO.getId());
-                        return cleanedTextDTO;
-                    })
-                    .collect(Collectors.toList());
-            tableDTOList.add(new TableDTO(dynamicRowService.formDynamicRowDTO(dynamicRow), cleanedTextList));
+            tableDTOList.add(new TableDTO(dynamicRowService.formDynamicRowDTO(dynamicRow), textList));
         }
         return tableDTOList;
     }

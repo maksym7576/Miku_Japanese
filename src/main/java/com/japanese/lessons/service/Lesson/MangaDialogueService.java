@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MangaDialogueService {
@@ -84,7 +85,16 @@ public class MangaDialogueService {
 
     public List<TextDTO>  getTextDTOListByIdsList(List<Long> idsList) {
         List<Text> textList = getTextByIdsList(idsList);
+        for (Text text : textList) {
+            uniteHiraganaKanji(text);
+        }
         return formTextDTOList(textList);
+    }
+
+    private Text uniteHiraganaKanji (Text text) {
+        text.setKanji(text.getKanji().replaceAll("\\s+", ""));
+        text.setHiragana_or_katakana(text.getHiragana_or_katakana().replaceAll("\\s+", ""));
+        return text;
     }
 
     public TextDTO createTextDTOByTargetId(Long targetId) {
