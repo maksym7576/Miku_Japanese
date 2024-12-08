@@ -31,7 +31,7 @@ public class PhraseService {
     public ObjectWithMediaDTO getPhraseWithMedia(Long phraseId) {
         Phrase phrase = getPhraseById(phraseId);
         List<FileRecordsDTO> fileRecordsDTOList = fileRecordService.createListFileRecordsDTOByIdsList(phrase.getIds());
-        TextDTO textDTO = mangaDialogueService.createTextDTOByTargetId(phrase.getTextId());
+        TextDTO textDTO = mangaDialogueService.getTextDTOByIdWithUnitingWords(phrase.getTextId());
         PhraseDTOWithSentence phraseDTOWithSentence = new PhraseDTOWithSentence(generatePhrase(phrase), textDTO);
         return new ObjectWithMediaDTO(phraseDTOWithSentence, fileRecordsDTOList);
     }

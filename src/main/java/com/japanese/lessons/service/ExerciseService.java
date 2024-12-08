@@ -32,12 +32,12 @@ public class ExerciseService {
     }
 
     private void addQuestion(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
-        ObjectWithMediaDTO objectWithMediaDTO = questionService.addMediaToQuestion(object.getActivityId(), "QUESTION");
+        ObjectWithMediaDTO objectWithMediaDTO = questionService.addMediaToQuestionAndGetQuestion(object.getActivityId(), "QUESTION");
         exercisesToReturn.add(new StructuredDataForExercisesDTO("question", objectWithMediaDTO));
     }
 
     private void addColocate(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
-        ObjectWithMediaDTO objectWithMediaDTO = questionService.addMediaToQuestion(object.getActivityId(), "COLOCATE");
+        ObjectWithMediaDTO objectWithMediaDTO = questionService.addMediaToQuestionAndGetQuestion(object.getActivityId(), "COLOCATE");
         exercisesToReturn.add(new StructuredDataForExercisesDTO("exercise_colocate", objectWithMediaDTO));
     }
 

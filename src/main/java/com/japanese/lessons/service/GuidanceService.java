@@ -5,7 +5,6 @@ import com.japanese.lessons.dtos.guidance.ExplanationWithTableDTO;
 import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.fifth.DynamicRow;
 import com.japanese.lessons.models.fourth.Guidance;
-import com.japanese.lessons.models.sixsth.Text;
 import com.japanese.lessons.repositories.IGuidanceRepository;
 import com.japanese.lessons.service.Lesson.MangaDialogueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GuidanceService {
@@ -40,7 +38,7 @@ public class GuidanceService {
     private List<TableDTO> formPhrasesTableList(List<DynamicRow> dynamicRowList) {
         List<TableDTO> tableDTOList = new ArrayList<>();
         for (DynamicRow dynamicRow : dynamicRowList) {
-            List<TextDTO> textList = mangaDialogueService.getTextDTOListByIdsList(dynamicRow.getIds());
+            List<TextDTO> textList = mangaDialogueService.getTextDTOListByIdsListWithUnitingWords(dynamicRow.getIds());
             tableDTOList.add(new TableDTO(dynamicRowService.formDynamicRowDTO(dynamicRow), textList));
         }
         return tableDTOList;

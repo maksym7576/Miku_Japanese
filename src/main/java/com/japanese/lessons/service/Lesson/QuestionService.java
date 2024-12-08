@@ -57,7 +57,7 @@ public class QuestionService {
     private QuestionWithAnswerDTO getQuestionWithAnswers(Question question) {
         Map<Long, Boolean> answersMap = question.getIdsAnswers();
         List<Long> ids = new ArrayList<>(answersMap.keySet());
-        List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsList(ids);
+        List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsListWithUnitingWords(ids);
         return new QuestionWithAnswerDTO(formQuestion(question), answerDTOList);
     }
 
@@ -65,36 +65,11 @@ public class QuestionService {
         Map<Long, Boolean> answersMap = question.getIdsAnswers();
         List<Long> ids = new ArrayList<>(answersMap.keySet());
         List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(ids);
-        TextDTO text = textDTOList.get(0);
-        String[] arrayKanji = text.getKanji_word().split(" ");
-        String kanjiPhrase = String.join("", arrayKanji);
-        String[] arrayHiragana_katakana = text.getHiragana_or_katakana().split(" ");
-        String hiragana_katakanaPhrase = String.join("", arrayHiragana_katakana);
-        String[] arrayRomanji = text.getRomanji_word().split(" ");
-        String romanjiPhrase = String.join(" ", arrayRomanji);
-        List<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < arrayKanji.length; i++) {
-            indices.add(i);
-        }
-        Collections.shuffle(indices);
-        String[] shuffledKanji = new String[arrayKanji.length];
-        String[] shuffledHiraganaKatakana = new String[arrayHiragana_katakana.length];
-        String[] shuffledRomanji = new String[arrayRomanji.length];
-
-        for (int i = 0; i < indices.size(); i++) {
-            int shuffledIndex = indices.get(i);
-            shuffledKanji[i] = arrayKanji[shuffledIndex];
-            shuffledHiraganaKatakana[i] = arrayHiragana_katakana[shuffledIndex];
-            shuffledRomanji[i] = arrayRomanji[shuffledIndex];
-        }
-        ColocateWordsDTO colocateWordsDTO = new ColocateWordsDTO(
-                text.getId(), kanjiPhrase, hiragana_katakanaPhrase, romanjiPhrase, text.getTranslation(),
-                shuffledKanji, shuffledHiraganaKatakana, shuffledRomanji
-        );
-       return new ColocateExerciseDTO(formQuestion(question), colocateWordsDTO);
+        TextDTO textDTO = textDTOList.get(0);
+       return new ColocateExerciseDTO(formQuestion(question), mangaDialogueService.splitPhrase(textDTO));
     }
 
-    public ObjectWithMediaDTO addMediaToQuestion(Long questionId, String questionType) {
+    public ObjectWithMediaDTO addMediaToQuestionAndGetQuestion(Long questionId, String questionType) {
         Question question = getQuestionById(questionId);
         ObjectWithMediaDTO objectWithMediaDTO = new ObjectWithMediaDTO();
         switch (questionType) {
