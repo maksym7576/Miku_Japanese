@@ -1,5 +1,6 @@
 package com.japanese.lessons.models.fifth;
 
+import com.japanese.lessons.models.EDynamicRowsTypes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,23 +26,24 @@ public class DynamicRow {
     @Column(columnDefinition = "VARCHAR(100) COLLATE utf8mb4_general_ci")
     private String tableName;
 
-    @Column(name = "guidance_id", nullable = true)
-    private Long guidanceId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EDynamicRowsTypes rowsType;
 
-    @Column(name = "ids_string")
-    private String idsString;
+    @Column(name = "ids_string", nullable = false)
+    private String textIds;
 
     public void setIds(List<Long> ids) {
-        this.idsString = ids.stream()
+        this.textIds = ids.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
     }
 
     public List<Long> getIds() {
-        if(idsString == null || idsString.isEmpty()) {
+        if(textIds == null || textIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return Arrays.stream(idsString.split(","))
+        return Arrays.stream(textIds.split(","))
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
     }

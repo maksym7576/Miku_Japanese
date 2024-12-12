@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MangaDialogueService {
@@ -81,10 +79,17 @@ public class MangaDialogueService {
     }
 
     public List<TextDTO> getTextDTOListByIdsListWithUnitingWords(List<Long> idsList) {
+        logger.debug("ids list in getTextDTOListByIdsListWithUnitingWords {}", idsList);
         List<Text> textList = getTextByIdsList(idsList);
-        logger.debug("List length of getTextByIdsList {}", textList.size());
+        Map<Long, Integer> idsIndexMap = new HashMap<>();
+        for (int i = 0; i < idsList.size(); i++) {
+            idsIndexMap.put(idsList.get(i), i);
+        }
+        textList.sort(Comparator.comparingInt(text -> idsIndexMap.get(text.getId())));
+        for (Text text : textList) {
+            logger.debug("Text id : {}", text.getId());
+        }
         List<TextDTO> textDTOList = formTextDTOList(textList);
-        logger.debug("List length of getTextDTOListByIdsListWithUnitingWords {}", textDTOList.size());
         for (TextDTO textDTO : textDTOList) {
             uniteHiraganaKanji(textDTO);
         }
@@ -105,7 +110,6 @@ public class MangaDialogueService {
 
     public ColocateWordsDTO splitPhrase(TextDTO textDTO) {
         String[] arrayKanji = textDTO.getKanji_word().split("/");
-        logger.debug("Length of Kanji array: {}", arrayKanji.length);
         String kanjiPhrase = String.join("", arrayKanji);
         String[] arrayHiragana_katakana = textDTO.getHiragana_or_katakana().split("/");
         String hiragana_katakanaPhrase = String.join("", arrayHiragana_katakana);
@@ -133,11 +137,9 @@ public class MangaDialogueService {
     }
 
     public TextDTO uniteHiraganaKanji (TextDTO textDTO) {
-        logger.debug("Not replased object {}", textDTO.getHiragana_or_katakana());
         textDTO.setKanji_word(textDTO.getKanji_word().replaceAll("/", ""));
         textDTO.setHiragana_or_katakana(textDTO.getHiragana_or_katakana().replaceAll("/", ""));
         textDTO.setRomanji_word(textDTO.getRomanji_word().replaceAll("/", " "));
-        logger.debug("Replased object {}", textDTO.getHiragana_or_katakana());
         return textDTO;
     }
 

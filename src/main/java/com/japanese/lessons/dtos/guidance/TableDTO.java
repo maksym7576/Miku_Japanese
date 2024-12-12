@@ -18,5 +18,6 @@ import java.util.List;
 public class TableDTO {
 
     private DynamicRowDTO dynamicRow;
+    private String type;
     private List<TextDTO> textList;
 }

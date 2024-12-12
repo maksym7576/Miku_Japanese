@@ -1,15 +1,17 @@
 package com.japanese.lessons.service.Lesson;
 
-import com.japanese.lessons.dtos.AnswerDTO;
-import com.japanese.lessons.dtos.ObjectWithMediaDTO;
-import com.japanese.lessons.dtos.QuestionWithAnswerDTO;
+import com.japanese.lessons.dtos.*;
 import com.japanese.lessons.dtos.response.question.ColocateExerciseDTO;
 import com.japanese.lessons.dtos.response.question.ColocateWordsDTO;
 import com.japanese.lessons.dtos.response.models.QuestionDTO;
 import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.fourth.Question;
+import com.japanese.lessons.models.sixsth.Text;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
+import com.japanese.lessons.service.ExerciseService;
 import com.japanese.lessons.service.FileRecordService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
-
+    private static final Logger logger = LoggerFactory.getLogger(ExerciseService.class);
     @Autowired private IQuestionRepository iQuestionRepository;
     @Autowired private MangaDialogueService mangaDialogueService;
     @Autowired private FileRecordService fileRecordService;
@@ -46,27 +48,99 @@ public class QuestionService {
     }
 
     private QuestionDTO formQuestion(Question question) {
-        Map<Long, Boolean> answersMap = question.getIdsAnswers();
-        List<AnswerDTO> answerDTOList = answersMap.entrySet()
-                .stream()
-                .map(entry -> new AnswerDTO(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        List<QuestionJsonStandardDTO> answerIdsList = question.getStandardFormat();
+        List<AnswerDTO> answerDTOList = new ArrayList<>();
+
+        for (QuestionJsonStandardDTO questionJsonStandardDTO : answerIdsList) {
+            answerDTOList.add(new AnswerDTO(questionJsonStandardDTO.getTextId(), questionJsonStandardDTO.isCorrect()));
+        }
         return new QuestionDTO(question.getId(), question.getQuestion(), question.getDescription(), answerDTOList);
     }
 
     private QuestionWithAnswerDTO getQuestionWithAnswers(Question question) {
-        Map<Long, Boolean> answersMap = question.getIdsAnswers();
-        List<Long> ids = new ArrayList<>(answersMap.keySet());
+        List<QuestionJsonStandardDTO> idsList = question.getStandardFormat();
+        List<Long> ids = new ArrayList<>( idsList.stream()
+                .map(QuestionJsonStandardDTO::getTextId)
+                .collect(Collectors.toList()));
         List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsListWithUnitingWords(ids);
         return new QuestionWithAnswerDTO(formQuestion(question), answerDTOList);
     }
 
     private ColocateExerciseDTO getColocateWithWords(Question question) {
-        Map<Long, Boolean> answersMap = question.getIdsAnswers();
-        List<Long> ids = new ArrayList<>(answersMap.keySet());
+        List<QuestionJsonStandardDTO> idsList = question.getStandardFormat();
+        List<Long> ids = new ArrayList<>(idsList.stream()
+                .map(QuestionJsonStandardDTO::getTextId)
+                .collect(Collectors.toList()));
         List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(ids);
         TextDTO textDTO = textDTOList.get(0);
        return new ColocateExerciseDTO(formQuestion(question), mangaDialogueService.splitPhrase(textDTO));
+    }
+
+    public ColocateWordsWithCorrectWordsListDTO addErrorCorrection (Long questionId) {
+        Question question = getQuestionById(questionId);
+        List<QuestionJsonIndexDTO> questionIncorrectWordsList = question.getIndexFormat();
+        List<Long> idsList = questionIncorrectWordsList.stream()
+                .map(word -> word.getTextId())
+                .collect(Collectors.toList());
+        logger.debug("IdsList ErrorCorrection {}", idsList);
+        List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(idsList);
+        TextDTO dialogueTextDTO = new TextDTO();
+        for (QuestionJsonIndexDTO questionJsonIndexDTO : questionIncorrectWordsList) {
+            if(questionJsonIndexDTO.getIndex() == 100) {
+                for (TextDTO textDTO : textDTOList) {
+                    if(textDTO.getId().equals(questionJsonIndexDTO.getTextId())) {
+                        dialogueTextDTO = textDTO;
+                    }
+                }
+            }
+        }
+        logger.debug("Dialogue id {}", dialogueTextDTO.getId());
+        String[] arrayKanji = dialogueTextDTO.getKanji_word().split("/");
+        String phraseKanji = String.join("", arrayKanji);
+        String[] arrayHiragana = dialogueTextDTO.getHiragana_or_katakana().split("/");
+        String phraseHiragana = String.join("", arrayHiragana);
+        String[] arrayRomanji = dialogueTextDTO.getRomanji_word().split("/");
+        String phraseRomanji = String.join(" ", arrayKanji);
+        String[] correctWordsKanji = new String[textDTOList.size() - 1];
+        logger.debug("CorrectWordsKanji length {}", correctWordsKanji.length);
+        String[] correctsWordsHiraganaKatakana = new String[textDTOList.size() -1];
+        String[] correctWordsRomanji = new String[textDTOList.size() -1];
+        for (QuestionJsonIndexDTO questionJsonIndexDTO : questionIncorrectWordsList) {
+            if(questionJsonIndexDTO.getIndex() >= 1 && questionJsonIndexDTO.getIndex() !=100) {
+                for (TextDTO textDTO : textDTOList) {
+                    if(textDTO.getId().equals(questionJsonIndexDTO.getTextId())) {
+                        for (int i = 0; i < correctWordsKanji.length; i++) {
+                            if (correctWordsKanji[i] == null) {
+                                correctWordsKanji[i] = arrayKanji[questionJsonIndexDTO.getIndex()];
+                                correctsWordsHiraganaKatakana[i] = arrayHiragana[questionJsonIndexDTO.getIndex()];
+                                correctWordsRomanji[i] = arrayRomanji[questionJsonIndexDTO.getIndex()];
+                                break;
+                            }
+                        }
+                        arrayKanji[questionJsonIndexDTO.getIndex() -1] = textDTO.getKanji_word();
+                        arrayHiragana[questionJsonIndexDTO.getIndex() -1] = textDTO.getHiragana_or_katakana();
+                        arrayRomanji[questionJsonIndexDTO.getIndex() -1] = textDTO.getRomanji_word();
+                    }
+                }
+            }
+        }
+        for (int i =0; i < correctWordsKanji.length; i++) {
+            if(correctWordsKanji[i] == null) {
+                for (TextDTO textDTO :textDTOList) {
+                    for (QuestionJsonIndexDTO questionJsonIndexDTO : questionIncorrectWordsList) {
+                        if(textDTO.getId() == questionJsonIndexDTO.getTextId() && questionJsonIndexDTO.getIndex() == 0) {
+                            correctWordsKanji[i] = textDTO.getKanji_word();
+                            correctsWordsHiraganaKatakana[i] = textDTO.getHiragana_or_katakana();
+                            correctWordsRomanji[i] = textDTO.getRomanji_word();
+                        }
+                    }
+                }
+            }
+        }
+        ColocateWordsDTO colocateWordsDTO = new ColocateWordsDTO(dialogueTextDTO.getId(), phraseKanji, phraseHiragana, phraseRomanji,
+                dialogueTextDTO.getTranslation(), arrayKanji, arrayHiragana, arrayRomanji);
+        ColocateWordsWithCorrectWordsListDTO correctWordsListDTO = new ColocateWordsWithCorrectWordsListDTO(colocateWordsDTO, correctWordsKanji, correctsWordsHiraganaKatakana, correctWordsRomanji);
+        return correctWordsListDTO;
     }
 
     public ObjectWithMediaDTO addMediaToQuestionAndGetQuestion(Long questionId, String questionType) {

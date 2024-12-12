@@ -1,7 +1,10 @@
 package com.japanese.lessons.models.fourth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.japanese.lessons.dtos.QuestionJsonIndexDTO;
+import com.japanese.lessons.dtos.QuestionJsonStandardDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,26 +39,37 @@ public class Question {
     @Column(name = "ids_media")
     private String idsMediaString;
 
-    public void setIdsAnswers(Map<Long, Boolean> answers) {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public List<QuestionJsonIndexDTO> getIndexFormat() {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            this.idsAnswersJson = objectMapper.writeValueAsString(answers);
+            // Зчитуємо JSON з idsAnswersJson
+            List<Map<String, Object>> answersList = objectMapper.readValue(idsAnswersJson, new TypeReference<>() {});
+
+            // Перетворюємо список Map у список QuestionJsonIndexDTO
+            return answersList.stream()
+                    .map(item -> new QuestionJsonIndexDTO(
+                            ((Number) item.get("wordId")).longValue(),
+                            item.get("index") != null ? ((Number) item.get("index")).intValue() : 0))
+                    .collect(Collectors.toList());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            this.idsAnswersJson = "{}";
+            return Collections.emptyList();
         }
     }
-    public Map<Long, Boolean> getIdsAnswers() {
-        if (idsAnswersJson == null || idsAnswersJson.isEmpty()) {
-            return new HashMap<>();
-        }
+
+    public List<QuestionJsonStandardDTO> getStandardFormat() {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(idsAnswersJson,
-                    objectMapper.getTypeFactory().constructMapType(Map.class, Long.class, Boolean.class));
+            // Зчитуємо JSON з idsAnswersJson
+            Map<String, Boolean> answersMap = objectMapper.readValue(idsAnswersJson, new TypeReference<>() {});
+
+            // Перетворюємо Map у список QuestionJsonStandartDTO
+            return answersMap.entrySet().stream()
+                    .map(entry -> new QuestionJsonStandardDTO(Long.parseLong(entry.getKey()), entry.getValue()))
+                    .collect(Collectors.toList());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return new HashMap<>();
+            return Collections.emptyList();
         }
     }
 

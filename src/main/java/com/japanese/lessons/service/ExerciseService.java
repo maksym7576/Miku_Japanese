@@ -45,14 +45,9 @@ public class ExerciseService {
 
     }
 
-    private void addStudyContentNewWords(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
+    private void addStudyContent(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
         ExplanationWithTableDTO explanationWithTableDTO = guidanceService.getExplanationWithTable(object.getActivityId());
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("explanation_with_table", explanationWithTableDTO));
-    }
-
-    private void addStudyContentPhrases(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
-        ExplanationWithTableDTO explanationWithPhrasesTableDTO = guidanceService.getExplanationWithTable(object.getActivityId());
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("explanation_with_phrases", explanationWithPhrasesTableDTO));
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("explanation", explanationWithTableDTO));
     }
 
     private void addMultipleAnswerQuestion(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
@@ -66,6 +61,11 @@ public class ExerciseService {
     private void addFlashCardPopupPhrases(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
         ObjectWithMediaDTO objectWithMediaDTO = phraseService.getPhraseWithMedia(object.getActivityId());
         exercisesToReturn.add(new StructuredDataForExercisesDTO("flash_card_popup", objectWithMediaDTO));
+    }
+
+    private void addErrorCorrection(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
+        ColocateWordsWithCorrectWordsListDTO correctWordsListDTO = questionService.addErrorCorrection(object.getActivityId());
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("colocate with finding errors", correctWordsListDTO));
     }
 
     public List<StructuredDataForExercisesDTO> getExercisesFromAllTables (Long lessonId) {
@@ -84,9 +84,9 @@ public class ExerciseService {
                 case QUESTION_COLOCATE -> addColocate(index, exercisesToReturn);
 //                case EXERCISE_FACT ->  addFact(index, exercisesToReturn);
 //                case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
-                case STUDY_CONTENT_WORDS -> addStudyContentNewWords(index, exercisesToReturn);
-                case STUDY_CONTENT_PHRASES -> addStudyContentPhrases(index, exercisesToReturn);
-                case FLASHCARD_POPUP -> addFlashCardPopupPhrases(index, exercisesToReturn);
+                case STUDY_CONTENT -> addStudyContent(index, exercisesToReturn);
+                case PHRASE -> addFlashCardPopupPhrases(index, exercisesToReturn);
+                case ERROR_CORRECTION -> addErrorCorrection(index, exercisesToReturn);
                 default -> {}
             }
         }

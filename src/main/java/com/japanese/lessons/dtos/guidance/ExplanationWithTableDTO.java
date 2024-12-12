@@ -1,6 +1,7 @@
 package com.japanese.lessons.dtos.guidance;
 
 
+import com.japanese.lessons.dtos.response.models.GuidanceDTO;
 import com.japanese.lessons.models.fourth.Guidance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ExplanationWithTableDTO {
 
-    private Guidance guidance;
+    private GuidanceDTO guidance;
     private List<TableDTO> tableDTOList;
 }

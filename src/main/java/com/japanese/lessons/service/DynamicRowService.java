@@ -14,8 +14,8 @@ public class DynamicRowService {
 
     @Autowired private IDynamicRowRepository iDynamicRowRepository;
 
-    public List<DynamicRow> getAllDynamicRowByGuidanceId(Long guidanceId) {
-        return iDynamicRowRepository.findByGuidanceId(guidanceId);
+    public List<DynamicRow> getAllDynamicRowByGuidanceId(List<Long> ids) {
+        return iDynamicRowRepository.findAllById(ids);
     }
 
     public DynamicRowDTO formDynamicRowDTO(DynamicRow dynamicRow) {
