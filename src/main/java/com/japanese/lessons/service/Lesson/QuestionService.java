@@ -143,11 +143,19 @@ public class QuestionService {
         return correctWordsListDTO;
     }
 
+    private QuestionWithEnglishAnswerDTO getQuestionWithEnglishAnswer(Question question) {
+        QuestionDTO questionDTO = formQuestion(question);
+        List<QuestionJsonEnglishTextDTO> questionJsonEnglishTextDTOS = question.getEnglishFormat();
+        Collections.shuffle(questionJsonEnglishTextDTOS);
+        return new QuestionWithEnglishAnswerDTO(questionDTO, questionJsonEnglishTextDTOS);
+    }
+
     public ObjectWithMediaDTO addMediaToQuestionAndGetQuestion(Long questionId, String questionType) {
         Question question = getQuestionById(questionId);
         ObjectWithMediaDTO objectWithMediaDTO = new ObjectWithMediaDTO();
         switch (questionType) {
             case "QUESTION" ->  objectWithMediaDTO.setObject(getQuestionWithAnswers(question));
+            case "QUESTION_ENGLISH" -> objectWithMediaDTO.setObject(getQuestionWithEnglishAnswer(question));
             case "COLOCATE" -> objectWithMediaDTO.setObject(getColocateWithWords(question));
             default -> {}
         };

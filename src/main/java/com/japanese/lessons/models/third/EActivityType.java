@@ -8,4 +8,5 @@ public enum EActivityType {
     STUDY_CONTENT,
     ERROR_CORRECTION,
     FACT,
+    QUESTION_ENGLISH_ANSWERS,
 }

@@ -3,6 +3,7 @@ package com.japanese.lessons.models.fourth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.japanese.lessons.dtos.QuestionJsonEnglishTextDTO;
 import com.japanese.lessons.dtos.QuestionJsonIndexDTO;
 import com.japanese.lessons.dtos.QuestionJsonStandardDTO;
 import jakarta.persistence.*;
@@ -43,10 +44,7 @@ public class Question {
 
     public List<QuestionJsonIndexDTO> getIndexFormat() {
         try {
-            // Зчитуємо JSON з idsAnswersJson
             List<Map<String, Object>> answersList = objectMapper.readValue(idsAnswersJson, new TypeReference<>() {});
-
-            // Перетворюємо список Map у список QuestionJsonIndexDTO
             return answersList.stream()
                     .map(item -> new QuestionJsonIndexDTO(
                             ((Number) item.get("wordId")).longValue(),
@@ -58,17 +56,28 @@ public class Question {
         }
     }
 
+    public List<QuestionJsonEnglishTextDTO> getEnglishFormat() {
+        try {
+            List<Map<String, Object>> answerList = objectMapper.readValue(idsAnswersJson, new TypeReference<List<Map<String, Object>>>() {});
+            return answerList.stream()
+                    .map(item -> new QuestionJsonEnglishTextDTO(
+                            (String) item.get("question"),
+                            (boolean) item.get("isCorrect")
+                    ))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
     public List<QuestionJsonStandardDTO> getStandardFormat() {
         try {
-            // Зчитуємо JSON з idsAnswersJson
             Map<String, Boolean> answersMap = objectMapper.readValue(idsAnswersJson, new TypeReference<>() {});
-
-            // Перетворюємо Map у список QuestionJsonStandartDTO
             return answersMap.entrySet().stream()
                     .map(entry -> new QuestionJsonStandardDTO(Long.parseLong(entry.getKey()), entry.getValue()))
                     .collect(Collectors.toList());
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
             return Collections.emptyList();
         }
     }
