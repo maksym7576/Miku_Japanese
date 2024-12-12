@@ -7,4 +7,5 @@ public enum EActivityType {
     QUESTION_COLOCATE,
     STUDY_CONTENT,
     ERROR_CORRECTION,
+    FACT,
 }

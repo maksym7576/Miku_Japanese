@@ -30,6 +30,13 @@ public class Guidance {
     @Column(name = "ids_dynamic_row")
     private String dynamicRowIds;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_to_show")
+    private EMediaType eMediaType;
+
+    @Column(name = "ids_media")
+    private String idsMediaString;
+
     public void setIds(List<Long> ids) {
         this.dynamicRowIds = ids.stream()
                 .map(String::valueOf)
@@ -41,6 +48,21 @@ public class Guidance {
             return new ArrayList<>();
         }
         return Arrays.stream(dynamicRowIds.split(","))
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+    }
+
+    public void setIdsMedia(List<Long> ids) {
+        this.idsMediaString = ids.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+    }
+
+    public List<Long> getIdsMedia() {
+        if (idsMediaString == null || idsMediaString.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(idsMediaString.split(","))
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
     }

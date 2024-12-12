@@ -1,11 +1,14 @@
 package com.japanese.lessons.service;
 
+import com.japanese.lessons.dtos.ObjectWithMediaDTO;
 import com.japanese.lessons.dtos.guidance.TableDTO;
 import com.japanese.lessons.dtos.guidance.ExplanationWithTableDTO;
+import com.japanese.lessons.dtos.response.models.FileRecordsDTO;
 import com.japanese.lessons.dtos.response.models.GuidanceDTO;
 import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.fifth.DynamicRow;
 import com.japanese.lessons.models.fourth.Guidance;
+import com.japanese.lessons.models.sixsth.FileRecords;
 import com.japanese.lessons.repositories.IGuidanceRepository;
 import com.japanese.lessons.service.Lesson.MangaDialogueService;
 import org.slf4j.Logger;
@@ -23,6 +26,7 @@ public class GuidanceService {
     @Autowired private IGuidanceRepository iGuidanceRepository;
     @Autowired private DynamicRowService dynamicRowService;
     @Autowired private MangaDialogueService mangaDialogueService;
+    @Autowired private FileRecordService fileRecordService;
 
     private Guidance getGuidanceById(Long id) {
         return iGuidanceRepository.findById(id).orElseThrow(() ->
@@ -52,5 +56,11 @@ public class GuidanceService {
             tableDTOList.add(new TableDTO(dynamicRowService.formDynamicRowDTO(dynamicRow), dynamicRow.getRowsType().toString(), textList));
         }
         return tableDTOList;
+    }
+    public ObjectWithMediaDTO getFactWithMedia(Long guidanceId) {
+        Guidance guidance = getGuidanceById(guidanceId);
+        List<FileRecordsDTO> fileRecordsList = fileRecordService.createListFileRecordsDTOByIdsList(guidance.getIdsMedia());
+        logger.debug("Fact media ids: {}", guidance.getIdsMedia());
+        return new ObjectWithMediaDTO(formGuidanceGTO(guidance), fileRecordsList);
     }
 }

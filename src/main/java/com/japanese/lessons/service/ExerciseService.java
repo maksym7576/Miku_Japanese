@@ -42,7 +42,8 @@ public class ExerciseService {
     }
 
     private void addFact(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
-
+        ObjectWithMediaDTO objectWithMediaDTO = guidanceService.getFactWithMedia(object.getActivityId());
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("fact", objectWithMediaDTO));
     }
 
     private void addStudyContent(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
@@ -82,7 +83,7 @@ public class ExerciseService {
             switch (index.getActivityType()) {
                 case QUESTION -> addQuestion(index, exercisesToReturn);
                 case QUESTION_COLOCATE -> addColocate(index, exercisesToReturn);
-//                case EXERCISE_FACT ->  addFact(index, exercisesToReturn);
+                case FACT ->  addFact(index, exercisesToReturn);
 //                case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
                 case STUDY_CONTENT -> addStudyContent(index, exercisesToReturn);
                 case PHRASE -> addFlashCardPopupPhrases(index, exercisesToReturn);
