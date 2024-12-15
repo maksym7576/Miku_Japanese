@@ -17,6 +17,4 @@ public class QuestionDTO {
     private Long id;
     private String question;
     private String description;
-    private List<AnswerDTO> answerList;
-
 }

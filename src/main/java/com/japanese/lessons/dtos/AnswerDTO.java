@@ -11,6 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AnswerDTO {
 
-    private Long objectId;
+    private Long id;
+    private String kanji_word;
+    private String hiragana_or_katakana;
+    private String romanji_word;
+    private String translation;
     private boolean isCorrect;
 }

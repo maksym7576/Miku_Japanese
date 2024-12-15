@@ -1,7 +1,6 @@
 package com.japanese.lessons.dtos;
 
 import com.japanese.lessons.dtos.response.models.QuestionDTO;
-import com.japanese.lessons.dtos.response.models.TextDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 public class QuestionWithAnswerDTO {
 
-    private QuestionDTO questionDTO;
-    private List<TextDTO> textDTOList;
+    private QuestionDTO question;
+    private List<AnswerDTO> answer;
 }

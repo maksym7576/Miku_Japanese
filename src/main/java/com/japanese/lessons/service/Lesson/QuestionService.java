@@ -48,13 +48,7 @@ public class QuestionService {
     }
 
     private QuestionDTO formQuestion(Question question) {
-        List<QuestionJsonStandardDTO> answerIdsList = question.getStandardFormat();
-        List<AnswerDTO> answerDTOList = new ArrayList<>();
-
-        for (QuestionJsonStandardDTO questionJsonStandardDTO : answerIdsList) {
-            answerDTOList.add(new AnswerDTO(questionJsonStandardDTO.getTextId(), questionJsonStandardDTO.isCorrect()));
-        }
-        return new QuestionDTO(question.getId(), question.getQuestion(), question.getDescription(), answerDTOList);
+        return new QuestionDTO(question.getId(), question.getQuestion(), question.getDescription());
     }
 
     private QuestionWithAnswerDTO getQuestionWithAnswers(Question question) {
@@ -62,7 +56,18 @@ public class QuestionService {
         List<Long> ids = new ArrayList<>( idsList.stream()
                 .map(QuestionJsonStandardDTO::getTextId)
                 .collect(Collectors.toList()));
-        List<TextDTO> answerDTOList = mangaDialogueService.getTextDTOListByIdsListWithUnitingWords(ids);
+        List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsListWithUnitingWords(ids);
+        List<AnswerDTO> answerDTOList = new ArrayList<>();
+        for (TextDTO textDTO : textDTOList) {
+            for (QuestionJsonStandardDTO questionJsonStandardDTO : idsList) {
+                if (questionJsonStandardDTO.getTextId() == textDTO.getId()) {
+
+                    answerDTOList.add(new AnswerDTO(textDTO.getId(),
+                            textDTO.getKanji_word(), textDTO.getHiragana_or_katakana(), textDTO.getRomanji_word(),
+                            textDTO.getTranslation(), questionJsonStandardDTO.isCorrect()));
+                }
+            }
+        }
         return new QuestionWithAnswerDTO(formQuestion(question), answerDTOList);
     }
 
