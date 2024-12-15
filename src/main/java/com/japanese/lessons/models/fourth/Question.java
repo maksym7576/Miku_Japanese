@@ -3,6 +3,7 @@ package com.japanese.lessons.models.fourth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.japanese.lessons.dtos.QuestionJsonChooseTheContinuationDTO;
 import com.japanese.lessons.dtos.QuestionJsonEnglishTextDTO;
 import com.japanese.lessons.dtos.QuestionJsonIndexDTO;
 import com.japanese.lessons.dtos.QuestionJsonStandardDTO;
@@ -81,6 +82,22 @@ public class Question {
             return Collections.emptyList();
         }
     }
+    public List<QuestionJsonChooseTheContinuationDTO> getChooseTheContinuationFormat() {
+        try {
+            List<Map<String, Object>> answerList = objectMapper.readValue(idsAnswersJson, new TypeReference<List<Map<String, Object>>>() {});
+
+            return answerList.stream()
+                    .map(item -> new QuestionJsonChooseTheContinuationDTO(
+                            item.get("miniQuestion") != null ? item.get("miniQuestion").toString() : null,
+                            item.get("textId") != null ? ((Number) item.get("textId")).longValue() : null
+                    ))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
 
     public void setIdsMedia(List<Long> ids) {
         this.idsMediaString = ids.stream()

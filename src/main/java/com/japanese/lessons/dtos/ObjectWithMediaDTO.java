@@ -15,5 +15,5 @@ import java.util.List;
 public class ObjectWithMediaDTO {
 
     private Object object;
-    private List<FileRecordsDTO> fileRecordsList;
+    private MediaPackageDTO mediaPackage;
 }

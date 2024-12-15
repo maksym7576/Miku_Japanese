@@ -150,6 +150,18 @@ public class QuestionService {
         return new QuestionWithEnglishAnswerDTO(questionDTO, questionJsonEnglishTextDTOS);
     }
 
+    public QuestionChooseDTO getQuestionChoose(Long questionId) {
+        Question question = getQuestionById(questionId);
+        List<QuestionJsonChooseTheContinuationDTO> jsonList = question.getChooseTheContinuationFormat();
+        List<Long> idsText = jsonList.stream()
+                .map(text -> text.getTextId())
+                .collect(Collectors.toList());
+        List<TextDTO> textDTOList = mangaDialogueService.getTextDTOListByIdsList(idsText);
+        Collections.shuffle(jsonList);
+        Collections.shuffle(textDTOList);
+        return new QuestionChooseDTO(formQuestion(question), jsonList, textDTOList);
+    }
+
     public ObjectWithMediaDTO addMediaToQuestionAndGetQuestion(Long questionId, String questionType) {
         Question question = getQuestionById(questionId);
         ObjectWithMediaDTO objectWithMediaDTO = new ObjectWithMediaDTO();
@@ -159,7 +171,8 @@ public class QuestionService {
             case "COLOCATE" -> objectWithMediaDTO.setObject(getColocateWithWords(question));
             default -> {}
         };
-        objectWithMediaDTO.setFileRecordsList(fileRecordService.createListFileRecordsDTOByIdsList(question.getIdsMedia()));
+        MediaPackageDTO mediaPackageDTO = new MediaPackageDTO(question.getEMediaType().toString(),(fileRecordService.createListFileRecordsDTOByIdsList(question.getIdsMedia())));
+        objectWithMediaDTO.setMediaPackage(mediaPackageDTO);;
         return objectWithMediaDTO;
     }
 }

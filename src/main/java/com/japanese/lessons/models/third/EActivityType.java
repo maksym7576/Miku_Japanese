@@ -5,6 +5,7 @@ public enum EActivityType {
     DOUBLE_PHRASE,
     QUESTION,
     QUESTION_COLOCATE,
+    QUESTION_CHOOSE,
     STUDY_CONTENT,
     ERROR_CORRECTION,
     FACT,

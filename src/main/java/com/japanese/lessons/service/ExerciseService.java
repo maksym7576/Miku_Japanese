@@ -74,6 +74,11 @@ public class ExerciseService {
         exerciseToReturn.add(new StructuredDataForExercisesDTO("question_with_english_answers", objectWithMediaDTO));
     }
 
+    private void addQuestionChooseAnswers(Ordered_objects object, List<StructuredDataForExercisesDTO> exerciseToReturn) {
+        QuestionChooseDTO questionChooseDTO = questionService.getQuestionChoose(object.getActivityId());
+        exerciseToReturn.add(new StructuredDataForExercisesDTO("question_choose", questionChooseDTO));
+    }
+
     public List<StructuredDataForExercisesDTO> getExercisesFromAllTables (Long lessonId) {
         logger.debug("Getting exercises for lesson ID: {}", lessonId);
         List<StructuredDataForExercisesDTO> exercisesToReturn = new ArrayList<>();
@@ -90,6 +95,7 @@ public class ExerciseService {
                 case QUESTION_COLOCATE -> addColocate(index, exercisesToReturn);
                 case FACT ->  addFact(index, exercisesToReturn);
                 case QUESTION_ENGLISH_ANSWERS -> addQuestionInEnglishAnswers(index, exercisesToReturn);
+                case QUESTION_CHOOSE -> addQuestionChooseAnswers(index, exercisesToReturn);
 //                case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
                 case STUDY_CONTENT -> addStudyContent(index, exercisesToReturn);
                 case PHRASE -> addFlashCardPopupPhrases(index, exercisesToReturn);

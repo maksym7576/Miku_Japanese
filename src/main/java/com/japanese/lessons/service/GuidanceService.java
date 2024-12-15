@@ -1,5 +1,6 @@
 package com.japanese.lessons.service;
 
+import com.japanese.lessons.dtos.MediaPackageDTO;
 import com.japanese.lessons.dtos.ObjectWithMediaDTO;
 import com.japanese.lessons.dtos.guidance.TableDTO;
 import com.japanese.lessons.dtos.guidance.ExplanationWithTableDTO;
@@ -61,6 +62,7 @@ public class GuidanceService {
         Guidance guidance = getGuidanceById(guidanceId);
         List<FileRecordsDTO> fileRecordsList = fileRecordService.createListFileRecordsDTOByIdsList(guidance.getIdsMedia());
         logger.debug("Fact media ids: {}", guidance.getIdsMedia());
-        return new ObjectWithMediaDTO(formGuidanceGTO(guidance), fileRecordsList);
+        MediaPackageDTO mediaPackageDTO = new MediaPackageDTO(guidance.getEMediaType().toString(), fileRecordsList);
+        return new ObjectWithMediaDTO(formGuidanceGTO(guidance), mediaPackageDTO);
     }
 }

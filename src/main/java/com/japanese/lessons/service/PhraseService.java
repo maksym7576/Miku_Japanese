@@ -1,5 +1,6 @@
 package com.japanese.lessons.service;
 
+import com.japanese.lessons.dtos.MediaPackageDTO;
 import com.japanese.lessons.dtos.ObjectWithMediaDTO;
 import com.japanese.lessons.dtos.PhraseDTOWithSentence;
 import com.japanese.lessons.dtos.response.models.FileRecordsDTO;
@@ -33,6 +34,7 @@ public class PhraseService {
         List<FileRecordsDTO> fileRecordsDTOList = fileRecordService.createListFileRecordsDTOByIdsList(phrase.getIds());
         TextDTO textDTO = mangaDialogueService.getTextDTOByIdWithUnitingWords(phrase.getTextId());
         PhraseDTOWithSentence phraseDTOWithSentence = new PhraseDTOWithSentence(generatePhrase(phrase), textDTO);
-        return new ObjectWithMediaDTO(phraseDTOWithSentence, fileRecordsDTOList);
+        MediaPackageDTO mediaPackageDTO =new MediaPackageDTO(phrase.getEMediaType().toString(), fileRecordsDTOList);
+        return new ObjectWithMediaDTO(phraseDTOWithSentence, mediaPackageDTO);
     }
 }
