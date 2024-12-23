@@ -6,7 +6,6 @@ import com.japanese.lessons.dtos.response.question.ColocateWordsDTO;
 import com.japanese.lessons.dtos.response.models.QuestionDTO;
 import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.fourth.Question;
-import com.japanese.lessons.models.sixsth.Text;
 import com.japanese.lessons.repositories.Lesson.IQuestionRepository;
 import com.japanese.lessons.service.ExerciseService;
 import com.japanese.lessons.service.FileRecordService;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,7 +103,7 @@ public class QuestionService {
         String[] arrayHiragana = dialogueTextDTO.getHiragana_or_katakana().split("/");
         String phraseHiragana = String.join("", arrayHiragana);
         String[] arrayRomanji = dialogueTextDTO.getRomanji_word().split("/");
-        String phraseRomanji = String.join(" ", arrayKanji);
+        String phraseRomanji = String.join(" ", arrayRomanji);
         String[] correctWordsKanji = new String[textDTOList.size() - 1];
         logger.debug("CorrectWordsKanji length {}", correctWordsKanji.length);
         String[] correctsWordsHiraganaKatakana = new String[textDTOList.size() -1];
@@ -122,9 +120,9 @@ public class QuestionService {
                                 break;
                             }
                         }
-                        arrayKanji[questionJsonIndexDTO.getIndex() -1] = textDTO.getKanji_word();
-                        arrayHiragana[questionJsonIndexDTO.getIndex() -1] = textDTO.getHiragana_or_katakana();
-                        arrayRomanji[questionJsonIndexDTO.getIndex() -1] = textDTO.getRomanji_word();
+                        arrayKanji[questionJsonIndexDTO.getIndex()] = textDTO.getKanji_word();
+                        arrayHiragana[questionJsonIndexDTO.getIndex()] = textDTO.getHiragana_or_katakana();
+                        arrayRomanji[questionJsonIndexDTO.getIndex()] = textDTO.getRomanji_word();
                     }
                 }
             }
@@ -142,9 +140,35 @@ public class QuestionService {
                 }
             }
         }
-        ColocateWordsDTO colocateWordsDTO = new ColocateWordsDTO(dialogueTextDTO.getId(), phraseKanji, phraseHiragana, phraseRomanji,
-                dialogueTextDTO.getTranslation(), arrayKanji, arrayHiragana, arrayRomanji);
-        ColocateWordsWithCorrectWordsListDTO correctWordsListDTO = new ColocateWordsWithCorrectWordsListDTO(colocateWordsDTO, correctWordsKanji, correctsWordsHiraganaKatakana, correctWordsRomanji);
+        int numberOfWord = 1;
+        int needsToBeChanged = 0;
+        for (QuestionJsonIndexDTO questionJsonIndexDTO : questionIncorrectWordsList) {
+            if(questionJsonIndexDTO.getIndex() > 0 && questionJsonIndexDTO.getIndex() < 100) {
+                needsToBeChanged++;
+            }
+        }
+        List<WordDTO> wordsList = new ArrayList<>();
+        if (arrayKanji.length == arrayHiragana.length && arrayKanji.length == arrayRomanji.length) {
+            for (int i = 0; i < arrayKanji.length; i++) {
+                wordsList.add(new WordDTO(numberOfWord, arrayKanji[i], arrayHiragana[i], arrayRomanji[i]));
+                numberOfWord++;
+            }
+        } else {
+            throw new IllegalArgumentException("Masivy arrayKanji, arrayHiragana, arrayRomanji ne odnakovoi dovzhini");
+        }
+        List<WordDTO> correctWordsList = new ArrayList<>();
+
+        if (correctWordsKanji.length == correctsWordsHiraganaKatakana.length && correctWordsKanji.length == correctWordsRomanji.length) {
+            for (int i = 0; i < correctWordsKanji.length; i++) {
+                correctWordsList.add(new WordDTO(numberOfWord, correctWordsKanji[i], correctsWordsHiraganaKatakana[i], correctWordsRomanji[i]));
+                numberOfWord++;
+            }
+        } else {
+            throw new IllegalArgumentException("Masivy correctWordsKanji, correctsWordsHiraganaKatakana, correctWordsRomanji ne odnakovoi dovzhini");
+        }
+        ColocateWordsWithListDTO colocateWordsDTO = new ColocateWordsWithListDTO(dialogueTextDTO.getId(), phraseKanji, phraseHiragana, phraseRomanji,
+                dialogueTextDTO.getTranslation(), wordsList);
+        ColocateWordsWithCorrectWordsListDTO correctWordsListDTO = new ColocateWordsWithCorrectWordsListDTO(needsToBeChanged, colocateWordsDTO, correctWordsList);
         return correctWordsListDTO;
     }
 

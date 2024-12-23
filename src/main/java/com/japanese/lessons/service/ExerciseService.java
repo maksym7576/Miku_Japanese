@@ -66,7 +66,7 @@ public class ExerciseService {
 
     private void addErrorCorrection(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
         ColocateWordsWithCorrectWordsListDTO correctWordsListDTO = questionService.addErrorCorrection(object.getActivityId());
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("colocate with finding errors", correctWordsListDTO));
+        exercisesToReturn.add(new StructuredDataForExercisesDTO("colocate_with_finding_errors", correctWordsListDTO));
     }
 
     private void addQuestionInEnglishAnswers(Ordered_objects object, List<StructuredDataForExercisesDTO> exerciseToReturn) {
