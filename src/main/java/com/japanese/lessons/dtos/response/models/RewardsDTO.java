@@ -1,4 +1,4 @@
-package com.japanese.lessons.dtos.request;
+package com.japanese.lessons.dtos.response.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerDataDTO {
-    private Long objectId;
+public class RewardsDTO {
+
+    private Long id;
+    private String name;
+    private String description;
     private String type;
 }

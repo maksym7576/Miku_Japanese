@@ -1,15 +1,15 @@
-package com.japanese.lessons.dtos.response;
+package com.japanese.lessons.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ResponseEvaluationDTO {
-
+@NoArgsConstructor
+public class UserResponseDTO {
     private Boolean isCorrect;
-    private Object correctAnswer;
-    private String description;
+    private Long questionId;
 }

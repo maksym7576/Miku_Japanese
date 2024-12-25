@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Entity
 @Getter
 @Setter
@@ -32,5 +37,23 @@ public class Exercise {
     @JsonBackReference
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
+
+    @Column(name = "ids_rewards")
+    private String rewardsIds;
+
+    public void setIdsRewards(List<Long> ids) {
+        this.rewardsIds = ids.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+    }
+
+    public List<Long> getIdsRewards() {
+        if (rewardsIds == null || rewardsIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(rewardsIds.split(","))
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+    }
 
 }

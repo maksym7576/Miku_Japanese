@@ -1,13 +1,14 @@
 package com.japanese.lessons.controller.Lesson;
 
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
+import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
+import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.service.ExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,16 @@ public class ExerciseController {
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+    }
+
+    @PostMapping("/finish")
+    public ResponseEntity<?> concludeUserResponses(@RequestBody FinalExerciseRequestDTO finalExerciseRequestDTO) {
+        try {
+            FinalExerciseResponseDTO result = exerciseService.concludeExercise(finalExerciseRequestDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has ocurred an error:" + e.getMessage());
         }
     }
 }

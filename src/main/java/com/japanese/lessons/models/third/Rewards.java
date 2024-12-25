@@ -21,11 +21,4 @@ public class Rewards {
 
     @Column
     private String type;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "target_type", nullable = false)
-//    private ETargetType targetType;
-
-    @Column(name = "target_id", nullable = false)
-    private Long targetId;
 }
