@@ -13,7 +13,7 @@ public class Ordered_objects_service {
 
     @Autowired private IOrdered_objects_repository iOrderedObjectsRepository;
 
-    public List<Ordered_objects> getOrderedObjectsListByOrderedIdAndType(Long exerciseId) {
+    public List<Ordered_objects> getOrderedObjectsListByExerciseId(Long exerciseId) {
         List<Ordered_objects> orderedObjectsList = iOrderedObjectsRepository.findByExercise_id(exerciseId);
         return orderedObjectsList != null ? orderedObjectsList : Collections.emptyList();
     }

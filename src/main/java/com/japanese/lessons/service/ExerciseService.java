@@ -6,10 +6,13 @@ import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
 import com.japanese.lessons.dtos.response.models.ExercisesDetailsDTO;
+import com.japanese.lessons.dtos.response.models.PhraseDTO;
+import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.User.EFinishedTypes;
 import com.japanese.lessons.models.User.UserProgress;
 import com.japanese.lessons.models.second.EExerciseType;
 import com.japanese.lessons.models.second.Exercise;
+import com.japanese.lessons.models.third.EActivityType;
 import com.japanese.lessons.models.third.Ordered_objects;
 import com.japanese.lessons.repositories.IExerciseRepository;
 import com.japanese.lessons.service.Lesson.MangaDialogueService;
@@ -20,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 public class ExerciseService {
@@ -101,7 +106,7 @@ public class ExerciseService {
         Exercise exercise = getExerciseByEExerciseTypeAndLessonId(EExerciseType.EXERCISE, lessonId);
         ExercisesDetailsDTO exerciseDetails = new ExercisesDetailsDTO(exercise.getId(),exercise.getTopic(), exercise.getDescription());
         exercisesToReturn.add(new StructuredDataForExercisesDTO("details", exerciseDetails));
-        List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByOrderedIdAndType(exercise.getId());
+        List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exercise.getId());
         orderedObjectsList.sort(Comparator.comparing(Ordered_objects:: getOrderIndex));
         logger.debug("by id: {}", exercise.getId());
         for (Ordered_objects index : orderedObjectsList) {
@@ -160,7 +165,7 @@ public class ExerciseService {
     }
 
 
-    public List<ExerciseDTO> getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
+    private List<ExerciseDTO> getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
         List<Exercise> exerciseList = getAllByLessonId(lessonId);
         List<UserProgress> userProgressList = userProgressService.getAllUserProgressExercisesBuETypeAndLessonIdAndUserId(EFinishedTypes.EXERCISES, lessonId, userId);
         List<ExerciseDTO> exerciseDTOList = new ArrayList<>();
@@ -176,6 +181,40 @@ public class ExerciseService {
             exerciseDTOList.add(formExerciseDTO(exercise, isFinished));
         }
         return exerciseDTOList;
+    }
+
+    public LessonDetailsDTO getLessonDetailsByLessonIdAndUserId(Long lessonId, Long userId) {
+        List<Exercise> exerciseList = getAllByLessonId(lessonId);
+        List<Ordered_objects> orderedObjectsList = new ArrayList<>();
+        for (Exercise exercise : exerciseList) {
+            orderedObjectsList.addAll(orderedObjectsService.getOrderedObjectsListByExerciseId(exercise.getId()));
+        }
+        List<Long> phraseIds = orderedObjectsList.stream()
+                .filter(phrase -> phrase.getActivityType().equals(EActivityType.PHRASE))
+                .map(phrase -> phrase.getActivityId())
+                .collect(Collectors.toList());
+        List<PhraseDTOWithSentence> phraseDTOWithSentenceList = new ArrayList<>();
+        for (Long id : phraseIds) {
+            phraseDTOWithSentenceList.add(phraseService.getPhraseByPhraseId(id));
+        }
+        Collections.shuffle(phraseDTOWithSentenceList);
+        List<String> textList = new ArrayList<>();
+        for (PhraseDTOWithSentence phraseDTOWithSentence : phraseDTOWithSentenceList) {
+            int randomNumber = ThreadLocalRandom.current().nextInt(1, 4);
+            if(randomNumber == 1) {
+                textList.add(phraseDTOWithSentence.getTextDTO().getKanji_word());
+            }
+            if (randomNumber == 2 ) {
+                textList.add(phraseDTOWithSentence.getTextDTO().getHiragana_or_katakana());
+            }
+            if (randomNumber == 3) {
+                textList.add(phraseDTOWithSentence.getTextDTO().getRomanji_word());
+            }
+            if (randomNumber == 4) {
+                textList.add(phraseDTOWithSentence.getTextDTO().getTranslation());
+            }
+        }
+        return new LessonDetailsDTO(getAllExercisesDTOByLessonIdAndCheckIsCompleted(lessonId, userId), textList);
     }
 
 }

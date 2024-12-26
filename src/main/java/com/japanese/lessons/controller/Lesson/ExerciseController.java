@@ -1,5 +1,6 @@
 package com.japanese.lessons.controller.Lesson;
 
+import com.japanese.lessons.dtos.LessonDetailsDTO;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
@@ -43,8 +44,8 @@ public class ExerciseController {
     @GetMapping("/get/{lessonId}/user/{userId}")
     public ResponseEntity<?> getAllExercisesByLessonIdAndReviewIsFinished(@PathVariable Long lessonId, @PathVariable Long userId) {
         try {
-            List<ExerciseDTO> exerciseDTOList = exerciseService.getAllExercisesDTOByLessonIdAndCheckIsCompleted(lessonId, userId);
-            return ResponseEntity.status(HttpStatus.OK).body(exerciseDTOList);
+            LessonDetailsDTO lessonDetailsDTO = exerciseService.getLessonDetailsByLessonIdAndUserId(lessonId, userId);
+            return ResponseEntity.status(HttpStatus.OK).body(lessonDetailsDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
         }
