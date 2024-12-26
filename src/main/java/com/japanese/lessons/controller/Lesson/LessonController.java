@@ -1,15 +1,13 @@
 package com.japanese.lessons.controller.Lesson;
 
+import com.japanese.lessons.dtos.response.models.LessonDTO;
 import com.japanese.lessons.models.first.Lesson;
 import com.japanese.lessons.service.Lesson.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -56,6 +54,15 @@ public class LessonController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to retrieve lessons",
                     "message", e.getMessage()));
+        }
+    }
+    @GetMapping("/get/sorted/user/{userId}")
+    public ResponseEntity<?> getAllSortedLessonsAndFormIsFinishedByUSerId(@PathVariable Long userId) {
+        try {
+            List<LessonDTO> lessonDTOList = lessonService.getAllSortedLessonsAndWhatFinishedMarkFinished(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(lessonDTOList);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
         }
     }
 }

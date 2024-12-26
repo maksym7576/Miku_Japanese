@@ -13,9 +13,9 @@ public class UserProgressService {
 
     @Autowired private IUserProgressRepository iUserProgressRepository;
 
-//    public List<UserProgress> getAllUserProgressLessonsByETypeAndUserId(EFinishedTypes eFinishedTypes, Long userId) {
-//        return iUserProgressRepository.findByEFinishedTypesAndUserId(eFinishedTypes, userId);
-//    }
+    public List<UserProgress> getAllUserProgressLessonsByETypeAndUserId(EFinishedTypes eFinishedTypes, Long userId) {
+        return iUserProgressRepository.findByEFinishedTypesAndUserId(eFinishedTypes, userId);
+    }
 
     public List<UserProgress> getAllUserProgressExercisesBuETypeAndLessonIdAndUserId(EFinishedTypes eFinishedTypes, Long lessonId, Long userId) {
         return iUserProgressRepository.findByEFinishedTypesAndLessonIdAndUserId(eFinishedTypes, lessonId, userId);

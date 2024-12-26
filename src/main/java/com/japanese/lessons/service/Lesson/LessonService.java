@@ -1,18 +1,23 @@
 package com.japanese.lessons.service.Lesson;
 
+import com.japanese.lessons.dtos.response.models.LessonDTO;
+import com.japanese.lessons.models.User.EFinishedTypes;
+import com.japanese.lessons.models.User.UserProgress;
 import com.japanese.lessons.models.first.Lesson;
 import com.japanese.lessons.repositories.Lesson.ILessonRepository;
+import com.japanese.lessons.service.UserProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class LessonService {
 
-    @Autowired
-    ILessonRepository iLessonRepository;
+    @Autowired private ILessonRepository iLessonRepository;
+    @Autowired private UserProgressService userProgressService;
 
     public Lesson getLessonById(Long id) {
         return iLessonRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Lesson is not exists: " + id));
@@ -47,5 +52,27 @@ public class LessonService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Error:", e);
         }
+    }
+
+    private LessonDTO formLessonDTO(Lesson lesson, boolean isFinished) {
+        return new LessonDTO(lesson.getId(), lesson.getPosition(), lesson.getBox(), lesson.getLevel().toString(), isFinished);
+    }
+
+    public List<LessonDTO> getAllSortedLessonsAndWhatFinishedMarkFinished(Long userId) {
+        List<Lesson> lessonList = getAllSortedLessons();
+        List<LessonDTO> lessonDTOList = new ArrayList<>();
+        List<UserProgress> userProgressList = userProgressService.getAllUserProgressLessonsByETypeAndUserId(EFinishedTypes.LESSON, userId);
+        boolean isFinished = false;
+        for (Lesson lesson : lessonList) {
+            for (UserProgress userProgress : userProgressList) {
+                if(lesson.getId() == userProgress.getObjectFinishedId()) {
+                    isFinished = true;
+                } else {
+                    isFinished = false;
+                }
+            }
+            lessonDTOList.add(formLessonDTO(lesson, isFinished));
+        }
+        return lessonDTOList;
     }
 }
