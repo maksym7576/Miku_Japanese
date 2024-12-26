@@ -5,6 +5,9 @@ import com.japanese.lessons.dtos.guidance.ExplanationWithTableDTO;
 import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
+import com.japanese.lessons.dtos.response.models.ExercisesDetailsDTO;
+import com.japanese.lessons.models.User.EFinishedTypes;
+import com.japanese.lessons.models.User.UserProgress;
 import com.japanese.lessons.models.second.EExerciseType;
 import com.japanese.lessons.models.second.Exercise;
 import com.japanese.lessons.models.third.Ordered_objects;
@@ -17,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ExerciseService {
@@ -30,9 +32,15 @@ public class ExerciseService {
     @Autowired private FileRecordService fileRecordService;
     @Autowired private PhraseService phraseService;
     @Autowired private RewardsService rewardsService;
+    @Autowired private UserProgressService userProgressService;
+
     private Exercise getExerciseByEExerciseTypeAndLessonId(EExerciseType eExerciseType, Long lessonId) {
         List<Exercise> exerciseList = iExerciseRepository.findExercisesByLessonAndType(lessonId, eExerciseType);
         return exerciseList.get(0);
+    }
+
+    private List<Exercise> getAllByLessonId(Long lessonId) {
+        return iExerciseRepository.findAllByLessonId(lessonId);
     }
 
     private Exercise getExerciseById(Long id) {
@@ -91,7 +99,7 @@ public class ExerciseService {
         logger.debug("Getting exercises for lesson ID: {}", lessonId);
         List<StructuredDataForExercisesDTO> exercisesToReturn = new ArrayList<>();
         Exercise exercise = getExerciseByEExerciseTypeAndLessonId(EExerciseType.EXERCISE, lessonId);
-        ExerciseDTO exerciseDetails = new ExerciseDTO(exercise.getId(),exercise.getTopic(), exercise.getDescription());
+        ExercisesDetailsDTO exerciseDetails = new ExercisesDetailsDTO(exercise.getId(),exercise.getTopic(), exercise.getDescription());
         exercisesToReturn.add(new StructuredDataForExercisesDTO("details", exerciseDetails));
         List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByOrderedIdAndType(exercise.getId());
         orderedObjectsList.sort(Comparator.comparing(Ordered_objects:: getOrderIndex));
@@ -145,6 +153,29 @@ public class ExerciseService {
         double sum = numCorrectAnswer * 2;
         double experience = sum * (percentage / 100.0);
         return (int) Math.floor(experience);
+    }
+
+    private ExerciseDTO formExerciseDTO(Exercise exercise, boolean isFinished) {
+        return new ExerciseDTO(exercise.getId(), exercise.getTopic(), exercise.getEExerciseType().toString(), isFinished);
+    }
+
+
+    public List<ExerciseDTO> getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
+        List<Exercise> exerciseList = getAllByLessonId(lessonId);
+        List<UserProgress> userProgressList = userProgressService.getAllUserProgressExercisesBuETypeAndLessonIdAndUserId(EFinishedTypes.EXERCISES, lessonId, userId);
+        List<ExerciseDTO> exerciseDTOList = new ArrayList<>();
+        boolean isFinished = false;
+        for (Exercise exercise : exerciseList) {
+            for (UserProgress userProgress : userProgressList) {
+                if(exercise.getId() == userProgress.getObjectFinishedId()) {
+                    isFinished = true;
+                } else {
+                    isFinished = false;
+                }
+            }
+            exerciseDTOList.add(formExerciseDTO(exercise, isFinished));
+        }
+        return exerciseDTOList;
     }
 
 }

@@ -22,11 +22,11 @@ public class Lesson {
     @Column
     private int position;
 
+    @Column
+    private int box;
+
     @Enumerated(EnumType.STRING)
     private ELessonLevels level;
-
-    @Column(nullable = false)
-    private String videoPath;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -39,9 +39,6 @@ public class Lesson {
         if (level == null) {
             throw new IllegalArgumentException("Level cannot be null.");
         }
-//        if (videoPath == null) {
-//            throw new IllegalArgumentException("Video path cannot be null.");
-//        }
     }
 
     public void copyNonNullProperties(Lesson source) {
@@ -53,9 +50,6 @@ public class Lesson {
         }
         if (source.getLevel() != null) {
             this.level = source.getLevel();
-        }
-        if (source.getVideoPath() != null) {
-            this.videoPath = source.getVideoPath();
         }
     }
 }

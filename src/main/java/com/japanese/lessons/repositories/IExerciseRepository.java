@@ -14,4 +14,6 @@ public interface IExerciseRepository extends JpaRepository<Exercise, Long> {
             @Param("lessonId") Long lessonId,
             @Param("eExerciseType") EExerciseType eExerciseType
     );
+
+    List<Exercise> findAllByLessonId(Long lessonId);
 }

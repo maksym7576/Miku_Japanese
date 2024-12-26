@@ -14,9 +14,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
-@Table(name = "exercises", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"lesson_id", "eExerciseType"})
-})
+@Table(name = "exercises")
 public class Exercise {
 
     @Id
@@ -40,6 +38,9 @@ public class Exercise {
 
     @Column(name = "ids_rewards")
     private String rewardsIds;
+
+    @Column(name = "exercise_order")
+    private Integer exercise_order;
 
     public void setIdsRewards(List<Long> ids) {
         this.rewardsIds = ids.stream()

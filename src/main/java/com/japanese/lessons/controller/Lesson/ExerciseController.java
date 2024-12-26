@@ -3,6 +3,7 @@ package com.japanese.lessons.controller.Lesson;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
+import com.japanese.lessons.dtos.response.models.ExerciseDTO;
 import com.japanese.lessons.service.ExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,16 @@ public class ExerciseController {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has ocurred an error:" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/{lessonId}/user/{userId}")
+    public ResponseEntity<?> getAllExercisesByLessonIdAndReviewIsFinished(@PathVariable Long lessonId, @PathVariable Long userId) {
+        try {
+            List<ExerciseDTO> exerciseDTOList = exerciseService.getAllExercisesDTOByLessonIdAndCheckIsCompleted(lessonId, userId);
+            return ResponseEntity.status(HttpStatus.OK).body(exerciseDTOList);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
         }
     }
 }
