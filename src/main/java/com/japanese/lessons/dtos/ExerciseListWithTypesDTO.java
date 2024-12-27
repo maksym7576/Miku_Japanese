@@ -1,5 +1,6 @@
 package com.japanese.lessons.dtos;
 
+import com.japanese.lessons.dtos.response.models.ExerciseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonDetailsDTO {
-
-    private ExerciseListWithTypesDTO exercisesWithType;
-    private List<String> explainList;
+public class ExerciseListWithTypesDTO {
+    private String type;
+    private List<ExerciseDTO> exerciseList;
 }

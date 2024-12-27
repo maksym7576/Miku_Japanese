@@ -6,8 +6,6 @@ import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
 import com.japanese.lessons.dtos.response.models.ExercisesDetailsDTO;
-import com.japanese.lessons.dtos.response.models.PhraseDTO;
-import com.japanese.lessons.dtos.response.models.TextDTO;
 import com.japanese.lessons.models.User.EFinishedTypes;
 import com.japanese.lessons.models.User.UserProgress;
 import com.japanese.lessons.models.second.EExerciseType;
@@ -161,11 +159,11 @@ public class ExerciseService {
     }
 
     private ExerciseDTO formExerciseDTO(Exercise exercise, boolean isFinished) {
-        return new ExerciseDTO(exercise.getId(), exercise.getTopic(), exercise.getEExerciseType().toString(), isFinished);
+        return new ExerciseDTO(exercise.getId(), exercise.getTopic(), isFinished);
     }
 
 
-    private List<ExerciseDTO> getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
+    private ExerciseListWithTypesDTO getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
         List<Exercise> exerciseList = getAllByLessonId(lessonId);
         List<UserProgress> userProgressList = userProgressService.getAllUserProgressExercisesBuETypeAndLessonIdAndUserId(EFinishedTypes.EXERCISES, lessonId, userId);
         List<ExerciseDTO> exerciseDTOList = new ArrayList<>();
