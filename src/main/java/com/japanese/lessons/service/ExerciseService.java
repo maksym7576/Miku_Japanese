@@ -134,14 +134,9 @@ public class ExerciseService {
                 incorrectIds.add(userResponseDTO.getQuestionId());
             }
         }
-        logger.debug("Total responses: {}", finalExerciseRequestDTO.getUserResponsesList().size());
-        logger.debug("Incorrect answers: {}", incorrectIds.size());
         int numCorrectAnswers = finalExerciseRequestDTO.getUserResponsesList().size() - incorrectIds.size();
-        logger.debug("Correct answers: {}", numCorrectAnswers);
         int percentage = cuntPercentage(numCorrectAnswers, incorrectIds.size());
-        logger.debug("Percentage: {}", percentage);
         int exp = countExperience(numCorrectAnswers, percentage);
-        logger.debug("Exp: {}", exp);
         Exercise exercise = getExerciseById(finalExerciseRequestDTO.getExerciseId());
         return new FinalExerciseResponseDTO(percentage, exp, rewardsService.getRewardsDTOListByIdsList(exercise.getIdsRewards()));
     }
@@ -163,10 +158,13 @@ public class ExerciseService {
     }
 
 
-    private ExerciseListWithTypesDTO getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
+    private List<ExerciseListWithTypesDTO> getAllExercisesDTOByLessonIdAndCheckIsCompleted(Long lessonId, Long userId) {
         List<Exercise> exerciseList = getAllByLessonId(lessonId);
         List<UserProgress> userProgressList = userProgressService.getAllUserProgressExercisesBuETypeAndLessonIdAndUserId(EFinishedTypes.EXERCISES, lessonId, userId);
-        List<ExerciseDTO> exerciseDTOList = new ArrayList<>();
+        List<ExerciseDTO> exerciseDTOListVideo = new ArrayList<>();
+        List<ExerciseDTO> exerciseDTOListExercise = new ArrayList<>();
+        List<ExerciseDTO> exerciseDTOListManga = new ArrayList<>();
+        List<ExerciseListWithTypesDTO> typesDTOArrayList = new ArrayList<>();
         boolean isFinished = false;
         for (Exercise exercise : exerciseList) {
             for (UserProgress userProgress : userProgressList) {
@@ -176,9 +174,23 @@ public class ExerciseService {
                     isFinished = false;
                 }
             }
-            exerciseDTOList.add(formExerciseDTO(exercise, isFinished));
+            switch (exercise.getEExerciseType()) {
+                case VIDEO -> exerciseDTOListVideo.add(formExerciseDTO(exercise, isFinished));
+                case EXERCISE -> exerciseDTOListExercise.add(formExerciseDTO(exercise, isFinished));
+                case MANGA -> exerciseDTOListManga.add(formExerciseDTO(exercise, isFinished));
+                default -> new IllegalArgumentException("Exercise type don't exists");
+            }
         }
-        return exerciseDTOList;
+        if(exerciseDTOListVideo.size() > 0) {
+        typesDTOArrayList.add(new ExerciseListWithTypesDTO("VIDEO", exerciseDTOListVideo));
+        }
+        if(exerciseDTOListExercise.size() > 0) {
+            typesDTOArrayList.add(new ExerciseListWithTypesDTO("EXERCISE", exerciseDTOListExercise));
+        }
+        if(exerciseDTOListManga.size() > 0) {
+            typesDTOArrayList.add(new ExerciseListWithTypesDTO("MANGA", exerciseDTOListManga));
+        }
+        return typesDTOArrayList;
     }
 
     public LessonDetailsDTO getLessonDetailsByLessonIdAndUserId(Long lessonId, Long userId) {

@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class LessonDetailsDTO {
 
-    private ExerciseListWithTypesDTO exercisesWithType;
+    private List<ExerciseListWithTypesDTO> exercisesListWithType;
     private List<String> explainList;
 }
