@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.first;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.japanese.lessons.models.Block;
 import com.japanese.lessons.models.second.Exercise;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,34 +23,18 @@ public class Lesson {
     @Column
     private int position;
 
-    @Column
-    private int box;
-
-    @Enumerated(EnumType.STRING)
-    private ELessonLevels level;
-
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Exercise> exercises;
 
+    @ManyToOne
+    @JoinColumn(name = "block_id")
+    @JsonIgnore
+    private Block block;
+
     public void validateCompletion() {
         if (position < 0) {
             throw new IllegalArgumentException("Position cannot be less than 0.");
-        }
-        if (level == null) {
-            throw new IllegalArgumentException("Level cannot be null.");
-        }
-    }
-
-    public void copyNonNullProperties(Lesson source) {
-        if (source == null) {
-            return;
-        }
-        if (source.getPosition() > 0) {
-            this.position = source.getPosition();
-        }
-        if (source.getLevel() != null) {
-            this.level = source.getLevel();
         }
     }
 }

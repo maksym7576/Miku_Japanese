@@ -1,4 +1,4 @@
-package com.japanese.lessons.dtos.response.models;
+package com.japanese.lessons.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonDTO {
+public class LevelGuidanceDTO {
 
     private Long id;
-    private Integer position;
-    private Boolean isFinished;
+    private String type;
+    private String text;
+    private Boolean isCompleted;
 }

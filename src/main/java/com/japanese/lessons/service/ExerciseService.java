@@ -224,7 +224,17 @@ public class ExerciseService {
                 textList.add(phraseDTOWithSentence.getTextDTO().getTranslation());
             }
         }
-        return new LessonDetailsDTO(getAllExercisesDTOByLessonIdAndCheckIsCompleted(lessonId, userId), textList);
+        List<ExplanationWithTableDTO> explanationList = new ArrayList<>();
+        List<Long> exerciseIdsList = exerciseList.stream()
+                .map(exercise -> exercise.getId())
+                .collect(Collectors.toList());
+        List<Long> guidanceIds = orderedObjectsService.getOrderedObjectsListByEAcivityTypeAndExerciseIdsList(EActivityType.STUDY_CONTENT, exerciseIdsList).stream()
+                .map(orderObject -> orderObject.getActivityId())
+                .collect(Collectors.toList());
+        for (Long guidanceId : guidanceIds) {
+            explanationList.add(guidanceService.getExplanationWithTable(guidanceId));
+        }
+        return new LessonDetailsDTO(getAllExercisesDTOByLessonIdAndCheckIsCompleted(lessonId, userId), textList, explanationList);
     }
 
 }

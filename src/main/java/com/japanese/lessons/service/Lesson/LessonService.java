@@ -7,7 +7,6 @@ import com.japanese.lessons.models.first.Lesson;
 import com.japanese.lessons.repositories.Lesson.ILessonRepository;
 import com.japanese.lessons.service.UserProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class LessonService {
     }
     public List<Lesson> getAllSortedLessons() {
         try {
-        List<Lesson> lessonList =  iLessonRepository.findAll(Sort.by(Sort.Order.desc("level"), Sort.Order.asc("position")));
+        List<Lesson> lessonList =  iLessonRepository.findAll();
         if(lessonList == null) {
             throw new Exception("Lessons not found");
         }
@@ -55,11 +54,11 @@ public class LessonService {
     }
 
     private LessonDTO formLessonDTO(Lesson lesson, boolean isFinished) {
-        return new LessonDTO(lesson.getId(), lesson.getPosition(), lesson.getBox(), lesson.getLevel().toString(), isFinished);
+        return new LessonDTO(lesson.getId(), lesson.getPosition(), isFinished);
     }
 
-    public List<LessonDTO> getAllSortedLessonsAndWhatFinishedMarkFinished(Long userId) {
-        List<Lesson> lessonList = getAllSortedLessons();
+
+    public List<LessonDTO> markIsFinishedInLessonList(Long userId, List<Lesson> lessonList) {
         List<LessonDTO> lessonDTOList = new ArrayList<>();
         List<UserProgress> userProgressList = userProgressService.getAllUserProgressLessonsByETypeAndUserId(EFinishedTypes.LESSON, userId);
         boolean isFinished = false;

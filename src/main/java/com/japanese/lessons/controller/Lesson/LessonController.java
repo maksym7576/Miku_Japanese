@@ -56,13 +56,13 @@ public class LessonController {
                     "message", e.getMessage()));
         }
     }
-    @GetMapping("/get/sorted/user/{userId}")
-    public ResponseEntity<?> getAllSortedLessonsAndFormIsFinishedByUSerId(@PathVariable Long userId) {
-        try {
-            List<LessonDTO> lessonDTOList = lessonService.getAllSortedLessonsAndWhatFinishedMarkFinished(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(lessonDTOList);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
-        }
-    }
+//    @GetMapping("/get/sorted/user/{userId}")
+//    public ResponseEntity<?> getAllSortedLessonsAndFormIsFinishedByUSerId(@PathVariable Long userId) {
+//        try {
+//            List<LessonDTO> lessonDTOList = lessonService.getAllSortedLessonsAndWhatFinishedMarkFinished(userId);
+//            return ResponseEntity.status(HttpStatus.OK).body(lessonDTOList);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
+//        }
+//    }
 }
