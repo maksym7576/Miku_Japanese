@@ -101,7 +101,7 @@ public class ExerciseService {
     public List<StructuredDataForExercisesDTO> getExercisesFromAllTables (Long lessonId) {
         logger.debug("Getting exercises for lesson ID: {}", lessonId);
         List<StructuredDataForExercisesDTO> exercisesToReturn = new ArrayList<>();
-        Exercise exercise = getExerciseByEExerciseTypeAndLessonId(EExerciseType.EXERCISE, lessonId);
+        Exercise exercise = getExerciseById(lessonId);
         ExercisesDetailsDTO exerciseDetails = new ExercisesDetailsDTO(exercise.getId(),exercise.getTopic(), exercise.getDescription());
         exercisesToReturn.add(new StructuredDataForExercisesDTO("details", exerciseDetails));
         List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exercise.getId());

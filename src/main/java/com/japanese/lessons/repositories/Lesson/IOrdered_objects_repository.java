@@ -16,3 +16,4 @@ public interface IOrdered_objects_repository extends JpaRepository<Ordered_objec
 
 
 }
+
