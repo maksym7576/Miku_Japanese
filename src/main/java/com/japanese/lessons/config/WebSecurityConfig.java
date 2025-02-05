@@ -42,8 +42,8 @@ public class WebSecurityConfig {
                                 "/api/user/**",
                                 "/api/exercise/**",
                                 "/api/url/**",
-                                "/api/level/**"
-
+                                "/api/level/**",
+                                "/api/extraction/**"
                         ).permitAll()
 
                         .requestMatchers(
