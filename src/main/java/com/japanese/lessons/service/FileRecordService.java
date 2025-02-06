@@ -40,4 +40,8 @@ public class FileRecordService {
         List<FileRecords> fileRecordsList = getFileRecordsListByIds(idsList);
         return formListFileRecordsDTO(fileRecordsList);
     }
+    public FileRecordsDTO getByIdFileRecordsAndCreateDTO(Long fileRecordsId) {
+        FileRecords fileRecords = getFileRecordsById(fileRecordsId);
+        return formFileRecordsDTO(fileRecords);
+    }
 }

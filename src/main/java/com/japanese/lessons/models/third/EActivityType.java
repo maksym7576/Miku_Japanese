@@ -10,4 +10,5 @@ public enum EActivityType {
     ERROR_CORRECTION,
     FACT,
     QUESTION_ENGLISH_ANSWERS,
+    VIDEO,
 }

@@ -2,6 +2,7 @@ package com.japanese.lessons.controller.Lesson;
 
 import com.japanese.lessons.dtos.LessonDetailsDTO;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
+import com.japanese.lessons.dtos.VideoLessonDTO;
 import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
@@ -48,6 +49,16 @@ public class ExerciseController {
             return ResponseEntity.status(HttpStatus.OK).body(lessonDetailsDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/video/{exerciseId}")
+    public ResponseEntity<?> getExerciseVideo(@PathVariable Long exerciseId) {
+        try {
+            VideoLessonDTO videoLessonDTO = exerciseService.startVideoLesson(exerciseId);
+            return ResponseEntity.status(HttpStatus.OK).body(videoLessonDTO);
+        } catch (IllegalArgumentException e) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
         }
     }
 }

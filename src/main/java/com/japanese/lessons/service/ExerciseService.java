@@ -6,10 +6,12 @@ import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
 import com.japanese.lessons.dtos.response.models.ExercisesDetailsDTO;
+import com.japanese.lessons.dtos.response.models.FileRecordsDTO;
 import com.japanese.lessons.models.User.EFinishedTypes;
 import com.japanese.lessons.models.User.UserProgress;
 import com.japanese.lessons.models.second.EExerciseType;
 import com.japanese.lessons.models.second.Exercise;
+import com.japanese.lessons.models.sixsth.FileRecords;
 import com.japanese.lessons.models.third.EActivityType;
 import com.japanese.lessons.models.third.Ordered_objects;
 import com.japanese.lessons.repositories.IExerciseRepository;
@@ -36,6 +38,7 @@ public class ExerciseService {
     @Autowired private PhraseService phraseService;
     @Autowired private RewardsService rewardsService;
     @Autowired private UserProgressService userProgressService;
+    @Autowired private SubtitleService subtitleService;
 
     private Exercise getExerciseByEExerciseTypeAndLessonId(EExerciseType eExerciseType, Long lessonId) {
         List<Exercise> exerciseList = iExerciseRepository.findExercisesByLessonAndType(lessonId, eExerciseType);
@@ -236,5 +239,17 @@ public class ExerciseService {
         }
         return new LessonDetailsDTO(getAllExercisesDTOByLessonIdAndCheckIsCompleted(lessonId, userId), textList, explanationList);
     }
+
+    public VideoLessonDTO startVideoLesson(Long exerciseId) {
+        Exercise exercise = getExerciseById(exerciseId);
+        List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exercise.getId());
+        FileRecordsDTO fileRecordsDTO = fileRecordService.getByIdFileRecordsAndCreateDTO(orderedObjectsList.get(0).getActivityId());
+        VideoLessonDTO videoLessonDTO = new VideoLessonDTO();
+        videoLessonDTO.setExerciseId(exerciseId);
+        videoLessonDTO.setFileRecords(fileRecordsDTO);
+        videoLessonDTO.setSubtitleList(subtitleService.getSubtitleListOrderedByVideoId(fileRecordsDTO.getId()));
+        return videoLessonDTO;
+    }
+
 
 }
