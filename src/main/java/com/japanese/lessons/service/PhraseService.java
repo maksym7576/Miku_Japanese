@@ -22,7 +22,7 @@ public class PhraseService {
     @Autowired private FileRecordService fileRecordService;
 
     public Phrase getPhraseById(Long id) {
-        return iPhraseRepository.findById(id).orElseThrow(() -> new RuntimeException("Phrase not found"));
+        return iPhraseRepository.findById(id).orElseThrow(() -> new RuntimeException("Phrase not found by id: " + id));
     }
 
     private PhraseDTO generatePhrase(Phrase phrase) {
