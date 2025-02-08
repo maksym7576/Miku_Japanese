@@ -25,4 +25,7 @@ public class FileRecords {
     @Enumerated(EnumType.STRING)
     @Column
     private EFileURLType fileURLType;
+
+    @Column
+    private String mediaDescription;
 }

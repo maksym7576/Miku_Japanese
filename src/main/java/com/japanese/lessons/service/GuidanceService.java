@@ -65,4 +65,11 @@ public class GuidanceService {
         MediaPackageDTO mediaPackageDTO = new MediaPackageDTO(guidance.getEMediaType().toString(), fileRecordsList);
         return new ObjectWithMediaDTO(formGuidanceGTO(guidance), mediaPackageDTO);
     }
+
+    public ObjectWithMediaDTO getExplanationGuidance(Long guidanceId) {
+        Guidance guidance = getGuidanceById(guidanceId);
+        List<FileRecordsDTO> fileRecords = fileRecordService.createListFileRecordsDTOByIdsList(guidance.getIdsMedia());
+        MediaPackageDTO mediaPackageDTO = new MediaPackageDTO(guidance.getEMediaType().toString(), fileRecords);
+        return new ObjectWithMediaDTO(formGuidanceGTO(guidance), mediaPackageDTO);
+    }
 }

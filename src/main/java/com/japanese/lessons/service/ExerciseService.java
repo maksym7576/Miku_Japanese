@@ -7,7 +7,9 @@ import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
 import com.japanese.lessons.dtos.response.models.ExercisesDetailsDTO;
 import com.japanese.lessons.dtos.response.models.FileRecordsDTO;
+import com.japanese.lessons.dtos.response.models.GuidanceDTO;
 import com.japanese.lessons.models.User.EFinishedTypes;
+import com.japanese.lessons.models.User.User;
 import com.japanese.lessons.models.User.UserProgress;
 import com.japanese.lessons.models.second.EExerciseType;
 import com.japanese.lessons.models.second.Exercise;
@@ -39,6 +41,7 @@ public class ExerciseService {
     @Autowired private RewardsService rewardsService;
     @Autowired private UserProgressService userProgressService;
     @Autowired private SubtitleService subtitleService;
+    @Autowired private UserService userService;
 
     private Exercise getExerciseByEExerciseTypeAndLessonId(EExerciseType eExerciseType, Long lessonId) {
         List<Exercise> exerciseList = iExerciseRepository.findExercisesByLessonAndType(lessonId, eExerciseType);
@@ -81,9 +84,9 @@ public class ExerciseService {
 //        exercisesToReturn.add(new StructuredDataForExercisesDTO("question_multiple_answer", questionAnswerDTO));
     }
 
-    private void addFlashCardPopupPhrases(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
+    private void addFlashCardPopupPhrases(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn, String type) {
         ObjectWithMediaDTO objectWithMediaDTO = phraseService.getPhraseWithMedia(object.getActivityId());
-        exercisesToReturn.add(new StructuredDataForExercisesDTO("flash_card_popup", objectWithMediaDTO));
+        exercisesToReturn.add(new StructuredDataForExercisesDTO(type, objectWithMediaDTO));
     }
 
     private void addErrorCorrection(Ordered_objects object ,List<StructuredDataForExercisesDTO> exercisesToReturn) {
@@ -120,7 +123,7 @@ public class ExerciseService {
                 case QUESTION_CHOOSE -> addQuestionChooseAnswers(index, exercisesToReturn);
 //                case EXERCISE_MULTIPLE_ANSWER_QUESTION -> addMultipleAnswerQuestion(index, exercisesToReturn);
                 case STUDY_CONTENT -> addStudyContent(index, exercisesToReturn);
-                case PHRASE -> addFlashCardPopupPhrases(index, exercisesToReturn);
+                case PHRASE -> addFlashCardPopupPhrases(index, exercisesToReturn, "flash_card_popup");
                 case ERROR_CORRECTION -> addErrorCorrection(index, exercisesToReturn);
                 default -> {}
             }
@@ -251,5 +254,31 @@ public class ExerciseService {
         return videoLessonDTO;
     }
 
+    public List<StructuredDataForExercisesDTO> getMangaFromAllTables(Long exerciseId) {
+        List<StructuredDataForExercisesDTO> mangaToReturn = new ArrayList<>();
+        Exercise exercise = getExerciseById(exerciseId);
+        List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exercise.getId());
+        orderedObjectsList.sort(Comparator.comparing(Ordered_objects::getOrderIndex));
+        for (Ordered_objects index : orderedObjectsList) {
+            switch (index.getActivityType()) {
+                case QUESTION -> addQuestion(index, mangaToReturn);
+                case QUESTION_COLOCATE -> addColocate(index, mangaToReturn);
+                case QUESTION_ENGLISH_ANSWERS -> addQuestionInEnglishAnswers(index, mangaToReturn);
+                case QUESTION_CHOOSE -> addQuestionChooseAnswers(index, mangaToReturn);
+                case ERROR_CORRECTION -> addErrorCorrection(index, mangaToReturn);
+                case PHRASE -> addFlashCardPopupPhrases(index, mangaToReturn, "centre_phrase");
+                case RIGHT_PHRASE -> addFlashCardPopupPhrases(index, mangaToReturn, "right_phrase");
+                case LEFT_PHRASE -> addFlashCardPopupPhrases(index, mangaToReturn, "left_phrase");
+                case GUIDANCE -> addGuidance(index, mangaToReturn);
+                default -> {
+                }
+            }
+        }
+        return mangaToReturn;
+    }
 
+        private void addGuidance(Ordered_objects object , List<StructuredDataForExercisesDTO> exercisesToReturn) {
+            ObjectWithMediaDTO guidanceDTO = guidanceService.getExplanationGuidance(object.getActivityId());
+            exercisesToReturn.add(new StructuredDataForExercisesDTO("guidance", guidanceDTO));
+        }
 }

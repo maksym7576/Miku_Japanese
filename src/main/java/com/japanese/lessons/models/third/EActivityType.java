@@ -2,7 +2,8 @@ package com.japanese.lessons.models.third;
 
 public enum EActivityType {
     PHRASE,
-    DOUBLE_PHRASE,
+    RIGHT_PHRASE,
+    LEFT_PHRASE,
     QUESTION,
     QUESTION_COLOCATE,
     QUESTION_CHOOSE,
@@ -11,4 +12,5 @@ public enum EActivityType {
     FACT,
     QUESTION_ENGLISH_ANSWERS,
     VIDEO,
+    GUIDANCE,
 }

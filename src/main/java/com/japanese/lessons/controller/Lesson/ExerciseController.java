@@ -61,4 +61,14 @@ public class ExerciseController {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error:" + e.getMessage());
         }
     }
+
+    @GetMapping("/get/manga/{exerciseId}")
+    public ResponseEntity<?> getManga(@PathVariable Long exerciseId) {
+        try {
+            List<StructuredDataForExercisesDTO> structuredDataForExercisesDTOS = exerciseService.getMangaFromAllTables(exerciseId);
+            return ResponseEntity.status(HttpStatus.OK).body(structuredDataForExercisesDTOS);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error: " + e.getMessage());
+        }
+    }
 }
