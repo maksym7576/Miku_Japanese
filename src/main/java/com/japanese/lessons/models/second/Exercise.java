@@ -1,6 +1,7 @@
 package com.japanese.lessons.models.second;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.japanese.lessons.models.first.Character;
 import com.japanese.lessons.models.first.Lesson;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,10 +32,14 @@ public class Exercise {
     @Column(name = "e_exercise_type", nullable = false)
     private EExerciseType eExerciseType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "character_id")
+    private Character character;
 
     @Column(name = "ids_rewards")
     private String rewardsIds;

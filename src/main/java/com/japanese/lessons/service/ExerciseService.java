@@ -281,4 +281,6 @@ public class ExerciseService {
             ObjectWithMediaDTO guidanceDTO = guidanceService.getExplanationGuidance(object.getActivityId());
             exercisesToReturn.add(new StructuredDataForExercisesDTO("guidance", guidanceDTO));
         }
+
+
 }
