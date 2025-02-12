@@ -41,6 +41,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ERole role;
 
+    @Column
+    private Integer mikuMood;
+
+    @Column
+    private Integer mikuLevel;
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {

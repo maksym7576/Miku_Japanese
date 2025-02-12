@@ -4,4 +4,5 @@ public enum EFinishedTypes {
     LESSON,
     EXERCISES,
     LEVEL_GUIDANCE,
+    NOVELS,
 }

@@ -199,6 +199,23 @@ public class ExerciseService {
         return typesDTOArrayList;
     }
 
+    public List<ExerciseDTO> formNovelsListForCharacterByCharacterId(Long characterId, Long userId, List<Exercise> exerciseList) {
+        List<ExerciseDTO> novelsList = new ArrayList<>();
+        List<UserProgress> userProgressList = userProgressService.getAllUserProgressExercisesBuETypeAndLessonIdAndUserId(EFinishedTypes.NOVELS, characterId, userId);
+        boolean isFinished = false;
+        for (Exercise exercise : exerciseList) {
+            for (UserProgress userProgress : userProgressList) {
+                if (exercise.getId() == userProgress.getObjectFinishedId()) {
+                    isFinished = true;
+                } else {
+                    isFinished = false;
+                }
+            }
+            novelsList.add(formExerciseDTO(exercise, isFinished));
+        }
+        return novelsList;
+    }
+
     public LessonDetailsDTO getLessonDetailsByLessonIdAndUserId(Long lessonId, Long userId) {
         List<Exercise> exerciseList = getAllByLessonId(lessonId);
         List<Ordered_objects> orderedObjectsList = new ArrayList<>();
