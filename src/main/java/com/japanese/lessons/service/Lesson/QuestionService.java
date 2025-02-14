@@ -204,4 +204,9 @@ public class QuestionService {
         objectWithMediaDTO.setMediaPackage(mediaPackageDTO);;
         return objectWithMediaDTO;
     }
+
+    public QuestionWithAnswerDTO getQuestionWithAnswersWithoutMedia(Long questionId) {
+        Question question = getQuestionById(questionId);
+        return getQuestionWithAnswers(question);
+    }
 }

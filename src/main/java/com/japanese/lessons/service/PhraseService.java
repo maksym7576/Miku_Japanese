@@ -3,10 +3,13 @@ package com.japanese.lessons.service;
 import com.japanese.lessons.dtos.MediaPackageDTO;
 import com.japanese.lessons.dtos.ObjectWithMediaDTO;
 import com.japanese.lessons.dtos.PhraseDTOWithSentence;
+import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.response.models.FileRecordsDTO;
 import com.japanese.lessons.dtos.response.models.PhraseDTO;
 import com.japanese.lessons.dtos.response.models.TextDTO;
+import com.japanese.lessons.models.fourth.EMediaType;
 import com.japanese.lessons.models.fourth.Phrase;
+import com.japanese.lessons.models.second.EExerciseType;
 import com.japanese.lessons.repositories.IPhraseRepository;
 import com.japanese.lessons.service.Lesson.MangaDialogueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +44,20 @@ public class PhraseService {
         PhraseDTOWithSentence phraseDTOWithSentence = new PhraseDTOWithSentence(generatePhrase(phrase), textDTO);
         MediaPackageDTO mediaPackageDTO =new MediaPackageDTO(phrase.getEMediaType().toString(), fileRecordsDTOList);
         return new ObjectWithMediaDTO(phraseDTOWithSentence, mediaPackageDTO);
+    }
+
+    public StructuredDataForExercisesDTO getPhaseWithMediaAndWithoutByPhraseId(Long phraseId) {
+        Phrase phrase = getPhraseById(phraseId);
+        TextDTO textDTO = mangaDialogueService.getTextDTOByIdWithUnitingWords(phrase.getTextId());
+        PhraseDTO phraseDTO = generatePhrase(phrase);
+        PhraseDTOWithSentence phraseDTOWithSentence = new PhraseDTOWithSentence(phraseDTO, textDTO);
+        if(phrase.getEMediaType() == EMediaType.none) {
+            return new StructuredDataForExercisesDTO("phrase_without_media", phraseDTOWithSentence);
+        } else  {
+            List<FileRecordsDTO> fileRecordsDTOList = fileRecordService.createListFileRecordsDTOByIdsList(phrase.getIds());
+            MediaPackageDTO mediaPackageDTO =new MediaPackageDTO(phrase.getEMediaType().toString(), fileRecordsDTOList);
+            ObjectWithMediaDTO objectWithMediaDTO = new ObjectWithMediaDTO(phraseDTOWithSentence, mediaPackageDTO);
+            return new StructuredDataForExercisesDTO("phrase_with_media", objectWithMediaDTO);
+        }
     }
 }

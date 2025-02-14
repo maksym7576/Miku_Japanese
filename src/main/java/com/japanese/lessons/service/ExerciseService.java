@@ -4,10 +4,7 @@ import com.japanese.lessons.dtos.*;
 import com.japanese.lessons.dtos.guidance.ExplanationWithTableDTO;
 import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
-import com.japanese.lessons.dtos.response.models.ExerciseDTO;
-import com.japanese.lessons.dtos.response.models.ExercisesDetailsDTO;
-import com.japanese.lessons.dtos.response.models.FileRecordsDTO;
-import com.japanese.lessons.dtos.response.models.GuidanceDTO;
+import com.japanese.lessons.dtos.response.models.*;
 import com.japanese.lessons.models.User.EFinishedTypes;
 import com.japanese.lessons.models.User.User;
 import com.japanese.lessons.models.User.UserProgress;
@@ -299,5 +296,53 @@ public class ExerciseService {
             exercisesToReturn.add(new StructuredDataForExercisesDTO("guidance", guidanceDTO));
         }
 
+        private VisualNovelDTO formNovelByExerciseId(Long exerciseId) {
+            List<StructuredDataForExercisesDTO> startPhraseList = new ArrayList<>();
+            List<StructuredDataForExercisesDTO> phrasesFalseList = new ArrayList<>();
+            List<StructuredDataForExercisesDTO> phrasesTrueList = new ArrayList<>();
+            List<NovelQuestionDTO> novelQuestionDTOList = new ArrayList<>();
+            QuestionWithAnswerDTO question = new QuestionWithAnswerDTO();
+            List<NovelFinalScenarioDTO> novelFinalScenarioDTOS = new ArrayList<>();
+            List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exerciseId);
+            orderedObjectsList.sort(Comparator.comparing(Ordered_objects::getOrderIndex));
+            int block;
+            int isTrue;
+            int order;
+            for (Ordered_objects index : orderedObjectsList) {
+                block = index.getOrderIndex() / 1000;
+                isTrue = (index.getOrderIndex() % 1000) / 10;
+                order = index.getOrderIndex() % 10;
+                if (index.getActivityType() == EActivityType.PHRASE) {
+                    if(index.getOrderIndex() > 1000 && index.getOrderIndex() < 2000) {
+                        startPhraseList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId()));
+                    }
+                    if(index.getOrderIndex() > 2000 && index.getOrderIndex() < 990000) {
+                        if (isTrue == 0) {
+                            phrasesFalseList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId()));
+                        }
+                        if (isTrue == 1) {
+                            phrasesTrueList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId()));
+                        }
+                    }
+                    if(index.getOrderIndex() > 990000) {
 
+                    }
+                }
+                if (index.getActivityType() == EActivityType.QUESTION) {
+                    List<NovelTrueOrFalseLinePhrase> novelTrueOrFalseLinePhrases = new ArrayList<>();
+                    NovelTrueOrFalseLinePhrase falseLine = new NovelTrueOrFalseLinePhrase(false, phrasesFalseList);
+                    novelTrueOrFalseLinePhrases.add(falseLine);
+                    NovelTrueOrFalseLinePhrase trueLine = new NovelTrueOrFalseLinePhrase(true, phrasesTrueList);
+                    novelTrueOrFalseLinePhrases.add(trueLine);
+                    novelQuestionDTOList.add(new NovelQuestionDTO(question, novelTrueOrFalseLinePhrases));
+                    phrasesFalseList.clear();
+                    phrasesTrueList.clear();
+                    novelTrueOrFalseLinePhrases.clear();
+                    question = null;
+                     question = questionService.getQuestionWithAnswersWithoutMedia(index.getActivityId());
+                }
+
+            }
+            return new VisualNovelDTO(startPhraseList, novelQuestionDTOList, );
+        }
 }
