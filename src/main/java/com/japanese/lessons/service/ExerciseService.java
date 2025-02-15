@@ -296,10 +296,11 @@ public class ExerciseService {
             exercisesToReturn.add(new StructuredDataForExercisesDTO("guidance", guidanceDTO));
         }
 
-        private VisualNovelDTO formNovelByExerciseId(Long exerciseId) {
+        public VisualNovelDTO formNovelByExerciseId(Long exerciseId) {
             List<StructuredDataForExercisesDTO> startPhraseList = new ArrayList<>();
             List<StructuredDataForExercisesDTO> phrasesFalseList = new ArrayList<>();
             List<StructuredDataForExercisesDTO> phrasesTrueList = new ArrayList<>();
+            List<StructuredDataForExercisesDTO> finalPhrasesList = new ArrayList<>();
             List<NovelQuestionDTO> novelQuestionDTOList = new ArrayList<>();
             QuestionWithAnswerDTO question = new QuestionWithAnswerDTO();
             List<NovelFinalScenarioDTO> novelFinalScenarioDTOS = new ArrayList<>();
@@ -308,6 +309,7 @@ public class ExerciseService {
             int block;
             int isTrue;
             int order;
+            Ordered_objects lastIndex = new Ordered_objects();
             for (Ordered_objects index : orderedObjectsList) {
                 block = index.getOrderIndex() / 1000;
                 isTrue = (index.getOrderIndex() % 1000) / 10;
@@ -316,7 +318,7 @@ public class ExerciseService {
                     if(index.getOrderIndex() > 1000 && index.getOrderIndex() < 2000) {
                         startPhraseList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId()));
                     }
-                    if(index.getOrderIndex() > 2000 && index.getOrderIndex() < 990000) {
+                    if(index.getOrderIndex() > 2000 && index.getOrderIndex() < 900000) {
                         if (isTrue == 0) {
                             phrasesFalseList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId()));
                         }
@@ -324,8 +326,17 @@ public class ExerciseService {
                             phrasesTrueList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId()));
                         }
                     }
-                    if(index.getOrderIndex() > 990000) {
-
+                    if(index.getOrderIndex() > 900000) {
+                        int blockFinal = index.getOrderIndex() / 10000;
+                        int needsCorrectAnswers = blockFinal % 100;
+                        int orderFinal = index.getOrderIndex() % 100;
+                        int blockFinalLast = lastIndex.getOrderIndex() / 10000;
+                        if (blockFinal != blockFinalLast) {
+                        novelFinalScenarioDTOS.add(new NovelFinalScenarioDTO(needsCorrectAnswers, finalPhrasesList));
+                        finalPhrasesList.clear();
+                        }
+                        StructuredDataForExercisesDTO structuredDataForExercisesDTO = phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId());
+                        finalPhrasesList.add(structuredDataForExercisesDTO);
                     }
                 }
                 if (index.getActivityType() == EActivityType.QUESTION) {
@@ -341,8 +352,8 @@ public class ExerciseService {
                     question = null;
                      question = questionService.getQuestionWithAnswersWithoutMedia(index.getActivityId());
                 }
-
+                lastIndex = index;
             }
-            return new VisualNovelDTO(startPhraseList, novelQuestionDTOList, );
+            return new VisualNovelDTO(startPhraseList, novelQuestionDTOList, novelFinalScenarioDTOS);
         }
 }
