@@ -3,6 +3,7 @@ package com.japanese.lessons.controller.Lesson;
 import com.japanese.lessons.dtos.LessonDetailsDTO;
 import com.japanese.lessons.dtos.StructuredDataForExercisesDTO;
 import com.japanese.lessons.dtos.VideoLessonDTO;
+import com.japanese.lessons.dtos.VisualNovelDTO;
 import com.japanese.lessons.dtos.request.FinalExerciseRequestDTO;
 import com.japanese.lessons.dtos.response.FinalExerciseResponseDTO;
 import com.japanese.lessons.dtos.response.models.ExerciseDTO;
@@ -67,6 +68,16 @@ public class ExerciseController {
         try {
             List<StructuredDataForExercisesDTO> structuredDataForExercisesDTOS = exerciseService.getMangaFromAllTables(exerciseId);
             return ResponseEntity.status(HttpStatus.OK).body(structuredDataForExercisesDTOS);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/visual-novel/{exerciseId}")
+    public ResponseEntity<?> getVisualNovel(@PathVariable Long exerciseId) {
+        try {
+            VisualNovelDTO visualNovelDTO = exerciseService.formNovelByExerciseId(exerciseId);
+            return ResponseEntity.status(HttpStatus.OK).body(visualNovelDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Has occurred an error: " + e.getMessage());
         }
