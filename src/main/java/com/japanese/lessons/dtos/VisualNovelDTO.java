@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 public class VisualNovelDTO {
 
-    private List<StructuredDataForExercisesDTO> startPhrasesList;
-    private List<NovelQuestionDTO> novelQuestionList;
+    private List<StructuredDataForExercisesDTO> dialogueList;
     private List<NovelFinalScenarioDTO> finalDialogueList;
 }
