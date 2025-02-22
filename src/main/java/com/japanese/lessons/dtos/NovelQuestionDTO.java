@@ -15,5 +15,6 @@ import java.util.List;
 public class NovelQuestionDTO {
 
     private QuestionWithAnswerDTO question;
-    private List<StructuredDataForExercisesDTO> phrasesFalseLine;
+    private List<Object> phrasesFalseLine;
+    private List<Object> phrasesTrueLine;
 }

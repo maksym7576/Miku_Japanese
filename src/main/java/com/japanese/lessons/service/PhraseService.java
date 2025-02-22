@@ -46,18 +46,18 @@ public class PhraseService {
         return new ObjectWithMediaDTO(phraseDTOWithSentence, mediaPackageDTO);
     }
 
-    public StructuredDataForExercisesDTO getPhaseWithMediaAndWithoutByPhraseId(Long phraseId) {
+    public Object getPhaseWithMediaAndWithoutByPhraseId(Long phraseId) {
         Phrase phrase = getPhraseById(phraseId);
         TextDTO textDTO = mangaDialogueService.getTextDTOByIdWithUnitingWords(phrase.getTextId());
         PhraseDTO phraseDTO = generatePhrase(phrase);
         PhraseDTOWithSentence phraseDTOWithSentence = new PhraseDTOWithSentence(phraseDTO, textDTO);
         if(phrase.getEMediaType() == EMediaType.none) {
-            return new StructuredDataForExercisesDTO("phrase_without_media", phraseDTOWithSentence);
+            return phraseDTOWithSentence;
         } else  {
             List<FileRecordsDTO> fileRecordsDTOList = fileRecordService.createListFileRecordsDTOByIdsList(phrase.getIds());
             MediaPackageDTO mediaPackageDTO =new MediaPackageDTO(phrase.getEMediaType().toString(), fileRecordsDTOList);
             ObjectWithMediaDTO objectWithMediaDTO = new ObjectWithMediaDTO(phraseDTOWithSentence, mediaPackageDTO);
-            return new StructuredDataForExercisesDTO("phrase_with_media", objectWithMediaDTO);
+            return objectWithMediaDTO;
         }
     }
 }

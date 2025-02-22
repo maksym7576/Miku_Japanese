@@ -15,5 +15,5 @@ import java.util.List;
 public class NovelFinalScenarioDTO {
 
     private Integer needsAtLstCorrectAnswers;
-    private List<StructuredDataForExercisesDTO> phraseList;
+    private List<Object> phraseList;
 }

@@ -296,70 +296,81 @@ public class ExerciseService {
             exercisesToReturn.add(new StructuredDataForExercisesDTO("guidance", guidanceDTO));
         }
 
-        private void addNovelPhrases(StructuredDataForExercisesDTO phrase, List<StructuredDataForExercisesDTO> dialogueList) {
-            dialogueList.add(new StructuredDataForExercisesDTO("phrase", phrase));
-        }
-
-        private void addNovelQuestionsWithLines(QuestionWithAnswerDTO questionDTO, List<StructuredDataForExercisesDTO> dialogueList, List<StructuredDataForExercisesDTO> phrasesFalseLine) {
-            dialogueList.add(new StructuredDataForExercisesDTO("question", new NovelQuestionDTO(questionDTO, phrasesFalseLine)));
-        }
 
         private void addNovelFinalLinesByCorrectAnswers(Ordered_objects index) {
 
         }
 
-        public VisualNovelDTO formNovelByExerciseId(Long exerciseId) {
-            List<StructuredDataForExercisesDTO> dialogueList = new ArrayList<>();
-            List<NovelFinalScenarioDTO> novelFinalScenarioDTOS = new ArrayList<>();
-            List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exerciseId);
-            orderedObjectsList.sort(Comparator.comparing(Ordered_objects::getOrderIndex));
-            List<StructuredDataForExercisesDTO> phrasesFalseLineList = new ArrayList<>();
-            QuestionWithAnswerDTO question = new QuestionWithAnswerDTO();
-            List<StructuredDataForExercisesDTO> finalPhraseList = new ArrayList<>();
-            int lastIsTrue = 1;
-            int blockFinal = 0;
-            int lastBlockFinal = 0;
-            boolean isQuestionActived = false;
-            for (Ordered_objects index : orderedObjectsList) {
-                logger.debug("Object by index: {}", index.getOrderIndex());
-                int block = index.getOrderIndex() / 1000;
-                int isTrue = (index.getOrderIndex() % 1000) / 10;
-                int order = index.getOrderIndex() % 10;
-                if(lastIsTrue != isTrue && isQuestionActived == true) {
-                    addNovelQuestionsWithLines(question,dialogueList, phrasesFalseLineList);
-                    isQuestionActived = false;
-                    phrasesFalseLineList.clear();
-                }
-                if (index.getActivityType() == EActivityType.PHRASE) {
-                    StructuredDataForExercisesDTO structuredDataForExercisesDTO = phraseService.getPhaseWithMediaAndWithoutByPhraseId(index.getActivityId());
-                    if(index.getOrderIndex() < 900000) {
-                        if (isTrue == 1) {
-                            addNovelPhrases(structuredDataForExercisesDTO, dialogueList);
-                        }
-                        if(isTrue == 0) {
-                            phrasesFalseLineList.add(structuredDataForExercisesDTO);
-                        }
-                    }
-                    if(index.getOrderIndex() > 90000) {
-                        blockFinal = index.getOrderIndex() / 10000;
-                        int needsCorrectAnswers = (index.getOrderIndex() % 10000) / 100;
-                        int orderFinal = index.getOrderIndex() % 100;
-                        if (blockFinal != lastBlockFinal) {
-                            novelFinalScenarioDTOS.add(new NovelFinalScenarioDTO(needsCorrectAnswers, finalPhraseList));
-                            finalPhraseList.clear();
-                        }
-                        finalPhraseList.add(structuredDataForExercisesDTO);
-                    }
-                }
-                if (index.getActivityType() == EActivityType.QUESTION) {
-                    logger.debug("Start with question");
-                    question = questionService.getQuestionWithAnswersWithoutMedia(index.getActivityId());
-                    isQuestionActived = true;
-                    logger.debug("Getted question by id: {}", question.getQuestion().getId());
-                }
-                lastIsTrue = isTrue;
-                lastBlockFinal = blockFinal;
-            }
-            return new VisualNovelDTO(dialogueList, novelFinalScenarioDTOS);
+
+    private void addNovelPhrases(List<Ordered_objects> elements, List<StructuredDataForExercisesDTO> pracesAndQuestionList) {
+        for (Ordered_objects element : elements) {
+            pracesAndQuestionList.add(new StructuredDataForExercisesDTO("phrase", phraseService.getPhaseWithMediaAndWithoutByPhraseId(element.getActivityId())));
         }
+    }
+
+    private void addNovelQuestion(List<Ordered_objects> elements, List<StructuredDataForExercisesDTO> novelElements) {
+        NovelQuestionDTO novelQuestionDTO = new NovelQuestionDTO();
+        List<Object> phrasesFalseLine = new ArrayList<>();
+        List<Object> phrasesTrueLine = new ArrayList<>();
+
+        for (Ordered_objects element : elements) {
+            switch (element.getActivityType()) {
+                case QUESTION -> novelQuestionDTO.setQuestion(questionService.getQuestionWithAnswersWithoutMedia(element.getActivityId()));
+                case PHRASE -> {
+                    Object phrase = phraseService.getPhaseWithMediaAndWithoutByPhraseId(element.getActivityId());
+                    if (isTrue(element)) {
+                        phrasesTrueLine.add(phrase);
+                    } else {
+                        phrasesFalseLine.add(phrase);
+                    }
+                }
+            }
+        }
+
+        novelQuestionDTO.setPhrasesFalseLine(phrasesFalseLine);
+        novelQuestionDTO.setPhrasesTrueLine(phrasesTrueLine);
+        novelElements.add(new StructuredDataForExercisesDTO("question", novelQuestionDTO));
+    }
+
+    private boolean isTrue(Ordered_objects element) {
+        return (element.getOrderIndex() % 1000) / 10 == 1;
+    }
+
+    private void addNovelFinalCase(List<Ordered_objects> elements, List<NovelFinalScenarioDTO> finalDialogueList) {
+        int needsCorrectAnswers = (elements.get(0).getOrderIndex() % 10000) / 100;
+        List<Object> phraseList = new ArrayList<>();
+        for (Ordered_objects element : elements) {
+            if(element.getActivityType() == EActivityType.PHRASE) {
+                phraseList.add(phraseService.getPhaseWithMediaAndWithoutByPhraseId(element.getActivityId()));
+            }
+        }
+        finalDialogueList.add(new NovelFinalScenarioDTO(needsCorrectAnswers, phraseList));
+    }
+
+    public VisualNovelDTO formNovelByExerciseId(Long exerciseId) {
+        List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exerciseId);
+
+        Map<Integer, List<Ordered_objects>> blocks = orderedObjectsList.stream()
+                .collect(Collectors.groupingBy(object -> object.getOrderIndex() / 100));
+
+        List<StructuredDataForExercisesDTO> novelElements = new ArrayList<>();
+        List<NovelFinalScenarioDTO> finalDialogueList = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<Ordered_objects>> block : blocks.entrySet()) {
+            List<Ordered_objects> elements = block.getValue();
+            elements.sort(Comparator.comparing(Ordered_objects::getOrderIndex));
+            if (!elements.isEmpty()) {
+                if (elements.get(0).getOrderIndex() > 90000) {
+                    addNovelFinalCase(elements, finalDialogueList);
+                } else {
+                    switch (elements.get(0).getActivityType()) {
+                        case QUESTION -> addNovelQuestion(elements, novelElements);
+                        case PHRASE -> addNovelPhrases(elements, novelElements);
+                    }
+                }
+            }
+        }
+
+        return new VisualNovelDTO(novelElements, finalDialogueList);
+    }
 }
