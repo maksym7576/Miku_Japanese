@@ -349,9 +349,9 @@ public class ExerciseService {
 
     public VisualNovelDTO formNovelByExerciseId(Long exerciseId) {
         List<Ordered_objects> orderedObjectsList = orderedObjectsService.getOrderedObjectsListByExerciseId(exerciseId);
-
         Map<Integer, List<Ordered_objects>> blocks = orderedObjectsList.stream()
-                .collect(Collectors.groupingBy(object -> object.getOrderIndex() / 100));
+                .collect(Collectors.groupingBy(object -> object.getOrderIndex() / 100, LinkedHashMap::new, Collectors.toList()));
+
 
         List<StructuredDataForExercisesDTO> novelElements = new ArrayList<>();
         List<NovelFinalScenarioDTO> finalDialogueList = new ArrayList<>();
@@ -363,6 +363,10 @@ public class ExerciseService {
                 if (elements.get(0).getOrderIndex() > 90000) {
                     addNovelFinalCase(elements, finalDialogueList);
                 } else {
+                    for (Ordered_objects objects: elements) {
+                        logger.debug("object with id: {}", objects.getActivityId());
+                        logger.debug("order index {}", objects.getOrderIndex());
+                    }
                     switch (elements.get(0).getActivityType()) {
                         case QUESTION -> addNovelQuestion(elements, novelElements);
                         case PHRASE -> addNovelPhrases(elements, novelElements);
