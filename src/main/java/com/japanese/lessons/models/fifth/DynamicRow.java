@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+//@Table(name = "\"dynamic_row\"")
 public class DynamicRow {
 
     @Id

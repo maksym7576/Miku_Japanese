@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface ISubtitleRepository extends JpaRepository<Subtitle, Long> {
     List<Subtitle> findByVideoId(Long videoId);
+
+    List<Subtitle> findByVideoIdOrderByStartTimeAsc(Long videoId);
+
 }

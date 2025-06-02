@@ -15,7 +15,7 @@ public class SubtitleService {
     @Autowired private ISubtitleRepository iSubtitleRepository;
 
     private List<Subtitle> getAllSubtitleByVideoId(Long videoId) {
-        return iSubtitleRepository.findByVideoId(videoId);
+        return iSubtitleRepository.findByVideoIdOrderByStartTimeAsc(videoId);
     }
 
     private SubtitleDTO formSubtitleDTO(Subtitle subtitle) {
